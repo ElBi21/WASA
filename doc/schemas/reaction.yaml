@@ -1,0 +1,18 @@
+title: Reaction
+description: |
+  Defines a reaction, which can be made out of text or an emoji
+type: object
+properties:
+  id:
+    description: ID of the reaction
+    type: integer
+    example: 0000000000000003
+  message:
+    description: Message ID to which the reaction corresponds
+    type: integer
+    example: 0000000000000002
+  content:
+    description: Content of the reaction
+    type: string
+    minLength: 1
+    maxLength: 16384

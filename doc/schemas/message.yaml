@@ -1,0 +1,47 @@
+title: Message
+description: |
+  Representation of a message
+type: object
+properties:
+  id:
+    description: ID of the message, always expressed in 16 digits
+    type: integer
+    example: 0000000000000001
+  sender:
+    description: ID of the sender
+    type: integer
+    example: 0000000000000002
+  content:
+    description: Text of the message
+    type: string
+    minLength: 1
+    maxLength: 65536
+    example: |
+      Lorem ipsum dolor sit est cum magna gratia
+  timestamp:
+    description: Timestamp of when the message was sent
+    type: string
+    format: date-time
+    example: 1731321854
+  photo:
+    description: Photo sent with the message, if any is sent. Can be null
+    type: string
+    format: byte
+    nullable: true
+  received:
+    description: Specifies whether the user received the message
+    type: boolean
+    example: true
+  read:
+    description: Specifies whether the user read the message
+    type: boolean
+    example: false
+  forwarded:
+    description: Specifies whether the message was forwarded
+    type: boolean
+    example: false
+  reactions:
+    description: Set of reactions applied to the message
+    type: array
+    items:
+      $ref: "./reaction.yaml"

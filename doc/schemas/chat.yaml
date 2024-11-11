@@ -1,0 +1,40 @@
+title: Chat
+description: Representation of a chat
+type: object
+properties:
+  id:
+    description: ID of the chat
+    type: integer
+    example: 0000000000000004
+  isPrivate:
+    description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
+    type: boolean
+    example: true
+  users:
+    description: List of users participating to the chat
+    type: array
+    items:
+      description: ID of the users
+      type: integer
+  name:
+    description: Name of the group chat. Visible only if the chat is a group
+    type: string
+    example: The children of Andrew
+  groupDescription:
+    description: Description of the group. Visible only if the chat is a group
+    type: string
+    maxLength: 65536
+    nullable: true
+  photo:
+    description: Profile picture of the chat. Visible only if the chat is a group
+    type: string
+    format: byte
+  messages:
+    description: List of all the messages sent in the chat
+    type: array
+    items:
+      $ref: "./message.yaml"
+  lastSent:
+    description: ID of the last sent message
+    type: integer
+    example: 0000000000000002
