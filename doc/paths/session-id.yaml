@@ -1,0 +1,25 @@
+parameters:
+  - name: id
+    description: |
+      ID of the chat
+    in: path
+    required: true
+    schema:
+      type: integer
+
+get:
+  tags: ["User operations", "Chats"]
+  summary: Get the chat
+  description: Get the chat determined by the ID in the path
+  operationId: getConversation
+  responses:
+    '200':
+      description: Chat successfully retrieven
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../api.yaml#/components/schemas/chat"
+    '404':
+      description: The chat doesn't exist. Check if your chat ID is correct or not

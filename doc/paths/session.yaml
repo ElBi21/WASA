@@ -1,0 +1,24 @@
+post:
+  tags: ["User operations", "Login"]
+  summary: Logs in the user
+  description: |
+    If the user does not exist, it will be created,
+    and an identifier is returned.
+    If the user exists, the user identifier is returned.
+  operationId: doLogin
+  requestBody:
+    description: User details
+    content:
+      application/json:
+        schema:
+          $ref: "../api.yaml#/components/schemas/user"
+    required: true
+  
+  responses:
+    '200':
+      description: |
+        The user exists. Proceed to log in
+      
+    '201':
+      description: |
+        The user didn't exist, but got created. Proceed to log in

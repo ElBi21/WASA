@@ -29,13 +29,15 @@ properties:
     format: byte
     nullable: true
   received:
-    description: Specifies whether the user received the message
-    type: boolean
-    example: true
+    description: List of users who received the message
+    type: array
+    items:
+      $ref: "../api.yaml#/components/schemas/user"
   read:
-    description: Specifies whether the user read the message
-    type: boolean
-    example: false
+    description: List of users who read the message
+    type: array
+    items:
+      $ref: "../api.yaml#/components/schemas/user"
   forwarded:
     description: Specifies whether the message was forwarded
     type: boolean

@@ -1,0 +1,20 @@
+parameters:
+  - name: id
+    description: |
+      ID of the user
+    in: path
+    required: true
+    schema:
+      type: integer
+
+get:
+  tags: ["User operations", "Chats"]
+  summary: Get the chats of the user
+  description: Get the chats of the user specified in the user ID
+  operationId: getMyConversations
+  content:
+    application/json:
+      schema:
+        type: array
+        items: 
+          $ref: "../api.yaml#/components/schemas/user"
