@@ -6,6 +6,8 @@ parameters:
     required: true
     schema:
       type: integer
+      minimum: 1
+      maximum: 2048
 
 post:
   tags: ["User operations", "Settings"]
@@ -19,7 +21,7 @@ post:
         schema:
           type: object
           properties:
-            newUsername:
+            new_username:
               type: string
               description: New username
               pattern: '^.*?$'

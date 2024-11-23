@@ -11,7 +11,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../api.yaml#/components/schemas/user"
+          $ref: "../api.yaml#/components/schemas/User"
     required: true
   
   responses:

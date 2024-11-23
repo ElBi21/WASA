@@ -5,8 +5,10 @@ properties:
   id:
     description: ID of the chat
     type: integer
-    example: 0000000000000004
-  isPrivate:
+    example: 4
+    minimum: 1
+    maximum: 65536 # Set to 65536 for convenience, could be higher / lower
+  is_private:
     description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
     type: boolean
     example: true
@@ -16,11 +18,13 @@ properties:
     items:
       description: ID of the users
       type: integer
+      minimum: 1
+      maximum: 2048
   name:
     description: Name of the group chat. Visible only if the chat is a group
     type: string
     example: The children of Andrew
-  groupDescription:
+  group_description:
     description: Description of the group. Visible only if the chat is a group
     type: string
     maxLength: 65536
@@ -34,7 +38,9 @@ properties:
     type: array
     items:
       $ref: "./message.yaml"
-  lastSent:
+  last_sent:
     description: ID of the last sent message
     type: integer
-    example: 0000000000000002
+    example: 2
+    minimum: 1
+    maximum: 2048

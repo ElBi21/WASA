@@ -6,11 +6,15 @@ properties:
   id:
     description: ID of the message, always expressed in 16 digits
     type: integer
-    example: 0000000000000001
+    example: 1
+    minimum: 1
+    maximum: 1048576 # Could be lower or higher, had to set a maximum
   sender:
     description: ID of the sender
     type: integer
-    example: 0000000000000002
+    example: 2
+    minimum: 1
+    maximum: 2048
   content:
     description: Text of the message
     type: string
@@ -32,12 +36,15 @@ properties:
     description: List of users who received the message
     type: array
     items:
-      $ref: "../api.yaml#/components/schemas/user"
+      $ref: "../api.yaml#/components/schemas/User"
   read:
     description: List of users who read the message
     type: array
     items:
-      $ref: "../api.yaml#/components/schemas/user"
+      $ref: "../api.yaml#/components/schemas/User"
+  deleted:
+    description: Whether the message has been deleted
+    type: boolean
   forwarded:
     description: Specifies whether the message was forwarded
     type: boolean

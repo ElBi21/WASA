@@ -6,11 +6,21 @@ properties:
   id:
     description: ID of the reaction
     type: integer
-    example: 0000000000000003
+    example: 3
+    minimum: 1
+    maximum: 1048576
   message:
     description: Message ID to which the reaction corresponds
     type: integer
-    example: 0000000000000002
+    example: 2
+    minimum: 1
+    maximum: 1048576
+  sender:
+    description: ID of the sending user
+    type: integer
+    example: 5
+    minimum: 1
+    maximum: 2048
   content:
     description: Content of the reaction
     type: string

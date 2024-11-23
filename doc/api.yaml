@@ -7,16 +7,16 @@ info:
 
 components:
   schemas:
-    user:
+    User:
       $ref: "./schemas/user.yaml"
 
-    message:
+    Message:
       $ref: "./schemas/message.yaml"
 
-    reaction:
+    Reaction:
       $ref: "./schemas/reaction.yaml"
 
-    chat:
+    Chat:
       $ref: "./schemas/chat.yaml"
   
 

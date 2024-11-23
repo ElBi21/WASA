@@ -6,7 +6,9 @@ properties:
   id:
     description: ID of the message
     type: integer
-    example: 0000000000000001
+    example: 1
+    minimum: 1
+    maximum: 2048 # Had to set a cap on the user ID
   name:
     description: Name of the user
     type: string
@@ -21,7 +23,7 @@ properties:
     minLength: 1
     maxLength: 512
     example: When life gives you lemons...
-  profilePic:
+  profile_pic:
     description: Profile picture
     type: string
     format: byte

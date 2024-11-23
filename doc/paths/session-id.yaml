@@ -6,6 +6,8 @@ parameters:
     required: true
     schema:
       type: integer
+      minimum: 1
+      maximum: 65536
 
 get:
   tags: ["User operations", "Chats"]
@@ -18,8 +20,13 @@ get:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "../api.yaml#/components/schemas/chat"
+            type: object
+            properties:
+              chats:
+                type: array
+                items:
+                  $ref: "../api.yaml#/components/schemas/Chat"
+                minLength: 0
+                maxLength: 2048
     '404':
       description: The chat doesn't exist. Check if your chat ID is correct or not

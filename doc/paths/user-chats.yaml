@@ -6,6 +6,8 @@ parameters:
     required: true
     schema:
       type: integer
+      minimum: 1
+      maximum: 2048
 
 get:
   tags: ["User operations", "Chats"]
@@ -17,4 +19,4 @@ get:
       schema:
         type: array
         items: 
-          $ref: "../api.yaml#/components/schemas/user"
+          $ref: "../api.yaml#/components/schemas/User"
