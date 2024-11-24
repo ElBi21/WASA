@@ -28,11 +28,50 @@ paths:
   /session/{id}/chats:
     # POST = getMyConversations
     $ref: "./paths/user-chats.yaml"
-
-  /chat/{id}:
-    # GET = getConversation
-    $ref: "./paths/session-id.yaml"
-
-  /user/{id}/name:
+  
+  /session/{id}/name:
     # POST = setMyUserName
     $ref: "./paths/user-name.yaml"
+
+  /session/{id}/photo:
+    # POST = setMyPhoto
+    $ref: "./paths/user-photo.yaml"
+
+  /session/{id}/bio:
+    # POST = setMyBio
+    $ref: "./paths/user-bio.yaml"
+
+  /session/{id}/{chatID}:
+    # GET = getConversation
+    $ref: "./paths/chat-get-by-id.yaml"
+
+  /session/{id}/{chatID}/people:
+    # PUT = addToGroup
+    # POST = leaveGroup
+    $ref: "./paths/chat-add-leave.yaml"
+
+  /session/{id}/{chatID}/name:
+    # POST = setGroupName
+    $ref: "./paths/chat-name.yaml"
+
+  /session/{id}/{chatID}/photo:
+    # POST = setGroupPhoto
+    $ref: "./paths/chat-photo.yaml"
+
+  /session/{id}/{chatID}/description:
+    # POST = setGroupDescription
+    $ref: "./paths/chat-description.yaml"
+
+  /session/{id}/{chatID}/{messageID}:
+    # POST = sendMessage
+    # DELETE = deleteMessage
+    $ref: "./paths/message-send-delete.yaml"
+
+  /session/{id}/{chatID}/{messageID}/{commentID}:
+    # POST = commentMessage
+    # DELETE = uncommentMessage
+    $ref: "./paths/message-comment-uncomment.yaml"
+
+  /session/{id}/{chatID}/{messageID}/forward:
+    # POST = forwardMessage
+    $ref: "./paths/messages.yaml"

@@ -14,9 +14,16 @@ get:
   summary: Get the chats of the user
   description: Get the chats of the user specified in the user ID
   operationId: getMyConversations
-  content:
-    application/json:
-      schema:
-        type: array
-        items: 
-          $ref: "../api.yaml#/components/schemas/User"
+  responses:
+    "200":
+      description: |
+        Successfully retrieven the chats of the user
+      content:
+        application/json:
+          schema:
+            type: array
+            items: 
+              $ref: "../api.yaml#/components/schemas/Chat"
+    "404":
+      description: |
+        The user does not exist. Check the ID that got passed as a parameter
