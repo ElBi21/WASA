@@ -5,73 +5,591 @@ info:
     API for the WASAText application, which is the project for the WASA course @ Sapienza
   version: 0.0.1
 
+tags:
+  - name: User operations
+    description: Operations that users can perform
+  - name: Login
+    description: Login operations
+  - name: Chats
+    description: Operations involving chats
+  - name: Settings
+    description: Operations involving settings
+
 components:
+  parameters:
+    userId:
+      name: userId
+      description: |
+        ID of the user
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 2048
+    
+    chatId:
+      name: chatId
+      description: |
+        ID of the chat
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 65536
+    
+    messageId:
+      name: messageId
+      description: |
+        ID of the message
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 4294967296
+
+    commentId:
+      name: messageId
+      description: |
+        ID of the message
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 4294967296
+    
   schemas:
     User:
-      $ref: "./schemas/user.yaml"
+      title: User
+      description: |
+        Schema defining a user, which can belong to multiple chats and send messages
+      type: object
+      properties:
+        id:
+          description: ID of the message
+          type: integer
+          example: 1
+          minimum: 1
+          maximum: 2048 # Had to set a cap on the user ID
+        name:
+          description: Name of the user
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
+        biography:
+          description: |
+            Little biography of the user
+          type: string
+          minLength: 1
+          maxLength: 512
+          example: When life gives you lemons...
+        profile_pic:
+          description: Profile picture
+          type: string
+          format: byte
 
     Message:
-      $ref: "./schemas/message.yaml"
+      title: Message
+      description: |
+        Representation of a message
+      type: object
+      properties:
+        id:
+          description: ID of the message, always expressed in 16 digits
+          type: integer
+          example: 1
+          minimum: 1
+          maximum: 1048576 # Could be lower or higher, had to set a maximum
+        sender:
+          description: ID of the sender
+          type: integer
+          example: 2
+          minimum: 1
+          maximum: 2048
+        content:
+          description: Text of the message
+          type: string
+          minLength: 1
+          maxLength: 65536
+          example: |
+            Lorem ipsum dolor sit est cum magna gratia
+        timestamp:
+          description: Timestamp of when the message was sent
+          type: string
+          format: date-time
+          example: 1731321854
+        photo:
+          description: Photo sent with the message, if any is sent. Can be null
+          type: string
+          format: byte
+          nullable: true
+        received:
+          description: List of users who received the message
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        read:
+          description: List of users who read the message
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        deleted:
+          description: Whether the message has been deleted
+          type: boolean
+        forwarded:
+          description: Specifies whether the message was forwarded
+          type: boolean
+          example: false
+        reactions:
+          description: Set of reactions applied to the message
+          type: array
+          items:
+            $ref: "#/components/schemas/Reaction"
 
     Reaction:
-      $ref: "./schemas/reaction.yaml"
+      title: Reaction
+      description: |
+        Defines a reaction, which can be made out of text or an emoji
+      type: object
+      properties:
+        id:
+          description: ID of the reaction
+          type: integer
+          example: 3
+          minimum: 1
+          maximum: 1048576
+        message:
+          description: Message ID to which the reaction corresponds
+          type: integer
+          example: 2
+          minimum: 1
+          maximum: 1048576
+        sender:
+          description: ID of the sending user
+          type: integer
+          example: 5
+          minimum: 1
+          maximum: 2048
+        content:
+          description: Content of the reaction
+          type: string
+          minLength: 1
+          maxLength: 16384
 
     Chat:
-      $ref: "./schemas/chat.yaml"
+      title: Chat
+      description: Representation of a chat
+      type: object
+      properties:
+        id:
+          description: ID of the chat
+          type: integer
+          example: 4
+          minimum: 1
+          maximum: 65536 # Set to 65536 for convenience, could be higher / lower
+        is_private:
+          description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
+          type: boolean
+          example: true
+        users:
+          description: List of users participating to the chat
+          type: array
+          items:
+            description: ID of the users
+            type: integer
+            minimum: 1
+            maximum: 2048
+        name:
+          description: Name of the group chat. Visible only if the chat is a group
+          type: string
+          example: The children of Andrew
+        group_description:
+          description: Description of the group. Visible only if the chat is a group
+          type: string
+          maxLength: 65536
+          nullable: true
+        photo:
+          description: Profile picture of the chat. Visible only if the chat is a group
+          type: string
+          format: byte
+        messages:
+          description: List of all the messages sent in the chat
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+        last_sent:
+          description: ID of the last sent message
+          type: integer
+          example: 2
+          minimum: 1
+          maximum: 2048
   
 
 paths:
   /session:
     # POST = doLogin
-    $ref: "./paths/session.yaml"
+    post:
+      tags: ["User operations", "Login"]
+      summary: Logs in the user
+      description: |
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        required: true
+      
+      responses:
+        '200':
+          description: |
+            The user exists. Proceed to log in
+          
+        '201':
+          description: |
+            The user didn't exist, but got created. Proceed to log in
   
-  /session/{id}/chats:
+  /session/{userId}/chats:
     # POST = getMyConversations
-    $ref: "./paths/user-chats.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
+
+    get:
+      tags: ["User operations", "Chats"]
+      summary: Get the chats of the user
+      description: Get the chats of the user specified in the user ID
+      operationId: getMyConversations
+      responses:
+        "200":
+          description: |
+            Successfully retrieven the chats of the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/Chat"
+        "404":
+          description: |
+            The user does not exist. Check the ID that got passed as a parameter
   
-  /session/{id}/name:
+  /session/{userId}/name:
     # POST = setMyUserName
-    $ref: "./paths/user-name.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
 
-  /session/{id}/photo:
+    post:
+      tags: ["User operations", "Settings"]
+      summary: Change the username of the user
+      description: Changes the username of the user specified by the ID in the path
+      operationId: setMyUserName
+      requestBody:
+        description: New username
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_username:
+                  type: string
+                  description: New username
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Maria
+      responses:
+        "200":
+          description: |
+            The username has been changed successfully
+        "4XX":
+          description: |
+            The username wasn't changed due to an error
+
+  /session/{userId}/photo:
     # POST = setMyPhoto
-    $ref: "./paths/user-photo.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
 
-  /session/{id}/bio:
+    post:
+      tags: ["User operations"]
+      summary: Changes the user's photo
+      operationId: setMyPhoto
+      requestBody:
+        description: The new photo of the user
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_photo:
+                  type: string
+                  format: byte
+      responses:
+        "200":
+          description: |
+            The photo ahs been changed successfully
+
+  /session/{userId}/bio:
     # POST = setMyBio
-    $ref: "./paths/user-bio.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
+    
+    post:
+      tags: ["User operations", "Settings"]
+      summary: Change the bio of the user
+      operationId: setMyBio
+      requestBody:
+        description: The new biography
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newBio:
+                  type: string
+                  minLength: 1
+                  maxLength: 2048
+      responses:
+        "200":
+          description: |
+            The biography has been changed successfully
 
-  /session/{id}/{chatID}:
+  /session/{userId}/{chatID}:
     # GET = getConversation
-    $ref: "./paths/chat-get-by-id.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
 
-  /session/{id}/{chatID}/people:
+    get:
+      tags: ["User operations", "Chats"]
+      summary: Get the chat
+      description: Get the chat determined by the ID in the path
+      operationId: getConversation
+      responses:
+        '200':
+          description: Chat successfully retrieven
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Chat"
+                    minLength: 0
+                    maxLength: 2048
+        '404':
+          description: |
+            The chat doesn't exist. Check if your chat ID is correct or not
+
+  /session/{userId}/{chatID}/people:
     # PUT = addToGroup
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
+    
+    put:
+      tags: ["Chats"]
+      summary: Adds a user to a group
+      operationId: addToGroup
+      requestBody:
+        description: The user that must be added
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: |
+            User added successfully to the group
+
+  /session/{userId}/{chatID}/leave:
     # POST = leaveGroup
-    $ref: "./paths/chat-add-leave.yaml"
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
 
-  /session/{id}/{chatID}/name:
+    post:
+      tags: ["Chats"]
+      summary: Leave the group
+      operationId: leaveGroup
+      responses:
+        "200":
+          description: |
+            The user left the group successfully
+
+  /session/{userId}/{chatID}/name:
+    parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/chatId"
     # POST = setGroupName
-    $ref: "./paths/chat-name.yaml"
+    
+    post:
+      tags: ["Chats"]
+      summary: Set the name of the group
+      operationId: setGroupName
+      requestBody:
+        description: The name of the group
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_name:
+                  type: string
+                  minLength: 0
+                  maxLength: 4096
+                  example: The new fantastic four
+      responses:
+        "200":
+          description: |
+            The group name has been changed successfully
 
-  /session/{id}/{chatID}/photo:
+  /session/{userId}/{chatID}/photo:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
     # POST = setGroupPhoto
-    $ref: "./paths/chat-photo.yaml"
+    
+    post:
+      tags: ["Chats"]
+      summary: Change the photo of the group
+      operationId: setGroupPhoto
+      requestBody:
+        description: The new photo of the group
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_photo:
+                  type: string
+                  format: byte
+      responses:
+        "200":
+          description: |
+            The photo of the group has been changed successfully
 
-  /session/{id}/{chatID}/description:
+  /session/{userId}/{chatID}/description:
+    parameters:
+    - $ref: "#/components/parameters/userId"
+    - $ref: "#/components/parameters/chatId"
     # POST = setGroupDescription
-    $ref: "./paths/chat-description.yaml"
+    
+    post:
+      tags: ["Chats"]
+      summary: Change the photo of the group
+      operationId: setGroupDescription
+      requestBody:
+        description: The new description of the group
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_photo:
+                  type: string
+                  minLength: 0
+                  maxLength: 4098
+                  example: A new group! How cool!
+      responses:
+        "200":
+          description: |
+            The description of the group has been changed successfully
 
-  /session/{id}/{chatID}/{messageID}:
+  /session/{userId}/{chatID}/{messageId}:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/messageId"
     # POST = sendMessage
     # DELETE = deleteMessage
-    $ref: "./paths/message-send-delete.yaml"
 
-  /session/{id}/{chatID}/{messageID}/{commentID}:
+    post:
+      tags: ["Chats"]
+      summary: Send a message to the chat
+      operationId: sendMessage
+      requestBody:
+        description: The message that must be sent
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Message"
+      responses:
+        "200":
+          description: |
+            The message has been sent successfully
+
+    delete:
+      tags: ["Chats"]
+      summary: Delete a message from the chat
+      operationId: deleteMessage
+      responses:
+        "204":
+          description: |
+            The message has been deleted successfully
+
+  /session/{userId}/{chatID}/{messageId}/{commentId}:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/commentId"
     # POST = commentMessage
     # DELETE = uncommentMessage
-    $ref: "./paths/message-comment-uncomment.yaml"
 
-  /session/{id}/{chatID}/{messageID}/forward:
+    post:
+      tags: ["Chats"]
+      summary: Comment a message
+      operationId: commentMessage
+      requestBody:
+        description: The comment to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reaction"
+      responses:
+        "200":
+          description: |
+            The comment has been added successfully
+
+    delete:
+      tags: ["Chats"]
+      summary: Remove a comment from a message
+      operationId: uncommentMessage
+      responses:
+        "204":
+          description: |
+            The reaction has been removed successfully
+
+  /session/{userId}/{chatID}/{messageId}/forward:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/messageId"
     # POST = forwardMessage
-    $ref: "./paths/messages.yaml"
+
+    post:
+      tags: ["Chats"]
+      summary: Forward a message to another chat
+      operationId: forwardMessage
+      requestBody:
+        description: The chat to which the message should be forwarded
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+      responses:
+        "200":
+          description: |
+            The message has been forwarded to the chat
