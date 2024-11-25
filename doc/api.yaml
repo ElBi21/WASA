@@ -17,8 +17,8 @@ tags:
 
 components:
   parameters:
-    userId:
-      name: userId
+    user_id:
+      name: user_id
       description: |
         ID of the user
       in: path
@@ -28,8 +28,8 @@ components:
         minimum: 1
         maximum: 2048
     
-    chatId:
-      name: chatId
+    chat_id:
+      name: chat_id
       description: |
         ID of the chat
       in: path
@@ -39,8 +39,8 @@ components:
         minimum: 1
         maximum: 65536
     
-    messageId:
-      name: messageId
+    message_id:
+      name: message_id
       description: |
         ID of the message
       in: path
@@ -50,10 +50,10 @@ components:
         minimum: 1
         maximum: 4294967296
 
-    commentId:
-      name: messageId
+    comment_id:
+      name: comment_id
       description: |
-        ID of the message
+        ID of the comment
       in: path
       required: true
       schema:
@@ -258,10 +258,10 @@ paths:
           description: |
             The user didn't exist, but got created. Proceed to log in
   
-  /session/{userId}/chats:
+  /session/{user_id}/chats:
     # POST = getMyConversations
     parameters:
-      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/user_id"
 
     get:
       tags: ["User operations", "Chats"]
@@ -275,17 +275,20 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  $ref: "#/components/schemas/Chat"
+                type: object
+                properties:
+                  user_chats:
+                    type: array
+                    items: 
+                      $ref: "#/components/schemas/Chat"
         "404":
           description: |
             The user does not exist. Check the ID that got passed as a parameter
   
-  /session/{userId}/name:
+  /session/{user_id}/name:
     # POST = setMyUserName
     parameters:
-      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/user_id"
 
     post:
       tags: ["User operations", "Settings"]
@@ -314,10 +317,10 @@ paths:
           description: |
             The username wasn't changed due to an error
 
-  /session/{userId}/photo:
+  /session/{user_id}/photo:
     # POST = setMyPhoto
     parameters:
-      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/user_id"
 
     post:
       tags: ["User operations"]
@@ -338,10 +341,10 @@ paths:
           description: |
             The photo ahs been changed successfully
 
-  /session/{userId}/bio:
+  /session/{user_id}/bio:
     # POST = setMyBio
     parameters:
-      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/user_id"
     
     post:
       tags: ["User operations", "Settings"]
@@ -354,7 +357,7 @@ paths:
             schema:
               type: object
               properties:
-                newBio:
+                new_bio:
                   type: string
                   minLength: 1
                   maxLength: 2048
@@ -363,11 +366,11 @@ paths:
           description: |
             The biography has been changed successfully
 
-  /session/{userId}/{chatID}:
+  /session/{user_id}/chat/{chat_id}:
     # GET = getConversation
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
 
     get:
       tags: ["User operations", "Chats"]
@@ -388,15 +391,17 @@ paths:
                       $ref: "#/components/schemas/Chat"
                     minLength: 0
                     maxLength: 2048
+                required: 
+                  - chats
         '404':
           description: |
             The chat doesn't exist. Check if your chat ID is correct or not
 
-  /session/{userId}/{chatID}/people:
+  /session/{user_id}/chat/{chat_id}/people:
     # PUT = addToGroup
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
     
     put:
       tags: ["Chats"]
@@ -413,11 +418,11 @@ paths:
           description: |
             User added successfully to the group
 
-  /session/{userId}/{chatID}/leave:
+  /session/{user_id}/chat/{chat_id}/leave:
     # POST = leaveGroup
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
 
     post:
       tags: ["Chats"]
@@ -428,10 +433,10 @@ paths:
           description: |
             The user left the group successfully
 
-  /session/{userId}/{chatID}/name:
+  /session/{user_id}/chat/{chat_id}/name:
     parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/chatId"
+        - $ref: "#/components/parameters/user_id"
+        - $ref: "#/components/parameters/chat_id"
     # POST = setGroupName
     
     post:
@@ -455,10 +460,10 @@ paths:
           description: |
             The group name has been changed successfully
 
-  /session/{userId}/{chatID}/photo:
+  /session/{user_id}/chat/{chat_id}/photo:
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
     # POST = setGroupPhoto
     
     post:
@@ -480,10 +485,10 @@ paths:
           description: |
             The photo of the group has been changed successfully
 
-  /session/{userId}/{chatID}/description:
+  /session/{user_id}/chat/{chat_id}/description:
     parameters:
-    - $ref: "#/components/parameters/userId"
-    - $ref: "#/components/parameters/chatId"
+    - $ref: "#/components/parameters/user_id"
+    - $ref: "#/components/parameters/chat_id"
     # POST = setGroupDescription
     
     post:
@@ -507,11 +512,11 @@ paths:
           description: |
             The description of the group has been changed successfully
 
-  /session/{userId}/{chatID}/{messageId}:
+  /session/{user_id}/chat/{chat_id}/message/{message_id}:
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
-      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
+      - $ref: "#/components/parameters/message_id"
     # POST = sendMessage
     # DELETE = deleteMessage
 
@@ -539,12 +544,12 @@ paths:
           description: |
             The message has been deleted successfully
 
-  /session/{userId}/{chatID}/{messageId}/{commentId}:
+  /session/{user_id}/chat/{chat_id}/message/{message_id}/comment/{comment_id}:
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
-      - $ref: "#/components/parameters/messageId"
-      - $ref: "#/components/parameters/commentId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
+      - $ref: "#/components/parameters/message_id"
+      - $ref: "#/components/parameters/comment_id"
     # POST = commentMessage
     # DELETE = uncommentMessage
 
@@ -572,11 +577,11 @@ paths:
           description: |
             The reaction has been removed successfully
 
-  /session/{userId}/{chatID}/{messageId}/forward:
+  /session/{user_id}/chat/{chat_id}/message/{message_id}/forward:
     parameters:
-      - $ref: "#/components/parameters/userId"
-      - $ref: "#/components/parameters/chatId"
-      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
+      - $ref: "#/components/parameters/message_id"
     # POST = forwardMessage
 
     post:
