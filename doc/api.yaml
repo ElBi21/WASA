@@ -310,7 +310,7 @@ paths:
                   maxLength: 16
                   example: Maria
       responses:
-        "200":
+        "204":
           description: |
             The username has been changed successfully
         "4XX":
@@ -326,6 +326,7 @@ paths:
       tags: ["User operations"]
       summary: Changes the user's photo
       operationId: setMyPhoto
+      description: Changes the user's photo
       requestBody:
         description: The new photo of the user
         content:
@@ -337,7 +338,7 @@ paths:
                   type: string
                   format: byte
       responses:
-        "200":
+        "204":
           description: |
             The photo ahs been changed successfully
 
@@ -350,6 +351,7 @@ paths:
       tags: ["User operations", "Settings"]
       summary: Change the bio of the user
       operationId: setMyBio
+      description: Change the bio of the user
       requestBody:
         description: The new biography
         content:
@@ -362,7 +364,7 @@ paths:
                   minLength: 1
                   maxLength: 2048
       responses:
-        "200":
+        "204":
           description: |
             The biography has been changed successfully
 
@@ -407,6 +409,7 @@ paths:
       tags: ["Chats"]
       summary: Adds a user to a group
       operationId: addToGroup
+      description: Adds a user to a group
       requestBody:
         description: The user that must be added
         content:
@@ -414,7 +417,7 @@ paths:
             schema:
               $ref: "#/components/schemas/User"
       responses:
-        "200":
+        "204":
           description: |
             User added successfully to the group
 
@@ -428,8 +431,9 @@ paths:
       tags: ["Chats"]
       summary: Leave the group
       operationId: leaveGroup
+      description: Leave the group
       responses:
-        "200":
+        "204":
           description: |
             The user left the group successfully
 
@@ -443,6 +447,7 @@ paths:
       tags: ["Chats"]
       summary: Set the name of the group
       operationId: setGroupName
+      description: Set the name of the group
       requestBody:
         description: The name of the group
         content:
@@ -456,7 +461,7 @@ paths:
                   maxLength: 4096
                   example: The new fantastic four
       responses:
-        "200":
+        "204":
           description: |
             The group name has been changed successfully
 
@@ -470,6 +475,7 @@ paths:
       tags: ["Chats"]
       summary: Change the photo of the group
       operationId: setGroupPhoto
+      description: Change the photo of the group
       requestBody:
         description: The new photo of the group
         content:
@@ -481,7 +487,7 @@ paths:
                   type: string
                   format: byte
       responses:
-        "200":
+        "204":
           description: |
             The photo of the group has been changed successfully
 
@@ -495,6 +501,7 @@ paths:
       tags: ["Chats"]
       summary: Change the photo of the group
       operationId: setGroupDescription
+      description: Change the photo of the group
       requestBody:
         description: The new description of the group
         content:
@@ -508,7 +515,7 @@ paths:
                   maxLength: 4098
                   example: A new group! How cool!
       responses:
-        "200":
+        "204":
           description: |
             The description of the group has been changed successfully
 
@@ -524,6 +531,7 @@ paths:
       tags: ["Chats"]
       summary: Send a message to the chat
       operationId: sendMessage
+      description: Sends a message to the chat given the messageId
       requestBody:
         description: The message that must be sent
         content:
@@ -531,7 +539,7 @@ paths:
             schema:
               $ref: "#/components/schemas/Message"
       responses:
-        "200":
+        "204":
           description: |
             The message has been sent successfully
 
@@ -539,6 +547,7 @@ paths:
       tags: ["Chats"]
       summary: Delete a message from the chat
       operationId: deleteMessage
+      description: Deletes a message from the chat, given the messageId
       responses:
         "204":
           description: |
@@ -557,6 +566,7 @@ paths:
       tags: ["Chats"]
       summary: Comment a message
       operationId: commentMessage
+      description: Comments a message, given a messageId
       requestBody:
         description: The comment to add
         content:
@@ -564,13 +574,14 @@ paths:
             schema:
               $ref: "#/components/schemas/Reaction"
       responses:
-        "200":
+        "204":
           description: |
             The comment has been added successfully
 
     delete:
       tags: ["Chats"]
       summary: Remove a comment from a message
+      description: Removes a comment from a message, given the commentId
       operationId: uncommentMessage
       responses:
         "204":
@@ -587,6 +598,7 @@ paths:
     post:
       tags: ["Chats"]
       summary: Forward a message to another chat
+      description: Allows to forward a message to another chat
       operationId: forwardMessage
       requestBody:
         description: The chat to which the message should be forwarded
@@ -595,6 +607,6 @@ paths:
             schema:
               $ref: "#/components/schemas/Chat"
       responses:
-        "200":
+        "204":
           description: |
             The message has been forwarded to the chat
