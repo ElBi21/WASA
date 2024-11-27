@@ -453,6 +453,7 @@ paths:
   /session/{user_id}/chat/{chat_id}:
     # GET = getConversation
     # PUT = createConversation
+    # POST = leaveGroup
     parameters:
       - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/chat_id"
@@ -488,35 +489,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Chat"
-
-  /session/{user_id}/chat/{chat_id}/people:
-    # PUT = addToGroup
-    parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-    
-    post:
-      tags: ["Chats"]
-      summary: Adds a user to a group
-      operationId: addToGroup
-      description: Adds a user to a group
-      requestBody:
-        description: The user that must be added
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-        required: true
-      responses:
-        "204":
-          description: |
-            User added successfully to the group
-
-  /session/{user_id}/chat/{chat_id}/leave:
-    # POST = leaveGroup
-    parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
 
     post:
       tags: ["Chats", "Chat management"]
@@ -631,6 +603,7 @@ paths:
       - $ref: "#/components/parameters/message_id"
     # PUT = sendMessage
     # DELETE = deleteMessage
+    # POST = forwardMessage
 
     put:
       tags: ["Chats"]
@@ -662,6 +635,23 @@ paths:
         "204":
           description: |
             The message has been deleted successfully
+
+    post:
+      tags: ["Chats"]
+      summary: Forward a message to another chat
+      description: Allows to forward a message to another chat
+      operationId: forwardMessage
+      requestBody:
+        description: The chat to which the message should be forwarded
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+        required: true
+      responses:
+        "204":
+          description: |
+            The message has been forwarded to the chat
 
   /session/{user_id}/chat/{chat_id}/message/{message_id}/comment/{comment_id}:
     parameters:
@@ -698,27 +688,3 @@ paths:
         "204":
           description: |
             The reaction has been removed successfully
-
-  /session/{user_id}/chat/{chat_id}/message/{message_id}/forward:
-    parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-      - $ref: "#/components/parameters/message_id"
-    # POST = forwardMessage
-
-    post:
-      tags: ["Chats"]
-      summary: Forward a message to another chat
-      description: Allows to forward a message to another chat
-      operationId: forwardMessage
-      requestBody:
-        description: The chat to which the message should be forwarded
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Chat"
-        required: true
-      responses:
-        "204":
-          description: |
-            The message has been forwarded to the chat
