@@ -18,6 +18,12 @@ tags:
     description: Operations involving settings
 
 components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   parameters:
     user_id:
       name: user_id
@@ -288,6 +294,9 @@ components:
         - messages
         - lastSent
   
+#security:
+#  - bearerAuth: []
+
 
 paths:
   /session:
@@ -305,23 +314,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Maria
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
         required: true
       
       responses:
-        '204':
+        '200':
           description: |
-            The user exists. Proceeding to log in
-          
+            User log-in action successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        
         '201':
           description: |
-            The user didn't exist, but got created. Proceed to log in
+            The user does not exist, hence it will be created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
   
-  /session/{user_id}/chats:
+  /user/{user_id}/chats:
     # GET = getMyConversations
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -351,7 +371,7 @@ paths:
                 required: 
                   - userChats
   
-  /session/{user_id}/name:
+  /user/{user_id}/name:
     # POST = setMyUserName
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -389,7 +409,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
-  /session/{user_id}/photo:
+  /user/{user_id}/photo:
     # POST = setMyPhoto
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -420,7 +440,7 @@ paths:
           description: |
             The photo ahs been changed successfully
 
-  /session/{user_id}/bio:
+  /user/{user_id}/bio:
     # POST = setMyBio
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -450,12 +470,11 @@ paths:
           description: |
             The biography has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}:
+  /chat/{chat_id}:
     # GET = getConversation
     # PUT = createConversation
     # POST = leaveGroup
     parameters:
-      - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/chat_id"
 
     get:
@@ -500,9 +519,33 @@ paths:
           description: |
             The user left the group successfully
 
-  /session/{user_id}/chat/{chat_id}/name:
+  /chat/{chat_id}/users:
     parameters:
-        - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/chat_id"
+    # POST = addToGroup
+
+    post:
+      tags: ["Chats"]
+      summary: Add user to group
+      operationId: addToGroup
+      description: Adds a user to a group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        required: true
+      responses:
+        "200":
+          description: |
+            The user has been added to the group
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Chat"
+
+  /chat/{chat_id}/name:
+    parameters:
         - $ref: "#/components/parameters/chat_id"
     # POST = setGroupName
     
@@ -532,9 +575,8 @@ paths:
           description: |
             The group name has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/photo:
+  /chat/{chat_id}/photo:
     parameters:
-      - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/chat_id"
     # POST = setGroupPhoto
     
@@ -564,9 +606,8 @@ paths:
           description: |
             The photo of the group has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/description:
+  /chat/{chat_id}/description:
     parameters:
-    - $ref: "#/components/parameters/user_id"
     - $ref: "#/components/parameters/chat_id"
     # POST = setGroupDescription
     
@@ -596,10 +637,8 @@ paths:
           description: |
             The description of the group has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/message/{message_id}:
+  /message/{message_id}:
     parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
       - $ref: "#/components/parameters/message_id"
     # PUT = sendMessage
     # DELETE = deleteMessage
@@ -653,11 +692,8 @@ paths:
           description: |
             The message has been forwarded to the chat
 
-  /session/{user_id}/chat/{chat_id}/message/{message_id}/comment/{comment_id}:
+  /comment/{comment_id}:
     parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-      - $ref: "#/components/parameters/message_id"
       - $ref: "#/components/parameters/comment_id"
     # POST = commentMessage
     # DELETE = uncommentMessage
