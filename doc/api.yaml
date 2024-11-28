@@ -12,10 +12,18 @@ tags:
     description: Login operations
   - name: Chats
     description: Operations involving chats
+  - name: Chat management
+    description: Operations involving chats
   - name: Settings
     description: Operations involving settings
 
 components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   parameters:
     user_id:
       name: user_id
@@ -85,13 +93,22 @@ components:
           description: |
             Little biography of the user
           type: string
+          pattern: '^.*$'
           minLength: 1
           maxLength: 512
           example: When life gives you lemons...
-        profile_pic:
+        profilePic:
           description: Profile picture
           type: string
+          pattern: '^.*$'
+          minLength: 0
+          maxLength: 44294967296
           format: byte
+      required:
+        - id
+        - name
+        - biography
+        - profilePic
 
     Message:
       title: Message
@@ -114,28 +131,36 @@ components:
         content:
           description: Text of the message
           type: string
+          pattern: '^.*$'
           minLength: 1
           maxLength: 65536
-          example: |
-            Lorem ipsum dolor sit est cum magna gratia
+          example: Lorem ipsum dolor sit est cum magna gratia
         timestamp:
           description: Timestamp of when the message was sent
           type: string
-          format: date-time
-          example: 1731321854
+          pattern: '^[0-9]*$'
+          minLength: 0
+          maxLength: 44294967296
+          example: '1731321854'
         photo:
           description: Photo sent with the message, if any is sent. Can be null
           type: string
           format: byte
-          nullable: true
+          pattern: '^.*$'
+          minLength: 0
+          maxLength: 44294967296
         received:
           description: List of users who received the message
           type: array
+          minItems: 0
+          maxItems: 44294967296
           items:
             $ref: "#/components/schemas/User"
         read:
           description: List of users who read the message
           type: array
+          minItems: 0
+          maxItems: 44294967296
           items:
             $ref: "#/components/schemas/User"
         deleted:
@@ -148,8 +173,21 @@ components:
         reactions:
           description: Set of reactions applied to the message
           type: array
+          minItems: 0
+          maxItems: 44294967296
           items:
             $ref: "#/components/schemas/Reaction"
+      required:
+        - id
+        - sender
+        - content
+        - timestamp
+        - photo
+        - received
+        - read
+        - deleted
+        - forwarded
+        - reactions
 
     Reaction:
       title: Reaction
@@ -178,8 +216,14 @@ components:
         content:
           description: Content of the reaction
           type: string
+          pattern: '^.*$'
           minLength: 1
           maxLength: 16384
+      required:
+        - id
+        - message
+        - sender
+        - content
 
     Chat:
       title: Chat
@@ -192,7 +236,7 @@ components:
           example: 4
           minimum: 1
           maximum: 65536 # Set to 65536 for convenience, could be higher / lower
-        is_private:
+        isPrivate:
           description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
           type: boolean
           example: true
@@ -204,31 +248,55 @@ components:
             type: integer
             minimum: 1
             maximum: 2048
+          minItems: 0
+          maxItems: 4294967296
         name:
           description: Name of the group chat. Visible only if the chat is a group
           type: string
+          pattern: '^.*$'
+          minLength: 0
+          maxLength: 4294967296
           example: The children of Andrew
-        group_description:
+        groupDescription:
           description: Description of the group. Visible only if the chat is a group
           type: string
+          example: We are such a nice group!
+          pattern: '^.*$'
+          minLength: 0
           maxLength: 65536
-          nullable: true
         photo:
           description: Profile picture of the chat. Visible only if the chat is a group
           type: string
           format: byte
+          pattern: '^.*$'
+          minLength: 0
+          maxLength: 4294967296
         messages:
           description: List of all the messages sent in the chat
           type: array
+          minItems: 0
+          maxItems: 4294967296
           items:
             $ref: "#/components/schemas/Message"
-        last_sent:
+        lastSent:
           description: ID of the last sent message
           type: integer
           example: 2
           minimum: 1
-          maximum: 2048
+          maximum: 4294967296
+      required:
+        - id
+        - isPrivate
+        - users
+        - name
+        - groupDescription
+        - photo
+        - messages
+        - lastSent
   
+#security:
+#  - bearerAuth: []
+
 
 paths:
   /session:
@@ -246,20 +314,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Maria
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
         required: true
       
       responses:
         '200':
           description: |
-            The user exists. Proceed to log in
-          
+            User log-in action successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        
         '201':
           description: |
-            The user didn't exist, but got created. Proceed to log in
+            The user does not exist, hence it will be created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   
-  /session/{user_id}/chats:
-    # POST = getMyConversations
+  /user/{user_id}/chats:
+    # GET = getMyConversations
     parameters:
       - $ref: "#/components/parameters/user_id"
 
@@ -276,16 +359,19 @@ paths:
             application/json:
               schema:
                 type: object
+                description: Object containing an array of chats to which the user belongs
                 properties:
-                  user_chats:
+                  userChats:
                     type: array
+                    description: Array containing the chats to which the user belongs
                     items: 
                       $ref: "#/components/schemas/Chat"
-        "404":
-          description: |
-            The user does not exist. Check the ID that got passed as a parameter
+                    minItems: 0
+                    maxItems: 4294967296
+                required: 
+                  - userChats
   
-  /session/{user_id}/name:
+  /user/{user_id}/name:
     # POST = setMyUserName
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -301,23 +387,29 @@ paths:
           application/json:
             schema:
               type: object
+              description: Object containing the new username of the user
               properties:
-                new_username:
+                newUsername:
                   type: string
                   description: New username
                   pattern: '^.*?$'
                   minLength: 3
                   maxLength: 16
                   example: Maria
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The username has been changed successfully
         "4XX":
           description: |
             The username wasn't changed due to an error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
-  /session/{user_id}/photo:
+  /user/{user_id}/photo:
     # POST = setMyPhoto
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -326,22 +418,29 @@ paths:
       tags: ["User operations"]
       summary: Changes the user's photo
       operationId: setMyPhoto
+      description: Changes the user's photo
       requestBody:
         description: The new photo of the user
         content:
           application/json:
             schema:
               type: object
+              description: Object containing the new photo of the user
               properties:
-                new_photo:
+                newPhoto:
                   type: string
+                  description: The new photo of the user
+                  minLength: 0
+                  maxLength: 4294967296
+                  pattern: '^.*$'
                   format: byte
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The photo ahs been changed successfully
 
-  /session/{user_id}/bio:
+  /user/{user_id}/bio:
     # POST = setMyBio
     parameters:
       - $ref: "#/components/parameters/user_id"
@@ -350,26 +449,32 @@ paths:
       tags: ["User operations", "Settings"]
       summary: Change the bio of the user
       operationId: setMyBio
+      description: Change the bio of the user
       requestBody:
         description: The new biography
         content:
           application/json:
             schema:
+              description: Object containing the new bio of the user
               type: object
               properties:
-                new_bio:
+                newBio:
                   type: string
+                  description: The new bio of the user
+                  pattern: '^.*$'
                   minLength: 1
                   maxLength: 2048
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The biography has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}:
+  /chat/{chat_id}:
     # GET = getConversation
+    # PUT = createConversation
+    # POST = leaveGroup
     parameters:
-      - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/chat_id"
 
     get:
@@ -383,172 +488,212 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  chats:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Chat"
-                    minLength: 0
-                    maxLength: 2048
-                required: 
-                  - chats
-        '404':
-          description: |
-            The chat doesn't exist. Check if your chat ID is correct or not
+                $ref: "#/components/schemas/Chat"
 
-  /session/{user_id}/chat/{chat_id}/people:
-    # PUT = addToGroup
-    parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-    
     put:
-      tags: ["Chats"]
-      summary: Adds a user to a group
-      operationId: addToGroup
+      tags: ["Chats", "Chat management"]
+      summary: Create a conversation
+      description: Creates a conversation, which may be either a group or a private chat
+      operationId: createConversation
       requestBody:
-        description: The user that must be added
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+        required: true
+      responses:
+        '201':
+          description: Conversation successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+
+    post:
+      tags: ["Chats", "Chat management"]
+      summary: Leave the group
+      operationId: leaveGroup
+      description: Leave the group
+      responses:
+        "204":
+          description: |
+            The user left the group successfully
+
+  /chat/{chat_id}/users:
+    parameters:
+      - $ref: "#/components/parameters/chat_id"
+    # POST = addToGroup
+
+    post:
+      tags: ["Chats"]
+      summary: Add user to group
+      operationId: addToGroup
+      description: Adds a user to a group
+      requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/User"
+        required: true
       responses:
         "200":
           description: |
-            User added successfully to the group
+            The user has been added to the group
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Chat"
 
-  /session/{user_id}/chat/{chat_id}/leave:
-    # POST = leaveGroup
+  /chat/{chat_id}/name:
     parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-
-    post:
-      tags: ["Chats"]
-      summary: Leave the group
-      operationId: leaveGroup
-      responses:
-        "200":
-          description: |
-            The user left the group successfully
-
-  /session/{user_id}/chat/{chat_id}/name:
-    parameters:
-        - $ref: "#/components/parameters/user_id"
         - $ref: "#/components/parameters/chat_id"
     # POST = setGroupName
     
     post:
-      tags: ["Chats"]
+      tags: ["Chats", "Chat management"]
       summary: Set the name of the group
       operationId: setGroupName
+      description: Set the name of the group
       requestBody:
         description: The name of the group
         content:
           application/json:
             schema:
               type: object
+              description: New name of the group, as a string whose length must be smaller than 4096 characters
               properties:
-                new_name:
+                newName:
                   type: string
-                  minLength: 0
+                  description: New name of the group
+                  pattern: '^.*$'
+                  minLength: 1
                   maxLength: 4096
                   example: The new fantastic four
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The group name has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/photo:
+  /chat/{chat_id}/photo:
     parameters:
-      - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/chat_id"
     # POST = setGroupPhoto
     
     post:
-      tags: ["Chats"]
+      tags: ["Chats", "Chat management"]
       summary: Change the photo of the group
       operationId: setGroupPhoto
+      description: Change the photo of the group
       requestBody:
         description: The new photo of the group
         content:
           application/json:
             schema:
               type: object
+              description: New photo of the group
               properties:
-                new_photo:
+                newPhoto:
                   type: string
                   format: byte
+                  pattern: '^.*$'
+                  description: New photo of the group, as a string
+                  minLength: 0
+                  maxLength: 4294967296
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The photo of the group has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/description:
+  /chat/{chat_id}/description:
     parameters:
-    - $ref: "#/components/parameters/user_id"
     - $ref: "#/components/parameters/chat_id"
     # POST = setGroupDescription
     
     post:
-      tags: ["Chats"]
+      tags: ["Chats", "Chat management"]
       summary: Change the photo of the group
       operationId: setGroupDescription
+      description: Change the photo of the group
       requestBody:
         description: The new description of the group
         content:
           application/json:
             schema:
               type: object
+              description: New description of the group
               properties:
-                new_photo:
+                newDescription:
                   type: string
                   minLength: 0
                   maxLength: 4098
+                  pattern: '^.*$'
+                  description: Description of the group. New lines aren't allowed
                   example: A new group! How cool!
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The description of the group has been changed successfully
 
-  /session/{user_id}/chat/{chat_id}/message/{message_id}:
+  /message/{message_id}:
     parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
       - $ref: "#/components/parameters/message_id"
-    # POST = sendMessage
+    # PUT = sendMessage
     # DELETE = deleteMessage
+    # POST = forwardMessage
 
-    post:
+    put:
       tags: ["Chats"]
       summary: Send a message to the chat
       operationId: sendMessage
+      description: Sends a message to the chat given the messageId
       requestBody:
         description: The message that must be sent
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Message"
+        required: true
       responses:
         "200":
           description: |
             The message has been sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
     delete:
       tags: ["Chats"]
       summary: Delete a message from the chat
       operationId: deleteMessage
+      description: Deletes a message from the chat, given the messageId
       responses:
         "204":
           description: |
             The message has been deleted successfully
 
-  /session/{user_id}/chat/{chat_id}/message/{message_id}/comment/{comment_id}:
+    post:
+      tags: ["Chats"]
+      summary: Forward a message to another chat
+      description: Allows to forward a message to another chat
+      operationId: forwardMessage
+      requestBody:
+        description: The chat to which the message should be forwarded
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+        required: true
+      responses:
+        "204":
+          description: |
+            The message has been forwarded to the chat
+
+  /comment/{comment_id}:
     parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-      - $ref: "#/components/parameters/message_id"
       - $ref: "#/components/parameters/comment_id"
     # POST = commentMessage
     # DELETE = uncommentMessage
@@ -557,44 +702,25 @@ paths:
       tags: ["Chats"]
       summary: Comment a message
       operationId: commentMessage
+      description: Comments a message, given a messageId
       requestBody:
         description: The comment to add
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Reaction"
+        required: true
       responses:
-        "200":
+        "204":
           description: |
             The comment has been added successfully
 
     delete:
       tags: ["Chats"]
       summary: Remove a comment from a message
+      description: Removes a comment from a message, given the commentId
       operationId: uncommentMessage
       responses:
         "204":
           description: |
             The reaction has been removed successfully
-
-  /session/{user_id}/chat/{chat_id}/message/{message_id}/forward:
-    parameters:
-      - $ref: "#/components/parameters/user_id"
-      - $ref: "#/components/parameters/chat_id"
-      - $ref: "#/components/parameters/message_id"
-    # POST = forwardMessage
-
-    post:
-      tags: ["Chats"]
-      summary: Forward a message to another chat
-      operationId: forwardMessage
-      requestBody:
-        description: The chat to which the message should be forwarded
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Chat"
-      responses:
-        "200":
-          description: |
-            The message has been forwarded to the chat
