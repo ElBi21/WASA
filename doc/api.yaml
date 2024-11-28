@@ -294,8 +294,8 @@ components:
         - messages
         - lastSent
   
-#security:
-#  - bearerAuth: []
+security:
+  - bearerAuth: []
 
 
 paths:
