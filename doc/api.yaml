@@ -315,9 +315,11 @@ paths:
           application/json:
             schema:
               type: object
+              description: JSON object representing the user
               properties:
                 name:
                   type: string
+                  description: Name of the user
                   example: Maria
                   pattern: '^.*?$'
                   minLength: 3
@@ -542,7 +544,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Chat"
+                $ref: "#/components/schemas/Chat"
 
   /chat/{chat_id}/name:
     parameters:

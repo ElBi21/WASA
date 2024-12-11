@@ -24,7 +24,7 @@ go.work.sum
 # env file
 .env
 
-apitest.js
+api_tester.js
 
 # Logs
 logs
