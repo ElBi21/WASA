@@ -1,9 +1,11 @@
 /*
-Package api exposes the main API engine. All HTTP APIs are handled here - so-called "business logic" should be here, or
-in a dedicated package (if that logic is complex enough).
+Package api exposes the main API engine. All HTTP APIs are handled here - so-called
+"business logic" should be here, or in a dedicated package (if that logic is
+complex enough).
 
-To use this package, you should create a new instance with New() passing a valid Config. The resulting Router will have
-the Router.Handler() function that returns a handler that can be used in a http.Server (or in other middlewares).
+To use this package, you should create a new instance with New() passing a valid Config.
+The resulting Router will have the Router.Handler() function that returns a handler
+that can be used in a http.Server (or in other middlewares).
 
 Example:
 

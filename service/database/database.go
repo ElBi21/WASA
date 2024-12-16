@@ -1,12 +1,14 @@
 /*
-Package database is the middleware between the app database and the code. All data (de)serialization (save/load) from a
-persistent database are handled here. Database specific logic should never escape this package.
+Package database is the middleware between the app database and the code. All data
+(de)serialization (save/load) from a persistent database are handled here. Database
+specific logic should never escape this package.
 
-To use this package you need to apply migrations to the database if needed/wanted, connect to it (using the database
-data source name from config), and then initialize an instance of AppDatabase from the DB connection.
+To use this package you need to apply migrations to the database if needed/wanted,
+connect to it (using the database data source name from config), and then initialize
+an instance of AppDatabase from the DB connection.
 
-For example, this code adds a parameter in `webapi` executable for the database data source name (add it to the
-main.WebAPIConfiguration structure):
+For example, this code adds a parameter in `webapi` executable for the database data
+source name (add it to the main.WebAPIConfiguration structure):
 
 	DB struct {
 		Filename string `conf:""`

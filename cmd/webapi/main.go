@@ -1,8 +1,9 @@
 /*
 Webapi is the executable for the main web server.
 It builds a web server around APIs from `service/api`.
-Webapi connects to external resources needed (database) and starts two web servers: the API web server, and the debug.
-Everything is served via the API web server, except debug variables (/debug/vars) and profiler infos (pprof).
+Webapi connects to external resources needed (database) and starts two web servers:
+the API web server, and the debug. Everything is served via the API web server,
+except debug variables (/debug/vars) and profiler infos (pprof).
 
 Usage:
 
@@ -18,8 +19,8 @@ Return values (exit codes):
 	> 0
 		The program ended due to an error
 
-Note that this program will update the schema of the database to the latest version available (embedded in the
-executable during the build).
+Note that this program will update the schema of the database to the latest version
+available (embedded in the executable during the build).
 */
 package main
 
