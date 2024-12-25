@@ -36,13 +36,19 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"wasatext/service/customstructs"
 )
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
+	// Read
 	GetName() (string, error)
+	GetSession(user customstructs.User)
+
+	// Write
 	SetName(name string) error
 
+	// Misc
 	Ping() error
 }
 
