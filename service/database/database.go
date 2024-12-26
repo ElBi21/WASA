@@ -43,7 +43,7 @@ import (
 type AppDatabase interface {
 	// Read
 	GetName() (string, error)
-	GetSession(user customstructs.User)
+	GetSession(user customstructs.User) (string, error)
 
 	// Write
 	SetName(name string) error
@@ -67,6 +67,24 @@ func New(db *sql.DB) (AppDatabase, error) {
 	var tableName string
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
+		tableQueries := [4]string{
+			`CREATE TABLE users (
+				id INTEGER NOT NULL PRIMARY KEY,
+				name TEXT,
+				biography TEXT,
+				profilePic BLOB
+			);`,
+			`CREATE TABLE messages (
+				id INTEGER NOT NULL PRIMARY KEY,
+				sender INTEGER,
+				content TEXT,
+				timestamp TEXT,
+				photo BLOB,
+				received carray()
+			);`,
+			"",
+			"",
+		}
 		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
 		_, err = db.Exec(sqlStmt)
 		if err != nil {
