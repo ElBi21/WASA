@@ -6,14 +6,14 @@ info:
   version: 0.0.1
 
 tags:
-  - name: User operations
-    description: Operations that users can perform
-  - name: Login
-    description: Login operations
   - name: Chats
     description: Operations involving chats
   - name: Chat management
     description: Operations involving chats
+  - name: Login
+    description: Login operations
+  - name: User operations
+    description: Operations that users can perform
   - name: Settings
     description: Operations involving settings
 
@@ -138,6 +138,7 @@ components:
         timestamp:
           description: Timestamp of when the message was sent
           type: string
+          # format: date-time
           pattern: '^[0-9]*$'
           minLength: 0
           maxLength: 44294967296
@@ -342,6 +343,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        
+        '403':
+          description: |
+            The user is already logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   
   /user/{user_id}/chats:
     # GET = getMyConversations
@@ -372,6 +381,14 @@ paths:
                     maxItems: 4294967296
                 required: 
                   - userChats
+        
+        '404':
+          description: |
+            The chat does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
   
   /user/{user_id}/name:
     # POST = setMyUserName
@@ -403,7 +420,7 @@ paths:
         "204":
           description: |
             The username has been changed successfully
-        "4XX":
+        "418":
           description: |
             The username wasn't changed due to an error
           content:
@@ -441,6 +458,14 @@ paths:
         "204":
           description: |
             The photo ahs been changed successfully
+        
+        '403':
+          description: |
+            You are not the user, you can't change someone else's photo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
   /user/{user_id}/bio:
     # POST = setMyBio
@@ -472,6 +497,14 @@ paths:
           description: |
             The biography has been changed successfully
 
+        '403':
+          description: |
+            You are not the user, you can't change someone else's bio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
   /chat/{chat_id}:
     # GET = getConversation
     # PUT = createConversation
@@ -491,6 +524,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Chat"
+        
+        '404':
+          description: |
+            The chat does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
     put:
       tags: ["Chats", "Chat management"]
@@ -498,6 +539,8 @@ paths:
       description: Creates a conversation, which may be either a group or a private chat
       operationId: createConversation
       requestBody:
+        description: |
+          The chat that must be created
         content:
           application/json:
             schema:
@@ -510,8 +553,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Chat"
+        
+        '408':
+          description: |
+            There has been an error while trying to create the chat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
-    post:
+    delete:
       tags: ["Chats", "Chat management"]
       summary: Leave the group
       operationId: leaveGroup
@@ -520,6 +571,14 @@ paths:
         "204":
           description: |
             The user left the group successfully
+
+        '408':
+          description: |
+            There was an error while trying to leave the chat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
   /chat/{chat_id}/users:
     parameters:
@@ -532,10 +591,21 @@ paths:
       operationId: addToGroup
       description: Adds a user to a group
       requestBody:
+        description: |
+          User to be added to the group
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              type: object
+              description: Object containing the username of the user that must be added
+              properties:
+                newUsername:
+                  type: string
+                  description: User to be added
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Marco
         required: true
       responses:
         "200":
@@ -545,6 +615,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Chat"
+
+        '404':
+          description: |
+            The user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
   /chat/{chat_id}/name:
     parameters:
@@ -576,6 +654,23 @@ paths:
         "204":
           description: |
             The group name has been changed successfully
+        
+        '408':
+          description: |
+            There has been an error while trying to update the group name. Perhaps this is a private chat?
+          content:
+            application/json:
+              schema:
+                type: object
+                description: New name of the group
+                properties:
+                  newName:
+                    type: string
+                    description: New name of the group
+                    pattern: '^.*$'
+                    minLength: 1
+                    maxLength: 4096
+                    example: The new fantastic four
 
   /chat/{chat_id}/photo:
     parameters:
@@ -608,6 +703,23 @@ paths:
           description: |
             The photo of the group has been changed successfully
 
+        '408':
+          description: |
+            There has been an error while trying to update the chat photo. Perhaps this is a private chat?
+          content:
+            application/json:
+              schema:
+                type: object
+                description: New photo of the group
+                properties:
+                  newPhoto:
+                    type: string
+                    format: byte
+                    pattern: '^.*$'
+                    description: New photo of the group, as a string
+                    minLength: 0
+                    maxLength: 4294967296
+
   /chat/{chat_id}/description:
     parameters:
     - $ref: "#/components/parameters/chat_id"
@@ -615,9 +727,9 @@ paths:
     
     post:
       tags: ["Chats", "Chat management"]
-      summary: Change the photo of the group
+      summary: Change the description of the group
       operationId: setGroupDescription
-      description: Change the photo of the group
+      description: Change the description of the group
       requestBody:
         description: The new description of the group
         content:
@@ -638,6 +750,23 @@ paths:
         "204":
           description: |
             The description of the group has been changed successfully
+
+        '408':
+          description: |
+            There has been an error while trying to update the chat description. Perhaps this is a private chat?
+          content:
+            application/json:
+              schema:
+                type: object
+                description: New description of the group
+                properties:
+                  newDescription:
+                    type: string
+                    minLength: 0
+                    maxLength: 4098
+                    pattern: '^.*$'
+                    description: Description of the group. New lines aren't allowed
+                    example: A new group! How cool!
 
   /message/{message_id}:
     parameters:
@@ -665,7 +794,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Chat"
+                $ref: "#/components/schemas/Message"
+
+        "418":
+          description: |
+            Couldn't send the message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
     delete:
       tags: ["Chats"]
@@ -676,6 +813,14 @@ paths:
         "204":
           description: |
             The message has been deleted successfully
+
+        "408":
+          description: |
+            Couldn't delete the message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
     post:
       tags: ["Chats"]
@@ -693,6 +838,14 @@ paths:
         "204":
           description: |
             The message has been forwarded to the chat
+
+        "403":
+          description: |
+            Can't forward to another chat. Are you part of it?
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
   /comment/{comment_id}:
     parameters:
@@ -717,6 +870,14 @@ paths:
           description: |
             The comment has been added successfully
 
+        "408":
+          description: |
+            There was an error while trying to add a reaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reaction"
+
     delete:
       tags: ["Chats"]
       summary: Remove a comment from a message
@@ -726,3 +887,11 @@ paths:
         "204":
           description: |
             The reaction has been removed successfully
+
+        "403":
+          description: |
+            Couldn't delete the reaction. Are you part of the chat?
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reaction"
