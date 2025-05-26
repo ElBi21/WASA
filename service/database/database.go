@@ -65,26 +65,52 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
-	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
+	err := db.QueryRow(`SELECT name FROM Users WHERE type='TEXT NOT NULL';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
-		tableQueries := [4]string{
-			`CREATE TABLE users (
-				id INTEGER NOT NULL PRIMARY KEY,
-				name TEXT,
-				biography TEXT,
-				profilePic BLOB
+		tableQueries := [7]string{
+			`CREATE TABLE "Users" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"name" TEXT NOT NULL,
+				"photo" BLOB,
+				"bio" TEXT
 			);`,
-			`CREATE TABLE messages (
-				id INTEGER NOT NULL PRIMARY KEY,
-				sender INTEGER,
-				content TEXT,
-				timestamp TEXT,
-				photo BLOB,
-				received carray()
+			`CREATE TABLE IF NOT EXISTS "Messages" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"sender" integer NOT NULL,
+				"content" TEXT NOT NULL,
+				"chat" integer NOT NULL,
+				"timestamp" TEXT NOT NULL,
+				"photo" BLOB,
+				"forwarded" INTEGER
 			);`,
-			"",
-			"",
+			`CREATE TABLE IF NOT EXISTS "Chats" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"isPrivate" INTEGER NOT NULL,
+				"name" TEXT NOT NULL,
+				"description" TEXT NOT NULL,
+				"photo" BLOB
+			);`,
+			`CREATE TABLE IF NOT EXISTS "ReceivedMessages" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"message" integer NOT NULL,
+				"received_by" integer NOT NULL
+			);`,
+			`CREATE TABLE IF NOT EXISTS "SeenMessages" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"message" integer NOT NULL,
+				"seen_by" integer NOT NULL
+			);`,
+			`CREATE TABLE IF NOT EXISTS "ChatsUsers" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"chat" integer NOT NULL,
+				"user" integer NOT NULL
+			);`,
+			`CREATE TABLE IF NOT EXISTS "Sessions" (
+				"id" INTEGER PRIMARY KEY NOT NULL,
+				"user" integer NOT NULL
+			);`,
 		}
+
 		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
 		_, err = db.Exec(sqlStmt)
 		if err != nil {

@@ -7,26 +7,26 @@
 
 - [ ] Build the API, which should comprehend the following endpoints:
 
-|API Endpoint|OpenAPI|Go (Backend)|Vue (Frontend)|
-|---|---|---|---|
-|`doLogin` (see simplified login)| × | × | × |
-|`setMyUserName`| × | × | × |
-|`getMyConversations`| × | × | × |
-|`getConversation`| × | × | × |
-|`sendMessage`| × | × | × |
-|`forwardMessage`| × | × | × |
-|`commentMessage`| × | × | × |
-|`uncommentMessage`| × | × | × |
-|`deleteMessage`| × | × | × |
-|`addToGroup`| × | × | × |
-|`leaveGroup`| × | × | × |
-|`setGroupName`| × | × | × |
-|`setMyPhoto`| × | × | × |
-|`setGroupPhoto`| × | × | × |
+| API Endpoint                     | OpenAPI | Go (Backend) | Vue (Frontend) |
+|----------------------------------|---------|--------------|----------------|
+| `doLogin` (see simplified login) | ×       | ×            | ×              |
+| `setMyUserName`                  | ×       | ×            | ×              |
+| `getMyConversations`             | ×       | ×            | ×              |
+| `getConversation`                | ×       | ×            | ×              |
+| `sendMessage`                    | ×       | ×            | ×              |
+| `forwardMessage`                 | ×       | ×            | ×              |
+| `commentMessage`                 | ×       | ×            | ×              |
+| `uncommentMessage`               | ×       | ×            | ×              |
+| `deleteMessage`                  | ×       | ×            | ×              |
+| `addToGroup`                     | ×       | ×            | ×              |
+| `leaveGroup`                     | ×       | ×            | ×              |
+| `setGroupName`                   | ×       | ×            | ×              |
+| `setMyPhoto`                     | ×       | ×            | ×              |
+| `setGroupPhoto`                  | ×       | ×            | ×              |
 
 - [ ] Build the backend;
-- [ ] Build the frontend;
-- [ ] Dockerize the application.
+- [ ] Build the frontend;
+- [ ] Dockerize the application.
 
 ---
 
