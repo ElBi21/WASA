@@ -8,6 +8,8 @@
 *.so
 *.dylib
 
+webapi
+
 # Test binary, built with `go test -c`
 *.test
 

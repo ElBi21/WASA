@@ -74,7 +74,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 				"photo" BLOB,
 				"bio" TEXT
 			);`,
-			`CREATE TABLE IF NOT EXISTS "Messages" (
+			`CREATE TABLE "Messages" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"sender" integer NOT NULL,
 				"content" TEXT NOT NULL,
@@ -83,32 +83,36 @@ func New(db *sql.DB) (AppDatabase, error) {
 				"photo" BLOB,
 				"forwarded" INTEGER
 			);`,
-			`CREATE TABLE IF NOT EXISTS "Chats" (
+			`CREATE TABLE "Chats" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"isPrivate" INTEGER NOT NULL,
 				"name" TEXT NOT NULL,
 				"description" TEXT NOT NULL,
 				"photo" BLOB
 			);`,
-			`CREATE TABLE IF NOT EXISTS "ReceivedMessages" (
+			`CREATE TABLE "ReceivedMessages" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"message" integer NOT NULL,
 				"received_by" integer NOT NULL
 			);`,
-			`CREATE TABLE IF NOT EXISTS "SeenMessages" (
+			`CREATE TABLE "SeenMessages" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"message" integer NOT NULL,
 				"seen_by" integer NOT NULL
 			);`,
-			`CREATE TABLE IF NOT EXISTS "ChatsUsers" (
+			`CREATE TABLE "ChatsUsers" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"chat" integer NOT NULL,
 				"user" integer NOT NULL
 			);`,
-			`CREATE TABLE IF NOT EXISTS "Sessions" (
+			`CREATE TABLE "Sessions" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
 				"user" integer NOT NULL
 			);`,
+		}
+
+		for i := range tableQueries {
+			fmt.Printf("We got %d\n", i)
 		}
 
 		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
