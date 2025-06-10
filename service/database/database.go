@@ -66,7 +66,11 @@ func New(db *sql.DB) (AppDatabase, error) {
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
 	err := db.QueryRow(`SELECT name FROM Users WHERE type='TEXT NOT NULL';`).Scan(&tableName)
-	if errors.Is(err, sql.ErrNoRows) {
+	if err != nil {
+		tx, err := db.BeginTx()
+		if err != nil {
+			return nil, err
+		}
 		tableQueries := [7]string{
 			`CREATE TABLE "Users" (
 				"id" INTEGER PRIMARY KEY NOT NULL,
@@ -112,14 +116,21 @@ func New(db *sql.DB) (AppDatabase, error) {
 		}
 
 		for i := range tableQueries {
-			fmt.Printf("We got %d\n", i)
-		}
 
-		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
-		_, err = db.Exec(sqlStmt)
-		if err != nil {
-			return nil, fmt.Errorf("error creating database structure: %w", err)
+			_, err := tx.Exec(tableQueries[i])
+
+			if err != nil && !errors.Is(err, sql.ErrTxDone) {
+				return nil,
+					fmt.Errorf("error while creating table %d\n (%w)", i, err)
+			}
 		}
+		tx.Commit()
+
+		// sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
+		// _, err = db.Exec(sqlStmt)
+		// if err != nil {
+		//	return nil, fmt.Errorf("error creating database structure: %w", err)
+		// }
 	}
 
 	return &appdbimpl{

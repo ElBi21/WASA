@@ -1,3 +1,8 @@
+:root {
+	--navbar-height: 54px;
+	--navbar-margin: 8px;
+}
+
 body {
 	font-size: 0.875rem;
 }
@@ -5,6 +10,81 @@ body {
 .feather {
 	width: 16px;
 	height: 16px;
+}
+
+/* Navbar: main menu bar */
+
+.navbar {
+	height: var(--navbar-height);
+
+	background: rgba(255, 255, 255, 0.3);
+	border-radius: 28px;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(7px);
+	-webkit-backdrop-filter: blur(7px);
+	border: 2px solid rgba(255, 255, 255, 0.55);
+
+	margin: var(--navbar-margin);
+}
+
+.navbar-brand {
+	font-family: "DM Sans", serif;
+	font-weight: 800;
+
+	margin: 0 0 0 8px;
+
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	background-color: transparent;
+}
+
+.navbar .navbar-toggler {
+	top: 0.25rem;
+	right: 1rem;
+}
+
+.navbar .form-control {
+	padding: 0.75rem 1rem;
+}
+
+.form-control-dark {
+	color: #fff;
+	background-color: rgba(255 255 255 / 10%);
+	border-color: rgba(255 255 255 / 10%);
+}
+
+.form-control-dark:focus {
+	border-color: transparent;
+	box-shadow: 0 0 0 3px rgba(255 255 255 / 25%);
+}
+
+.navbar-options {
+	width: 150px;
+	height: 100%;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: end;
+	align-items: center;
+
+	margin: 0 4px 0 0;
+}
+
+.navbar-icon {
+	width: 24px;
+	height: 24px;
+	margin: 0 10px 0 20px;
+}
+
+.navbar-user-icon {
+	width: 46px;
+	height: 46px;
+
+	background-color: darkred;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 2px;
+
+	border-radius: 23px;
+	margin: 0 0 0 10px;
 }
 
 /*
@@ -15,6 +95,9 @@ body {
 	position: fixed;
 	top: 0;
 
+	min-width: 22%;
+	max-width: 24%;
+
 	/* rtl:raw:
 	right: 0;
 	*/
@@ -24,7 +107,7 @@ body {
 
 	left: 0;
 	z-index: 100; /* Behind the navbar */
-	padding: 48px 0 0; /* Height of navbar */
+	padding: calc(var(--navbar-height) + var(--navbar-margin)) 0 0; /* Height of navbar */
 	box-shadow: inset -1px 0 0 rgba(0 0 0 / 10%);
 }
 
@@ -38,6 +121,11 @@ body {
 	height: calc(100vh - 48px);
 	overflow-x: hidden;
 	overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: center;
 }
 
 .sidebar .nav-link {
@@ -63,33 +151,65 @@ body {
 	font-size: 0.75rem;
 }
 
-/*
- * Navbar
- */
-
-.navbar-brand {
-	padding-top: 0.75rem;
-	padding-bottom: 0.75rem;
-	background-color: rgba(0 0 0 / 25%);
-	box-shadow: inset -1px 0 0 rgba(0 0 0 / 25%);
+#sidebarMenu {
+	background-color: #E8EDF0;
 }
 
-.navbar .navbar-toggler {
-	top: 0.25rem;
-	right: 1rem;
+.main-view {
+	width: 76%;
 }
 
-.navbar .form-control {
-	padding: 0.75rem 1rem;
+/* Chats list */
+.chat-preview {
+	width: 96%;
+	height: 72px;
+	margin: 4px 0 4px 0;
+
+	background: linear-gradient(90deg, rgba(42, 123, 155, 1) 70%, rgba(0, 0, 0, 0) 100%);
+	border: 2px solid #CFD3D6;
+
+	border-radius: 8px;
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+	align-items: center;
 }
 
-.form-control-dark {
-	color: #fff;
-	background-color: rgba(255 255 255 / 10%);
-	border-color: rgba(255 255 255 / 10%);
+.chat-preview-pfp {
+	z-index: -1;
+	width: 30%;
+	height: 70px;
+
+	position: absolute;
+	left: calc(100% - 30% - 6px);
+
+	border-radius: 0 8px 8px 0;
 }
 
-.form-control-dark:focus {
-	border-color: transparent;
-	box-shadow: 0 0 0 3px rgba(255 255 255 / 25%);
+.chat-preview-data {
+	width: 70%;
+
+	z-index: 0;
+
+	padding: 0 0 0 8px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: start;
+}
+
+.chat-preview-title {
+	z-index: 1;
+	margin: 0 0 2px 0;
+	font-weight: 600;
+	font-size: 18px;
+}
+
+.chat-preview-last-msg {
+	z-index: 1;
+	margin: -2px 0 0 0;
+	font-weight: 250;
+	font-size: 14px;
+	line-height: 12px;
 }

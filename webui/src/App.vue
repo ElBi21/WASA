@@ -6,19 +6,46 @@ export default {}
 </script>
 
 <template>
-
-	<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#/">WASAText</a>
-		<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
+	<header class="navbar sticky-top flex-md-nowrap p-0">
+		<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-5" href="#/">WASAText</a>
+		<div class="navbar-options">
+            <img class="navbar-icon" src="../public/icons/gear-solid.svg" alt="Settings icon">
+            <div class="navbar-user-icon"></div>
+        </div>
 	</header>
 
 	<div class="container-fluid">
 		<div class="row">
-			<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+			<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
 				<div class="position-sticky pt-3 sidebar-sticky">
-					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+
+                    <div class="chat-preview">
+                        <img class="chat-preview-pfp" src="../public/test_assets/group_pfp.png" alt="Chat pfp">
+                        <div class="chat-preview-data">
+                            <p class="chat-preview-title">Amici del bunker</p>
+                            <p class="chat-preview-last-msg"><b>Author</b>: This is the last message</p>
+                        </div>
+                    </div>
+
+                    <div class="chat-preview">
+                        <img class="chat-preview-pfp" src="../public/test_assets/group_pfp.png" alt="Chat pfp">
+                        <div class="chat-preview-data">
+                            <p class="chat-preview-title">Amici del bunker</p>
+                            <p class="chat-preview-last-msg"><b>Author</b>: This is the last message</p>
+                        </div>
+                    </div>
+
+                    <div class="chat-preview">
+                        <img class="chat-preview-pfp" src="../public/test_assets/group_pfp.png" alt="Chat pfp">
+                        <div class="chat-preview-data">
+                            <p class="chat-preview-title">Amici del bunker</p>
+                            <p class="chat-preview-last-msg"><b>Author</b>: This is the last message</p>
+                        </div>
+                    </div>
+
+
+
+                    <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
 						<span>General</span>
 					</h6>
 					<ul class="nav flex-column">
@@ -52,11 +79,11 @@ export default {}
 								Item 1
 							</RouterLink>
 						</li>
-					</ul>
+					</ul>-->
 				</div>
 			</nav>
 
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+			<main class="main-view col-md-9 ms-sm-auto col-lg-10 px-md-4">
 				<RouterView />
 			</main>
 		</div>
