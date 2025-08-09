@@ -14,9 +14,9 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/liveness", rt.liveness)
 
 	// WASAText APIs paths
-	/*rt.router.POST("/session", rt.doLogin)
+	rt.router.POST("/session", rt.doLogin)
 
-	rt.router.GET("/user/:user_id/chats", rt.getMyConversations)
+	/*rt.router.GET("/user/:user_id/chats", rt.getMyConversations)
 	rt.router.POST("/user/:user_id/name", rt.setMyUserName)
 	rt.router.POST("/user/:user_id/photo", rt.setMyPhoto)
 	rt.router.POST("/user/:user_id/bio", rt.setMyBio)

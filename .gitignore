@@ -67,3 +67,5 @@ node_modules/
 !.yarn/versions
 
 bun.lockb
+
+wasa.sqlite

@@ -42,11 +42,12 @@ import (
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	// Read
-	GetName() (string, error)
+	GetUserByName(queryUser string) (customstructs.User, error)
 	GetSession(user customstructs.User) (string, error)
 
 	// Write
 	SetName(name string) error
+	RegisterNewUser(newUserName string) (customstructs.User, error)
 
 	// Misc
 	Ping() error
@@ -63,76 +64,86 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
-	// Check if table exists. If not, the database is empty, and we need to create the structure
-	var tableName string
-	err := db.QueryRow(`SELECT name FROM Users WHERE type='TEXT NOT NULL';`).Scan(&tableName)
+	// Start the transaction
+	tx, err := db.Begin()
+
+	// Check for transaction errors
 	if err != nil {
-		tx, err := db.BeginTx()
-		if err != nil {
-			return nil, err
-		}
-		tableQueries := [7]string{
-			`CREATE TABLE "Users" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"name" TEXT NOT NULL,
-				"photo" BLOB,
-				"bio" TEXT
-			);`,
-			`CREATE TABLE "Messages" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"sender" integer NOT NULL,
-				"content" TEXT NOT NULL,
-				"chat" integer NOT NULL,
-				"timestamp" TEXT NOT NULL,
-				"photo" BLOB,
-				"forwarded" INTEGER
-			);`,
-			`CREATE TABLE "Chats" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"isPrivate" INTEGER NOT NULL,
-				"name" TEXT NOT NULL,
-				"description" TEXT NOT NULL,
-				"photo" BLOB
-			);`,
-			`CREATE TABLE "ReceivedMessages" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"message" integer NOT NULL,
-				"received_by" integer NOT NULL
-			);`,
-			`CREATE TABLE "SeenMessages" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"message" integer NOT NULL,
-				"seen_by" integer NOT NULL
-			);`,
-			`CREATE TABLE "ChatsUsers" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"chat" integer NOT NULL,
-				"user" integer NOT NULL
-			);`,
-			`CREATE TABLE "Sessions" (
-				"id" INTEGER PRIMARY KEY NOT NULL,
-				"user" integer NOT NULL
-			);`,
-		}
-
-		for i := range tableQueries {
-
-			_, err := tx.Exec(tableQueries[i])
-
-			if err != nil && !errors.Is(err, sql.ErrTxDone) {
-				return nil,
-					fmt.Errorf("error while creating table %d\n (%w)", i, err)
-			}
-		}
-		tx.Commit()
-
-		// sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
-		// _, err = db.Exec(sqlStmt)
-		// if err != nil {
-		//	return nil, fmt.Errorf("error creating database structure: %w", err)
-		// }
+		return nil, err
 	}
 
+	tableQueries := [8]string{
+		`CREATE TABLE IF NOT EXISTS "Users" (
+			"name" TEXT PRIMARY KEY NOT NULL,
+			"display_name" TEXT,
+			"photo" BLOB NOT NULL,
+			"bio" TEXT
+		);`,
+		`CREATE TABLE IF NOT EXISTS "Messages" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"sender" TEXT NOT NULL,
+			"content" TEXT NOT NULL,
+			"chat" INTEGER NOT NULL,
+			"timestamp" DATETIME NOT NULL,
+			"photo" BLOB,
+			"forwarded" INTEGER NOT NULL,
+			"answer_to" TEXT,
+			"deleted" INTEGER NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS "Chats" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"isPrivate" INTEGER NOT NULL,
+			"name" TEXT NOT NULL,
+			"description" TEXT NOT NULL,
+			"photo" BLOB
+		);`,
+		`CREATE TABLE IF NOT EXISTS "ReceivedMessages" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"message" INTEGER NOT NULL,
+			"received_by" TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS "SeenMessages" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"message" INTEGER NOT NULL,
+			"seen_by" TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS "ChatsUsers" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"chat" INTEGER NOT NULL,
+			"user" TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS "Sessions" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"user" TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS "Reactions" (
+			"id" INTEGER PRIMARY KEY NOT NULL,
+			"message" INTEGER NOT NULL,
+			"content" TEXT NOT NULL,
+			"user" TEXT NOT NULL
+		);`,
+	}
+
+	// For each query, execute it
+	for i := range tableQueries {
+		_, err := tx.Exec(tableQueries[i])
+
+		// If the query had an issue, return nil
+		if err != nil && !errors.Is(err, sql.ErrTxDone) {
+			return nil,
+				fmt.Errorf("error while creating table %d\n (%w)", i+1, err)
+		}
+	}
+
+	// Commit the transaction and check for errors
+	transError := tx.Commit()
+
+	if transError != nil {
+		return nil,
+			fmt.Errorf("error while committing the DB creation queries\n (%w)", transError)
+	}
+
+	// Finally, return the DB
 	return &appdbimpl{
 		c: db,
 	}, nil

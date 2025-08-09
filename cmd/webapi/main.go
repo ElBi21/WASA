@@ -83,17 +83,21 @@ func run() error {
 	logger.Infof("application initializing")
 
 	// Start Database
-	logger.Println("initializing database support")
-	dbconn, err := sql.Open("sqlite3", cfg.DB.Filename)
+	logger.Printf("initializing database support (%s)\n", cfg.DB.Filename)
+	dbConn, err := sql.Open("sqlite3",
+		cfg.DB.Filename+"?_journal_mode=WAL&_busy_timeout=10000&_synchronous=NORMAL")
+
 	if err != nil {
 		logger.WithError(err).Error("error opening SQLite DB")
 		return fmt.Errorf("opening SQLite: %w", err)
 	}
+
 	defer func() {
 		logger.Debug("database stopping")
-		_ = dbconn.Close()
+		_ = dbConn.Close()
 	}()
-	db, err := database.New(dbconn)
+
+	db, err := database.New(dbConn)
 	if err != nil {
 		logger.WithError(err).Error("error creating AppDatabase")
 		return fmt.Errorf("creating AppDatabase: %w", err)

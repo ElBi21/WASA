@@ -1,22 +1,25 @@
 package customstructs
 
 type User struct {
-	ID         int32
-	Name       string
-	Biography  string
-	profilePic string
+	Name        string
+	DisplayName string
+	Biography   string
+	ProfilePic  string
 }
 
 type Message struct {
 	ID        int32
 	Sender    User
 	Content   string
+	ChatID    int32
 	Timestamp string
 	Photo     string
+	Forwarded bool
+	AnswerTo  int32
+
 	Received  []User
 	Read      []User
 	Deleted   bool
-	Forwarded bool
 	Reactions []Reaction
 }
 

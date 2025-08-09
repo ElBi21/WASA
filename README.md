@@ -5,11 +5,16 @@
 
 # TODO List
 
-- [ ] Build the API, which should comprehend the following endpoints:
+- [X] Build the API;
+- [ ] Build the backend;
+- [ ] Build the frontend;
+- [ ] Dockerize the application.
+
+## List of all the tasks to do
 
 | API Endpoint                     | OpenAPI | Go (Backend) | Vue (Frontend) |
 |----------------------------------|---------|--------------|----------------|
-| `doLogin` (see simplified login) | ×       | ×            | ×              |
+| `doLogin` (see simplified login) | ✓       | ✓            | ×              |
 | `setMyUserName`                  | ×       | ×            | ×              |
 | `getMyConversations`             | ×       | ×            | ×              |
 | `getConversation`                | ×       | ×            | ×              |
@@ -23,10 +28,6 @@
 | `setGroupName`                   | ×       | ×            | ×              |
 | `setMyPhoto`                     | ×       | ×            | ×              |
 | `setGroupPhoto`                  | ×       | ×            | ×              |
-
-- [ ] Build the backend;
-- [ ] Build the frontend;
-- [ ] Dockerize the application.
 
 ---
 

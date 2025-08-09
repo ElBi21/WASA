@@ -723,9 +723,9 @@ paths:
   /chat/{chat_id}/description:
     parameters:
     - $ref: "#/components/parameters/chat_id"
-    # POST = setGroupDescription
-    
-    post:
+    # POST = setGroupDescription
+
+    put:
       tags: ["Chats", "Chat management"]
       summary: Change the description of the group
       operationId: setGroupDescription
