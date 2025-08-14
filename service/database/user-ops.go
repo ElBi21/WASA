@@ -40,3 +40,31 @@ func (db *appdbimpl) RegisterNewUser(newUserName string) (customstructs.User, er
 
 	return queryUser, err
 }
+
+// SetNewUserName changes the username of a user, given the user and a new username.
+// When this function is called, the callee is sure that the new display name has a length
+// that is 3 <= len <= 16
+func (db *appdbimpl) SetNewUserName(toReplace string, newUserName string) error {
+	_, err := db.c.Exec("UPDATE Users SET name = ? WHERE name = ?",
+		newUserName, toReplace)
+
+	if err != nil {
+		return fmt.Errorf("[DB] error while changing username\n (%w)", err)
+	}
+
+	return nil
+}
+
+// SetNewDisplayName changes the display name of a user, given the user and a new display name.
+// When this function is called, the callee is sure that the new display name has a length
+// that is 3 <= len <= 32
+func (db *appdbimpl) SetNewDisplayName(toReplace string, newDisplayName string) error {
+	_, err := db.c.Exec("UPDATE Users SET display_name = ? WHERE name = ?",
+		newDisplayName, toReplace)
+
+	if err != nil {
+		return fmt.Errorf("[DB] error while changing display name\n (%w)", err)
+	}
+
+	return nil
+}

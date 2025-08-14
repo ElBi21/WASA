@@ -46,7 +46,8 @@ type AppDatabase interface {
 	GetSession(user customstructs.User) (string, error)
 
 	// Write
-	SetName(name string) error
+	SetNewUserName(user string, newUserName string) error
+	SetNewDisplayName(user string, newDisplayName string) error
 	RegisterNewUser(newUserName string) (customstructs.User, error)
 
 	// Misc

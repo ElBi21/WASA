@@ -6,15 +6,19 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 	"wasatext/service/customstructs"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 // The doLogin function performs the login logic
+//
+// TODO: Implement the 403 error by checking for sessions (might want to delete it (?))
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Fetch the body of the request and unmarshal in variable
 	queryBody, _ := io.ReadAll(r.Body)
+	var resCode = http.StatusOK
 	var requestUser customstructs.User
 	_ = json.Unmarshal(queryBody, &requestUser)
 
@@ -24,16 +28,56 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	// If the user does not exist, create it
 	if errors.Is(dbErr, sql.ErrNoRows) {
 		// Check for name length
-		if len(requestUser.Name) > 3 && len(requestUser.Name) < 16 {
+		if len(requestUser.Name) >= 3 && len(requestUser.Name) <= 16 {
 			// Register in the DB
 			dbUser, _ = rt.db.RegisterNewUser(requestUser.Name)
+			resCode = http.StatusCreated
+		} else {
+			w.WriteHeader(http.StatusNotAcceptable)
+			return
 		}
 	}
 
 	// Respond to the client
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(resCode)
 
 	jsonReturn, _ := json.Marshal(dbUser)
-	_, _ = w.Write(jsonReturn)
+	_, _ = w.Write([]byte(jsonReturn))
+}
+
+// The setMyUserName function changes the username of the user in the URI path
+func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Take the user ID from the path of the request
+	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/id")
+	var queryInput customstructs.User
+
+	queryBody, _ := io.ReadAll(r.Body)
+	_ = json.Unmarshal(queryBody, &queryInput)
+
+	// Check for new username length
+	if len(queryInput.Name) >= 3 && len(queryInput.Name) <= 16 {
+		_ = rt.db.SetNewUserName(userId, queryInput.Name)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusTeapot)
+	}
+}
+
+// The setMyUserName function changes the username of the user in the URI path
+func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Take the user ID from the path of the request
+	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/name")
+	var queryInput customstructs.User
+
+	queryBody, _ := io.ReadAll(r.Body)
+	_ = json.Unmarshal(queryBody, &queryInput)
+
+	// Check for new display name length
+	if len(queryInput.Name) >= 3 && len(queryInput.Name) <= 32 {
+		_ = rt.db.SetNewDisplayName(userId, queryInput.Name)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusTeapot)
+	}
 }
