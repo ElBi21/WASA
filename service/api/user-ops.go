@@ -81,3 +81,21 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 		w.WriteHeader(http.StatusTeapot)
 	}
 }
+
+// setMyBio sets a new biography
+func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Take the user ID from the path of the request
+	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/bio")
+	var queryInput customstructs.User
+
+	queryBody, _ := io.ReadAll(r.Body)
+	_ = json.Unmarshal(queryBody, &queryInput)
+
+	// Check for new biography length
+	if len(queryInput.Biography) >= 1 && len(queryInput.Biography) <= 512 {
+		_ = rt.db.SetNewBiography(userId, queryInput.Biography)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}

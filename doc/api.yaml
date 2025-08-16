@@ -544,9 +544,9 @@ paths:
           description: |
             The biography has been changed successfully
 
-        '403':
+        '400':
           description: |
-            You are not the user, you can't change someone else's bio
+            The biography given does not respect the standards imposed
           content:
             application/json:
               schema:

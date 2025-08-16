@@ -17,7 +17,7 @@
 | `doLogin` (see simplified login) | ✓       | ✓            | ×              |
 | `setMyUserName`                  | ✓       | ✓            | ×              |
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ×              |
-| `setMyBio` (Extra)               | ×       | ×            | ×              |
+| `setMyBio` (Extra)               | ✓       | ✓            | ×              |
 | `getMyConversations`             | ×       | ×            | ×              |
 | `createConversation`             | ×       | ×            | ×              |
 | `getConversation`                | ×       | ×            | ×              |

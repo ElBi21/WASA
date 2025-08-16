@@ -17,10 +17,10 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session", rt.doLogin)
 	rt.router.POST("/user/:user_id/id", rt.setMyUserName)
 	rt.router.POST("/user/:user_id/name", rt.setMyDisplayName)
+	rt.router.POST("/user/:user_id/bio", rt.setMyBio)
 
 	/*rt.router.GET("/user/:user_id/chats", rt.getMyConversations)
 	rt.router.POST("/user/:user_id/photo", rt.setMyPhoto)
-	rt.router.POST("/user/:user_id/bio", rt.setMyBio)
 
 	rt.router.GET("/chat/:chat_id", rt.getConversation)
 	rt.router.PUT("/chat/:chat_id", rt.createConversation)

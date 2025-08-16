@@ -21,10 +21,10 @@ func (db *appdbimpl) GetUserByName(queryUser string) (customstructs.User, error)
 }
 
 // RegisterNewUser creates a new user in the DB given a name. The display_name will be initialized as name
-func (db *appdbimpl) RegisterNewUser(newUserName string) (customstructs.User, error) {
+func (db *appdbimpl) RegisterNewUser(user string) (customstructs.User, error) {
 	queryUser := customstructs.User{
-		Name:        newUserName,
-		DisplayName: newUserName,
+		Name:        user,
+		DisplayName: user,
 		ProfilePic:  "",
 		Biography:   "Hey, I'm a WASAText user",
 	}
@@ -44,9 +44,9 @@ func (db *appdbimpl) RegisterNewUser(newUserName string) (customstructs.User, er
 // SetNewUserName changes the username of a user, given the user and a new username.
 // When this function is called, the callee is sure that the new display name has a length
 // that is 3 <= len <= 16
-func (db *appdbimpl) SetNewUserName(toReplace string, newUserName string) error {
+func (db *appdbimpl) SetNewUserName(user string, newUserName string) error {
 	_, err := db.c.Exec("UPDATE Users SET name = ? WHERE name = ?",
-		newUserName, toReplace)
+		newUserName, user)
 
 	if err != nil {
 		return fmt.Errorf("[DB] error while changing username\n (%w)", err)
@@ -58,12 +58,25 @@ func (db *appdbimpl) SetNewUserName(toReplace string, newUserName string) error 
 // SetNewDisplayName changes the display name of a user, given the user and a new display name.
 // When this function is called, the callee is sure that the new display name has a length
 // that is 3 <= len <= 32
-func (db *appdbimpl) SetNewDisplayName(toReplace string, newDisplayName string) error {
+func (db *appdbimpl) SetNewDisplayName(user string, newDisplayName string) error {
 	_, err := db.c.Exec("UPDATE Users SET display_name = ? WHERE name = ?",
-		newDisplayName, toReplace)
+		newDisplayName, user)
 
 	if err != nil {
 		return fmt.Errorf("[DB] error while changing display name\n (%w)", err)
+	}
+
+	return nil
+}
+
+// SetNewBiography changes the biography of a user, given the user and a new biography.
+// The callee must be sure that 1 <= len(bio) <= 512
+func (db *appdbimpl) SetNewBiography(user string, newBiography string) error {
+	_, err := db.c.Exec("UPDATE Users SET bio = ? WHERE name = ?",
+		newBiography, user)
+
+	if err != nil {
+		return fmt.Errorf("[DB] error while changing biography\n (%w)", err)
 	}
 
 	return nil
