@@ -51,6 +51,9 @@ type AppDatabase interface {
 	SetNewUserName(user string, newUserName string) error
 	SetNewDisplayName(user string, newDisplayName string) error
 	SetNewBiography(user string, newBiography string) error
+	SetNewPhoto(user string, newPhoto string) error
+	CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error)
+	AddUserToGroup(chat string, user string) error
 
 	// Misc
 	Ping() error

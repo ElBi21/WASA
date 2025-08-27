@@ -19,7 +19,7 @@
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ×              |
 | `setMyBio` (Extra)               | ✓       | ✓            | ×              |
 | `getMyConversations`             | ✓       | ✓            | ×              |
-| `createConversation`             | ×       | ×            | ×              |
+| `createConversation`             | ✓       | ✓            | ×              |
 | `getConversation`                | ×       | ×            | ×              |
 | `sendMessage`                    | ×       | ×            | ×              |
 | `forwardMessage`                 | ×       | ×            | ×              |
@@ -30,7 +30,7 @@
 | `setGroupDescription` (Extra)    | ×       | ×            | ×              |
 | `leaveGroup`                     | ×       | ×            | ×              |
 | `setGroupName`                   | ×       | ×            | ×              |
-| `setMyPhoto`                     | ×       | ×            | ×              |
+| `setMyPhoto`                     | ✓       | ✓            | ×              |
 | `setGroupPhoto`                  | ×       | ×            | ×              |
 
 ---

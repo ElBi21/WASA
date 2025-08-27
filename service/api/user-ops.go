@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -44,13 +43,13 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	w.WriteHeader(resCode)
 
 	jsonReturn, _ := json.Marshal(dbUser)
-	_, _ = w.Write([]byte(jsonReturn))
+	_, _ = w.Write(jsonReturn)
 }
 
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Take the user ID from the path of the request
-	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/id")
+	userId := ps[0].Value
 	var queryInput struct {
 		NewUserName string `json:"newUsername"`
 	}
@@ -70,7 +69,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Take the user ID from the path of the request
-	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/name")
+	userId := ps[0].Value
 	var queryInput struct {
 		NewDisplayName string `json:"newDisplayName"`
 	}
@@ -90,7 +89,7 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 // setMyBio sets a new biography
 func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Take the user ID from the path of the request
-	userId := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/bio")
+	userId := ps[0].Value
 	var queryInput struct {
 		NewBio string `json:"newBio"`
 	}
@@ -107,10 +106,30 @@ func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httproute
 	}
 }
 
+// setMyPhoto sets a new profile picture for the user
+func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Take the user ID from the path of the request
+	userId := ps[0].Value
+	var queryInput struct {
+		NewPhoto string `json:"newPhoto"`
+	}
+
+	queryBody, _ := io.ReadAll(r.Body)
+	_ = json.Unmarshal(queryBody, &queryInput)
+
+	// Check for new biography length
+	if len(queryInput.NewPhoto) >= 0 && len(queryInput.NewPhoto) <= 4294967296 {
+		_ = rt.db.SetNewPhoto(userId, queryInput.NewPhoto)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}
+
 // getMyConversations retrieves all the chats where the user belongs
 func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Take the user ID from the path of the request
-	userID := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/user/"), "/chats")
+	userID := ps[0].Value
 
 	// Check if user exists, in case return 404
 	_, err := rt.db.GetUserByName(userID)

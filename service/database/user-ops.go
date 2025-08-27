@@ -84,6 +84,20 @@ func (db *appdbimpl) SetNewBiography(user string, newBiography string) error {
 	return nil
 }
 
+// SetNewPhoto changes the profile picture of a user, given the user and a new biography.
+// The base64 encoding must be smaller than 4294967296 characters
+func (db *appdbimpl) SetNewPhoto(user string, newPhoto string) error {
+	_, err := db.c.Exec("UPDATE Users SET photo = ? WHERE name = ?",
+		newPhoto, user)
+
+	if err != nil {
+		return fmt.Errorf("[DB] error while changing biography\n (%w)", err)
+	}
+
+	return nil
+}
+
+// GetConversations gets all the chats to which a user belongs. Returns a customstructs.Chat struct
 func (db *appdbimpl) GetConversations(user string) (resChats []customstructs.Chat) {
 	var chats []customstructs.Chat
 	queryChats, err := db.c.Query("SELECT r.id, r.isPrivate, r.name, r.description, r.photo FROM ChatsUsers l INNER JOIN Chats r ON l.chat = r.id WHERE user = ?;", user)

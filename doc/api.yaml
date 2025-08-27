@@ -611,9 +611,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Chat"
 
-        '408':
+        '400':
           description: |
-            There has been an error while trying to create the chat
+            One of the users specified does not exist
           content:
             application/json:
               schema:
