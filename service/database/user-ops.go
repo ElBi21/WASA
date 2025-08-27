@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"wasatext/service/customstructs"
 )
@@ -80,4 +82,52 @@ func (db *appdbimpl) SetNewBiography(user string, newBiography string) error {
 	}
 
 	return nil
+}
+
+func (db *appdbimpl) GetConversations(user string) (resChats []customstructs.Chat) {
+	var chats []customstructs.Chat
+	queryChats, err := db.c.Query("SELECT r.id, r.isPrivate, r.name, r.description, r.photo FROM ChatsUsers l INNER JOIN Chats r ON l.chat = r.id WHERE user = ?;", user)
+
+	// If the user belongs to no chats, then return an empty array
+	if errors.Is(err, sql.ErrNoRows) {
+		return chats
+	}
+
+	// If the user does belong to some chats, close the query and unwrap the result
+	defer queryChats.Close()
+
+	for queryChats.Next() {
+		var userChat customstructs.Chat
+		err = queryChats.Scan(&userChat.ID, &userChat.IsPrivate, &userChat.Name, &userChat.GroupDescription, &userChat.Photo)
+
+		if err != nil {
+			return chats
+		}
+
+		// Get users belonging to a chat
+		usersQuery, errUsers := db.c.Query("SELECT r.name, r.display_name, r.photo, r.bio FROM ChatsUsers l INNER JOIN Users r ON l.user = r.name WHERE l.chat = ?;", userChat.ID)
+
+		// Check if either the scan of the query or the second query got errors. In case, return
+		if errUsers != nil {
+			return chats
+		}
+
+		// For each user, scan its values into the struct and append it to the chat
+		for usersQuery.Next() {
+			var chatUser customstructs.User
+			err = usersQuery.Scan(&chatUser.Name, &chatUser.DisplayName, &chatUser.ProfilePic, &chatUser.Biography)
+
+			if err != nil {
+				return chats
+			}
+
+			// Append user to list of users belonging to chat
+			userChat.Users = append(userChat.Users, chatUser)
+		}
+
+		// Append chat to return array
+		chats = append(chats, userChat)
+	}
+
+	return chats
 }

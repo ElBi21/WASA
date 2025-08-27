@@ -37,6 +37,5 @@ type Chat struct {
 	Name             string
 	GroupDescription string
 	Photo            string
-	Messages         []Message
 	LastSent         Message
 }

@@ -44,6 +44,7 @@ type AppDatabase interface {
 	// Read
 	GetUserByName(queryUser string) (customstructs.User, error)
 	GetSession(user customstructs.User) (string, error)
+	GetConversations(user string) (chats []customstructs.Chat)
 
 	// Write
 	RegisterNewUser(newUserName string) (customstructs.User, error)
@@ -82,7 +83,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			"bio" TEXT
 		);`,
 		`CREATE TABLE IF NOT EXISTS "Messages" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"sender" TEXT NOT NULL,
 			"content" TEXT NOT NULL,
 			"chat" INTEGER NOT NULL,
@@ -93,33 +94,33 @@ func New(db *sql.DB) (AppDatabase, error) {
 			"deleted" INTEGER NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "Chats" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"isPrivate" INTEGER NOT NULL,
 			"name" TEXT NOT NULL,
 			"description" TEXT NOT NULL,
 			"photo" BLOB
 		);`,
 		`CREATE TABLE IF NOT EXISTS "ReceivedMessages" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"message" INTEGER NOT NULL,
 			"received_by" TEXT NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "SeenMessages" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"message" INTEGER NOT NULL,
 			"seen_by" TEXT NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "ChatsUsers" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"chat" INTEGER NOT NULL,
 			"user" TEXT NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "Sessions" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"user" TEXT NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "Reactions" (
-			"id" INTEGER PRIMARY KEY NOT NULL,
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			"message" INTEGER NOT NULL,
 			"content" TEXT NOT NULL,
 			"user" TEXT NOT NULL

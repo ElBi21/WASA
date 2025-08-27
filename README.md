@@ -18,7 +18,7 @@
 | `setMyUserName`                  | ✓       | ✓            | ×              |
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ×              |
 | `setMyBio` (Extra)               | ✓       | ✓            | ×              |
-| `getMyConversations`             | ×       | ×            | ×              |
+| `getMyConversations`             | ✓       | ✓            | ×              |
 | `createConversation`             | ×       | ×            | ×              |
 | `getConversation`                | ×       | ×            | ×              |
 | `sendMessage`                    | ×       | ×            | ×              |
