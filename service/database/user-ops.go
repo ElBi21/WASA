@@ -1,8 +1,6 @@
 package database
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
 	"wasatext/service/customstructs"
 )
@@ -97,13 +95,15 @@ func (db *appdbimpl) SetNewPhoto(user string, newPhoto string) error {
 	return nil
 }
 
-// GetConversations gets all the chats to which a user belongs. Returns a customstructs.Chat struct
-func (db *appdbimpl) GetConversations(user string) (resChats []customstructs.Chat) {
+// GetUserConversations gets all the chats to which a user belongs. Returns a customstructs.Chat struct
+func (db *appdbimpl) GetUserConversations(user string) (resChats []customstructs.Chat) {
 	var chats []customstructs.Chat
-	queryChats, err := db.c.Query("SELECT r.id, r.isPrivate, r.name, r.description, r.photo FROM ChatsUsers l INNER JOIN Chats r ON l.chat = r.id WHERE user = ?;", user)
+	queryChats, err := db.c.Query(
+		`SELECT r.id, r.isPrivate, r.name, r.description, r.photo FROM ChatsUsers l
+			INNER JOIN Chats r ON l.chat = r.id WHERE user = ?;`, user)
 
 	// If the user belongs to no chats, then return an empty array
-	if errors.Is(err, sql.ErrNoRows) {
+	if err != nil || queryChats.Err() != nil {
 		return chats
 	}
 
@@ -119,10 +119,11 @@ func (db *appdbimpl) GetConversations(user string) (resChats []customstructs.Cha
 		}
 
 		// Get users belonging to a chat
-		usersQuery, errUsers := db.c.Query("SELECT r.name, r.display_name, r.photo, r.bio FROM ChatsUsers l INNER JOIN Users r ON l.user = r.name WHERE l.chat = ?;", userChat.ID)
+		usersQuery, errUsers := db.c.Query(`SELECT r.name, r.display_name, r.photo, r.bio FROM ChatsUsers l
+    		INNER JOIN Users r ON l.user = r.name WHERE l.chat = ?;`, userChat.ID)
 
 		// Check if either the scan of the query or the second query got errors. In case, return
-		if errUsers != nil {
+		if errUsers != nil || usersQuery.Err() != nil {
 			return chats
 		}
 

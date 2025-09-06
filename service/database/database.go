@@ -44,7 +44,9 @@ type AppDatabase interface {
 	// Read
 	GetUserByName(queryUser string) (customstructs.User, error)
 	GetSession(user customstructs.User) (string, error)
-	GetConversations(user string) (chats []customstructs.Chat)
+	GetUserConversations(user string) (chats []customstructs.Chat)
+	GetConversation(chatId int) (customstructs.Chat, error)
+	GetChatUsers(chatId int) []customstructs.User
 
 	// Write
 	RegisterNewUser(newUserName string) (customstructs.User, error)
@@ -54,6 +56,7 @@ type AppDatabase interface {
 	SetNewPhoto(user string, newPhoto string) error
 	CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error)
 	AddUserToGroup(chat string, user string) error
+	CreateMessage(newMessage customstructs.PrimordialMessage) (customstructs.Message, error)
 
 	// Misc
 	Ping() error
@@ -93,7 +96,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			"timestamp" DATETIME NOT NULL,
 			"photo" BLOB,
 			"forwarded" INTEGER NOT NULL,
-			"answer_to" TEXT,
+			"replying_to" INTEGER NOT NULL,
 			"deleted" INTEGER NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS "Chats" (

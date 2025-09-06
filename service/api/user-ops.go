@@ -51,7 +51,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// Take the user ID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
-		NewUserName string `json:"newUsername"`
+		NewUserName string `json:"new_username"`
 	}
 
 	queryBody, _ := io.ReadAll(r.Body)
@@ -71,7 +71,7 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 	// Take the user ID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
-		NewDisplayName string `json:"newDisplayName"`
+		NewDisplayName string `json:"new_display_name"`
 	}
 
 	queryBody, _ := io.ReadAll(r.Body)
@@ -91,7 +91,7 @@ func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httproute
 	// Take the user ID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
-		NewBio string `json:"newBio"`
+		NewBio string `json:"new_bio"`
 	}
 
 	queryBody, _ := io.ReadAll(r.Body)
@@ -111,14 +111,14 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
 	// Take the user ID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
-		NewPhoto string `json:"newPhoto"`
+		NewPhoto string `json:"new_photo"`
 	}
 
 	queryBody, _ := io.ReadAll(r.Body)
 	_ = json.Unmarshal(queryBody, &queryInput)
 
 	// Check for new biography length
-	if len(queryInput.NewPhoto) >= 0 && len(queryInput.NewPhoto) <= 4294967296 {
+	if len(queryInput.NewPhoto) <= 4294967296 {
 		_ = rt.db.SetNewPhoto(userId, queryInput.NewPhoto)
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -138,7 +138,7 @@ func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps
 	}
 
 	// Retrieve chats
-	allChats := rt.db.GetConversations(userID)
+	allChats := rt.db.GetUserConversations(userID)
 
 	jsonChat, _ := json.Marshal(allChats)
 	w.WriteHeader(http.StatusOK)

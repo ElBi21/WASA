@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"wasatext/service/customstructs"
 )
@@ -52,4 +54,57 @@ func (db *appdbimpl) AddUserToGroup(chat string, user string) error {
 		chat, user)
 
 	return err
+}
+
+// GetConversation returns a chat given its ID. It also retrieves the last sent message
+func (db *appdbimpl) GetConversation(chatId int) (customstructs.Chat, error) {
+	var returnChat customstructs.Chat
+
+	// Get the chat
+	err := db.c.QueryRow("SELECT * FROM Chats WHERE id = ?;", chatId).Scan(
+		&returnChat.ID, &returnChat.IsPrivate, &returnChat.Name, &returnChat.GroupDescription, &returnChat.Photo)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return returnChat, fmt.Errorf("[DB] chat does not exist\n (%w)", err)
+	}
+
+	// Get last message of the chat
+	var lastMsg customstructs.Message
+	var userID string
+
+	err = db.c.QueryRow("SELECT * FROM Messages WHERE chat = ? ORDER BY timestamp DESC", chatId).Scan(
+		&lastMsg.ID, &userID, &lastMsg.Content, &lastMsg.ChatID, &lastMsg.Timestamp, &lastMsg.Photo,
+		&lastMsg.Forwarded, &lastMsg.ReplyingTo, &lastMsg.Deleted)
+
+	if !errors.Is(err, sql.ErrNoRows) {
+		lastMsg.Sender, _ = db.GetUserByName(userID)
+	}
+
+	// Set last sent message
+	returnChat.LastSent = lastMsg
+
+	// Retrieve users from chat
+	returnChat.Users = db.GetChatUsers(chatId)
+
+	return returnChat, err
+}
+
+// GetChatUsers retrieves the users belonging to a chat
+func (db *appdbimpl) GetChatUsers(chatId int) []customstructs.User {
+	var users []customstructs.User
+	rows, err := db.c.Query("SELECT user FROM ChatsUsers WHERE chat = ?;", chatId)
+
+	if errors.Is(err, sql.ErrNoRows) || rows.Err() != nil {
+		return users
+	}
+
+	// For each row, retrieve user and append to users
+	for rows.Next() {
+		var userId string
+		_ = rows.Scan(&userId)
+		user, _ := db.GetUserByName(userId)
+		users = append(users, user)
+	}
+
+	return users
 }

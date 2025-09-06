@@ -76,14 +76,14 @@ components:
         Schema defining a user, which can belong to multiple chats and send messages
       type: object
       properties:
-        id:
+        user_id:
           description: ID of the user
           type: string
           pattern: '^.*?$'
           minLength: 3
           maxLength: 16
           example: Maria
-        displayName:
+        display_name:
           description: Name of the user
           type: string
           pattern: '^.*?$'
@@ -98,7 +98,7 @@ components:
           minLength: 1
           maxLength: 512
           example: When life gives you lemons...
-        profilePic:
+        profile_pic:
           description: Profile picture
           type: string
           pattern: '^.*$'
@@ -106,10 +106,10 @@ components:
           maxLength: 44294967296
           format: byte
       required:
-        - id
-        - name
+        - user_id
+        - display_name
         - biography
-        - profilePic
+        - profile_pic
 
     Message:
       title: Message
@@ -117,7 +117,7 @@ components:
         Representation of a message
       type: object
       properties:
-        id:
+        message_id:
           description: ID of the message, always expressed in 16 digits
           type: integer
           example: 1
@@ -129,6 +129,12 @@ components:
           example: 2
           minimum: 1
           maximum: 2048
+        chat:
+          description: ID of the chat
+          type: integer
+          example: 1
+          minimum: 1
+          maximum: 65536
         content:
           description: Text of the message
           type: string
@@ -179,10 +185,17 @@ components:
           maxItems: 44294967296
           items:
             $ref: "#/components/schemas/Reaction"
+        reply:
+          description: ID of the message to which the current replies. 0 means no reply
+          type: integer
+          example: 1
+          minimum: 0
+          maximum: 1048576
       required:
-        - id
+        - message_id
         - sender
         - content
+        - chat
         - timestamp
         - photo
         - received
@@ -190,6 +203,7 @@ components:
         - deleted
         - forwarded
         - reactions
+        - reply
 
     Reaction:
       title: Reaction
@@ -197,7 +211,7 @@ components:
         Defines a reaction, which can be made out of text or an emoji
       type: object
       properties:
-        id:
+        reaction_id:
           description: ID of the reaction
           type: integer
           example: 3
@@ -222,7 +236,7 @@ components:
           minLength: 1
           maxLength: 16384
       required:
-        - id
+        - reaction_id
         - message
         - sender
         - content
@@ -232,13 +246,13 @@ components:
       description: Representation of a chat
       type: object
       properties:
-        id:
+        chat_id:
           description: ID of the chat
           type: integer
           example: 4
           minimum: 1
-          maximum: 65536 # Set to 65536 for convenience, could be higher / lower
-        isPrivate:
+          maximum: 65536 # Set to 65536 for convenience, could be higher / lower
+        is_private:
           description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
           type: boolean
           example: true
@@ -259,7 +273,7 @@ components:
           minLength: 0
           maxLength: 4294967296
           example: The children of Andrew
-        groupDescription:
+        group_description:
           description: Description of the group. Visible only if the chat is a group
           type: string
           example: We are such a nice group!
@@ -280,21 +294,21 @@ components:
           maxItems: 4294967296
           items:
             $ref: "#/components/schemas/Message"
-        lastSent:
+        last_sent:
           description: ID of the last sent message
           type: integer
           example: 2
           minimum: 1
           maximum: 4294967296
       required:
-        - id
-        - isPrivate
+        - chat_id
+        - is_private
         - users
         - name
-        - groupDescription
+        - group_description
         - photo
         - messages
-        - lastSent
+        - last_sent
   
 security:
   - bearerAuth: []
@@ -381,7 +395,7 @@ paths:
                 type: object
                 description: Object containing an array of chats to which the user belongs
                 properties:
-                  userChats:
+                  user_chats:
                     type: array
                     description: Array containing the chats to which the user belongs
                     items: 
@@ -389,7 +403,7 @@ paths:
                     minItems: 0
                     maxItems: 4294967296
                 required: 
-                  - userChats
+                  - user_chats
         
         '404':
           description: |
@@ -417,7 +431,7 @@ paths:
               type: object
               description: Object containing the new username of the user
               properties:
-                newUsername:
+                new_username:
                   type: string
                   description: New ID
                   pattern: '^.*?$'
@@ -455,7 +469,7 @@ paths:
               type: object
               description: Object containing the new display name of the user
               properties:
-                newDisplayName:
+                new_display_name:
                   type: string
                   description: New display name
                   pattern: '^.*?$'
@@ -493,7 +507,7 @@ paths:
               type: object
               description: Object containing the new photo of the user
               properties:
-                newPhoto:
+                new_photo:
                   type: string
                   description: The new photo of the user
                   minLength: 0
@@ -515,7 +529,7 @@ paths:
                 $ref: "#/components/schemas/User"
 
   /user/{user_id}/bio:
-    # POST = setMyBio
+    # POST = setMyBio
     parameters:
       - $ref: "#/components/parameters/user_id"
     
@@ -532,7 +546,7 @@ paths:
               description: Object containing the new bio of the user
               type: object
               properties:
-                newBio:
+                new_bio:
                   type: string
                   description: The new bio of the user
                   pattern: '^.*$'
@@ -567,7 +581,7 @@ paths:
             schema:
               type: object
               properties:
-                isPrivate:
+                is_private:
                   description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
                   type: boolean
                   example: true
@@ -588,7 +602,7 @@ paths:
                   minLength: 0
                   maxLength: 4294967296
                   example: The children of Andrew
-                groupDescription:
+                group_description:
                   description: Description of the group. Visible only if the chat is a group
                   type: string
                   example: We are such a nice group!
@@ -638,7 +652,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Chat"
-        
+
+        '400':
+          description: |
+            The specified chat_id is not valid
+
         '404':
           description: |
             The chat does not exist
@@ -684,7 +702,7 @@ paths:
               type: object
               description: Object containing the username of the user that must be added
               properties:
-                newUsername:
+                new_user:
                   type: string
                   description: User to be added
                   pattern: '^.*?$'
@@ -712,7 +730,7 @@ paths:
   /chat/{chat_id}/name:
     parameters:
         - $ref: "#/components/parameters/chat_id"
-    # POST = setGroupName
+    # POST = setGroupName
     
     post:
       tags: ["Chats", "Chat management"]
@@ -727,7 +745,7 @@ paths:
               type: object
               description: New name of the group, as a string whose length must be smaller than 4096 characters
               properties:
-                newName:
+                new_name:
                   type: string
                   description: New name of the group
                   pattern: '^.*$'
@@ -749,7 +767,7 @@ paths:
                 type: object
                 description: New name of the group
                 properties:
-                  newName:
+                  new_name:
                     type: string
                     description: New name of the group
                     pattern: '^.*$'
@@ -775,7 +793,7 @@ paths:
               type: object
               description: New photo of the group
               properties:
-                newPhoto:
+                new_photo:
                   type: string
                   format: byte
                   pattern: '^.*$'
@@ -797,7 +815,7 @@ paths:
                 type: object
                 description: New photo of the group
                 properties:
-                  newPhoto:
+                  new_photo:
                     type: string
                     format: byte
                     pattern: '^.*$'
@@ -823,7 +841,7 @@ paths:
               type: object
               description: New description of the group
               properties:
-                newDescription:
+                new_description:
                   type: string
                   minLength: 0
                   maxLength: 4098
@@ -845,7 +863,7 @@ paths:
                 type: object
                 description: New description of the group
                 properties:
-                  newDescription:
+                  new_description:
                     type: string
                     minLength: 0
                     maxLength: 4098
@@ -853,15 +871,11 @@ paths:
                     description: Description of the group. New lines aren't allowed
                     example: A new group! How cool!
 
-  /message/{message_id}:
-    parameters:
-      - $ref: "#/components/parameters/message_id"
+  /message:
     # PUT = sendMessage
-    # DELETE = deleteMessage
-    # POST = forwardMessage
 
     put:
-      tags: ["Chats"]
+      tags: [ "Chats" ]
       summary: Send a message to the chat
       operationId: sendMessage
       description: Sends a message to the chat given the messageId
@@ -870,7 +884,53 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Message"
+              type: object
+              description: A message to be sent. Is considered as primordial when sent through the API
+              properties:
+                sender:
+                  description: ID of the sender
+                  type: integer
+                  example: 2
+                  minimum: 1
+                  maximum: 2048
+                chat:
+                  description: ID of the chat where to send
+                  type: integer
+                  example: 4
+                  minimum: 1
+                  maximum: 65536
+                content:
+                  description: Text of the message
+                  type: string
+                  pattern: '^.*$'
+                  minLength: 1
+                  maxLength: 65536
+                  example: Lorem ipsum dolor sit est cum magna gratia
+                timestamp:
+                  description: Timestamp of when the message was sent
+                  type: string
+                  # format: date-time
+                  pattern: '^[0-9]*$'
+                  minLength: 0
+                  maxLength: 44294967296
+                  example: '1731321854'
+                photo:
+                  description: Photo sent with the message, if any is sent. Can be null
+                  type: string
+                  format: byte
+                  pattern: '^.*$'
+                  minLength: 0
+                  maxLength: 44294967296
+                forwarded:
+                  description: Specifies whether the message was forwarded
+                  type: boolean
+                  example: false
+                replying:
+                  description: ID of the message to which the user is replying
+                  type: integer
+                  example: 4
+                  minimum: 0
+                  maximum: 65536
         required: true
       responses:
         "200":
@@ -888,6 +948,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+
+  /message/{message_id}:
+    parameters:
+      - $ref: "#/components/parameters/message_id"
+    # DELETE = deleteMessage
+    # POST = forwardMessage
 
     delete:
       tags: ["Chats"]
@@ -935,8 +1001,8 @@ paths:
   /comment/{comment_id}:
     parameters:
       - $ref: "#/components/parameters/comment_id"
-    # POST = commentMessage
-    # DELETE = uncommentMessage
+    # POST = commentMessage
+    # DELETE = uncommentMessage
 
     post:
       tags: ["Chats"]

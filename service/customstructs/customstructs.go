@@ -1,26 +1,37 @@
 package customstructs
 
 type User struct {
-	Name        string
-	DisplayName string
-	Biography   string
-	ProfilePic  string
+	Name        string `json:"user_id"`
+	DisplayName string `json:"display_name"`
+	Biography   string `json:"biography"`
+	ProfilePic  string `json:"profile_pic"`
 }
 
 type Message struct {
-	ID        int32
-	Sender    User
-	Content   string
-	ChatID    int32
-	Timestamp string
-	Photo     string
-	Forwarded bool
-	AnswerTo  int32
+	ID         int32
+	Sender     User   `json:"sender"`
+	Content    string `json:"content"`
+	ChatID     int32  `json:"chat"`
+	Timestamp  string `json:"timestamp"`
+	Photo      string `json:"photo"`
+	Forwarded  bool   `json:"forwarded"`
+	ReplyingTo int32  `json:"replying"`
 
 	Received  []User
 	Read      []User
 	Deleted   bool
 	Reactions []Reaction
+}
+
+type PrimordialMessage struct {
+	ID         int32
+	Sender     string `json:"sender"`
+	Content    string `json:"content"`
+	ChatID     int32  `json:"chat"`
+	Timestamp  string `json:"timestamp"`
+	Photo      string `json:"photo"`
+	Forwarded  bool   `json:"forwarded"`
+	ReplyingTo int32  `json:"replying"`
 }
 
 type Reaction struct {

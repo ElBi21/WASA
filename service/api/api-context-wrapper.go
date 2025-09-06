@@ -1,19 +1,11 @@
 package api
 
-import (
-	"github.com/gofrs/uuid"
-	"github.com/julienschmidt/httprouter"
-	"github.com/sirupsen/logrus"
-	"net/http"
-	"wasatext/service/api/reqcontext"
-)
-
 // httpRouterHandler is the signature for functions that accepts a reqcontext.RequestContext in addition to those
 // required by the httprouter package.
-type httpRouterHandler func(http.ResponseWriter, *http.Request, httprouter.Params, reqcontext.RequestContext)
+// type httpRouterHandler func(http.ResponseWriter, *http.Request, httprouter.Params, reqcontext.RequestContext)
 
 // wrap parses the request and adds a reqcontext.RequestContext instance related to the request.
-func (rt *_router) wrap(fn httpRouterHandler) func(http.ResponseWriter, *http.Request, httprouter.Params) {
+/*func (rt *_router) wrap(fn httpRouterHandler) func(http.ResponseWriter, *http.Request, httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		reqUUID, err := uuid.NewV4()
 		if err != nil {
@@ -35,3 +27,4 @@ func (rt *_router) wrap(fn httpRouterHandler) func(http.ResponseWriter, *http.Re
 		fn(w, r, ps, ctx)
 	}
 }
+*/

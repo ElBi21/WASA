@@ -18,16 +18,17 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/user/:user_id/photo", rt.setMyPhoto)
 
 	rt.router.PUT("/chat", rt.createConversation)
-	/*
-		rt.router.GET("/chat/:chat_id", rt.getConversation)
+	rt.router.GET("/chat/:chat_id", rt.getConversation)
 
-		rt.router.POST("/chat/:chat_id", rt.leaveGroup)
+	rt.router.PUT("/message", rt.sendMessage)
+
+	/*	rt.router.POST("/chat/:chat_id", rt.leaveGroup)
 		rt.router.POST("/chat/:chat_id/users", rt.addToGroup)
 		rt.router.POST("/chat/:chat_id/name", rt.setGroupName)
 		rt.router.POST("/chat/:chat_id/photo", rt.setGroupPhoto)
 		rt.router.POST("/chat/:chat_id/description", rt.setGroupDescription)
 
-		rt.router.PUT("/message/:message_id", rt.sendMessage)
+
 		rt.router.DELETE("/message/:message_id", rt.deleteMessage)
 		rt.router.POST("/message/:message_id", rt.forwardMessage)
 

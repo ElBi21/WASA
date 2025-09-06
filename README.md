@@ -20,7 +20,7 @@
 | `setMyBio` (Extra)               | ✓       | ✓            | ×              |
 | `getMyConversations`             | ✓       | ✓            | ×              |
 | `createConversation`             | ✓       | ✓            | ×              |
-| `getConversation`                | ×       | ×            | ×              |
+| `getConversation`                | ✓       | ✓            | ×              |
 | `sendMessage`                    | ×       | ×            | ×              |
 | `forwardMessage`                 | ×       | ×            | ×              |
 | `commentMessage`                 | ×       | ×            | ×              |
