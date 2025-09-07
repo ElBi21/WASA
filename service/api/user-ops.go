@@ -48,7 +48,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Take the user ID from the path of the request
+	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
 		NewUserName string `json:"new_username"`
@@ -68,7 +68,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Take the user ID from the path of the request
+	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
 		NewDisplayName string `json:"new_display_name"`
@@ -88,7 +88,7 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 
 // setMyBio sets a new biography
 func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Take the user ID from the path of the request
+	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
 		NewBio string `json:"new_bio"`
@@ -108,7 +108,7 @@ func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httproute
 
 // setMyPhoto sets a new profile picture for the user
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Take the user ID from the path of the request
+	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
 		NewPhoto string `json:"new_photo"`
@@ -128,7 +128,7 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
 
 // getMyConversations retrieves all the chats where the user belongs
 func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Take the user ID from the path of the request
+	// Take the user ChatID from the path of the request
 	userID := ps[0].Value
 
 	// Check if user exists, in case return 404

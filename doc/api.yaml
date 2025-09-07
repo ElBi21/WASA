@@ -17,6 +17,10 @@ tags:
   - name: Settings
     description: Operations involving settings
 
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
 components:
   securitySchemes:
     bearerAuth:
@@ -87,7 +91,7 @@ components:
           description: Name of the user
           type: string
           pattern: '^.*?$'
-          minLength: 3
+          minLength: 1
           maxLength: 32
           example: FairyMaria
         biography:
@@ -164,7 +168,7 @@ components:
           maxItems: 44294967296
           items:
             $ref: "#/components/schemas/User"
-        read:
+        seen:
           description: List of users who read the message
           type: array
           minItems: 0
@@ -199,7 +203,7 @@ components:
         - timestamp
         - photo
         - received
-        - read
+        - seen
         - deleted
         - forwarded
         - reactions
@@ -224,11 +228,12 @@ components:
           minimum: 1
           maximum: 1048576
         sender:
-          description: ID of the sending user
-          type: integer
-          example: 5
-          minimum: 1
-          maximum: 2048
+          description: ID of the user
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
         content:
           description: Content of the reaction
           type: string
@@ -473,7 +478,7 @@ paths:
                   type: string
                   description: New display name
                   pattern: '^.*?$'
-                  minLength: 3
+                  minLength: 1
                   maxLength: 32
                   example: FairyNewMaria
         required: true
@@ -889,10 +894,11 @@ paths:
               properties:
                 sender:
                   description: ID of the sender
-                  type: integer
-                  example: 2
-                  minimum: 1
-                  maximum: 2048
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Maria
                 chat:
                   description: ID of the chat where to send
                   type: integer
@@ -906,14 +912,6 @@ paths:
                   minLength: 1
                   maxLength: 65536
                   example: Lorem ipsum dolor sit est cum magna gratia
-                timestamp:
-                  description: Timestamp of when the message was sent
-                  type: string
-                  # format: date-time
-                  pattern: '^[0-9]*$'
-                  minLength: 0
-                  maxLength: 44294967296
-                  example: '1731321854'
                 photo:
                   description: Photo sent with the message, if any is sent. Can be null
                   type: string
@@ -921,10 +919,6 @@ paths:
                   pattern: '^.*$'
                   minLength: 0
                   maxLength: 44294967296
-                forwarded:
-                  description: Specifies whether the message was forwarded
-                  type: boolean
-                  example: false
                 replying:
                   description: ID of the message to which the user is replying
                   type: integer
@@ -961,17 +955,13 @@ paths:
       operationId: deleteMessage
       description: Deletes a message from the chat, given the messageId
       responses:
-        "204":
+        "200":
           description: |
             The message has been deleted successfully
 
-        "408":
+        "400":
           description: |
             Couldn't delete the message
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
 
     post:
       tags: ["Chats"]
@@ -983,12 +973,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Chat"
+              type: object
+              properties:
+                sender:
+                  description: ID of the sender
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Maria
+                chat_id:
+                  description: ID of the chat to which the message should be forwarded
+                  type: integer
+                  example: 4
+                  minimum: 1
+                  maximum: 65536
         required: true
       responses:
         "204":
           description: |
             The message has been forwarded to the chat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
         "403":
           description: |
@@ -998,13 +1006,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Message"
 
-  /comment/{comment_id}:
-    parameters:
-      - $ref: "#/components/parameters/comment_id"
-    # POST = commentMessage
-    # DELETE = uncommentMessage
+  /comment:
+    # PUT = commentMessage
 
-    post:
+    put:
       tags: ["Chats"]
       summary: Comment a message
       operationId: commentMessage
@@ -1014,20 +1019,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Reaction"
+              type: object
+              properties:
+                message:
+                  description: Message ID to which the reaction corresponds
+                  type: integer
+                  example: 2
+                  minimum: 1
+                  maximum: 1048576
+                sender:
+                  description: ID of the user
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Maria
+                content:
+                  description: Content of the reaction
+                  type: string
+                  pattern: '^.*$'
+                  minLength: 1
+                  maxLength: 16384
         required: true
       responses:
-        "204":
+        "200":
           description: |
             The comment has been added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reaction"
 
-        "408":
+        "400":
           description: |
             There was an error while trying to add a reaction
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Reaction"
+
+  /comment/{comment_id}:
+    parameters:
+      - $ref: "#/components/parameters/comment_id"
+    # DELETE = uncommentMessage
 
     delete:
       tags: ["Chats"]
@@ -1039,10 +1073,6 @@ paths:
           description: |
             The reaction has been removed successfully
 
-        "403":
+        "400":
           description: |
             Couldn't delete the reaction. Are you part of the chat?
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Reaction"

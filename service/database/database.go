@@ -37,16 +37,24 @@ import (
 	"errors"
 	"fmt"
 	"wasatext/service/customstructs"
+
+	"github.com/ucarion/emoji"
 )
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
-	// Read
+	// Seen
 	GetUserByName(queryUser string) (customstructs.User, error)
 	GetSession(user customstructs.User) (string, error)
 	GetUserConversations(user string) (chats []customstructs.Chat)
 	GetConversation(chatId int) (customstructs.Chat, error)
 	GetChatUsers(chatId int) []customstructs.User
+	GetMessage(messageID int, forgetRecvSeen bool) (customstructs.Message, error)
+	AddReceivedMessage(messageID int, user string) error
+	AddSeenMessage(messageID int, user string) error
+	GetWhoReceivedMessage(messageID int) ([]customstructs.User, error)
+	GetWhoSawMessage(messageID int) ([]customstructs.User, error)
+	GetReactions(messageID int) ([]customstructs.Reaction, error)
 
 	// Write
 	RegisterNewUser(newUserName string) (customstructs.User, error)
@@ -57,9 +65,14 @@ type AppDatabase interface {
 	CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error)
 	AddUserToGroup(chat string, user string) error
 	CreateMessage(newMessage customstructs.PrimordialMessage) (customstructs.Message, error)
+	ForwardMessage(message customstructs.Message) (int, error)
+	CreateReaction(message int, content emoji.Emoji, user string) (customstructs.Reaction, error)
+	DeleteReaction(reactionID int) error
+	DeleteMessage(messageID int) error
 
 	// Misc
 	Ping() error
+	GetLastReactionID() (ID int)
 }
 
 type appdbimpl struct {

@@ -21,11 +21,11 @@
 | `getMyConversations`             | ✓       | ✓            | ×              |
 | `createConversation`             | ✓       | ✓            | ×              |
 | `getConversation`                | ✓       | ✓            | ×              |
-| `sendMessage`                    | ×       | ×            | ×              |
-| `forwardMessage`                 | ×       | ×            | ×              |
-| `commentMessage`                 | ×       | ×            | ×              |
-| `uncommentMessage`               | ×       | ×            | ×              |
-| `deleteMessage`                  | ×       | ×            | ×              |
+| `sendMessage`                    | ✓       | ✓            | ×              |
+| `forwardMessage`                 | ✓       | ✓            | ×              |
+| `commentMessage`                 | ✓       | ✓            | ×              |
+| `uncommentMessage`               | ✓       | ✓            | ×              |
+| `deleteMessage`                  | ✓       | ✓            | ×              |
 | `addToGroup`                     | ×       | ×            | ×              |
 | `setGroupDescription` (Extra)    | ×       | ×            | ×              |
 | `leaveGroup`                     | ×       | ×            | ×              |

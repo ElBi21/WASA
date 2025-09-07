@@ -5,9 +5,9 @@ import (
 )
 
 func (msg PrimordialMessage) Check() error {
-	// Check length of sender ID
+	// Check length of sender ChatID
 	if !(len(msg.Sender) >= 1 && len(msg.Sender) <= 16) {
-		return fmt.Errorf("sender ID has unadmissible length")
+		return fmt.Errorf("sender ChatID has unadmissible length")
 	}
 
 	// Check length of content
@@ -17,7 +17,7 @@ func (msg PrimordialMessage) Check() error {
 
 	// Check length of chatID
 	if !(msg.ChatID >= 1 && msg.ChatID <= 65536) {
-		return fmt.Errorf("chat has unadmissible ID")
+		return fmt.Errorf("chat has unadmissible ChatID")
 	}
 
 	// Check length of timestamp

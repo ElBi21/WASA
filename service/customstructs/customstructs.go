@@ -1,5 +1,7 @@
 package customstructs
 
+import "github.com/ucarion/emoji"
+
 type User struct {
 	Name        string `json:"user_id"`
 	DisplayName string `json:"display_name"`
@@ -8,41 +10,41 @@ type User struct {
 }
 
 type Message struct {
-	ID         int32
+	ID         int    `json:"message_id"`
 	Sender     User   `json:"sender"`
 	Content    string `json:"content"`
-	ChatID     int32  `json:"chat"`
+	ChatID     int    `json:"chat"`
 	Timestamp  string `json:"timestamp"`
 	Photo      string `json:"photo"`
 	Forwarded  bool   `json:"forwarded"`
-	ReplyingTo int32  `json:"replying"`
+	ReplyingTo int    `json:"replying"`
 
-	Received  []User
-	Read      []User
-	Deleted   bool
-	Reactions []Reaction
+	Received  []User     `json:"received"`
+	Seen      []User     `json:"seen"`
+	Deleted   bool       `json:"deleted"`
+	Reactions []Reaction `json:"reactions"`
 }
 
 type PrimordialMessage struct {
-	ID         int32
+	ID         int
 	Sender     string `json:"sender"`
 	Content    string `json:"content"`
-	ChatID     int32  `json:"chat"`
+	ChatID     int    `json:"chat"`
 	Timestamp  string `json:"timestamp"`
 	Photo      string `json:"photo"`
 	Forwarded  bool   `json:"forwarded"`
-	ReplyingTo int32  `json:"replying"`
+	ReplyingTo int    `json:"replying"`
 }
 
 type Reaction struct {
-	ID         int32
-	RefMessage Message
-	Sender     User
-	Content    string
+	ID         int         `json:"reaction_id"`
+	RefMessage int         `json:"message"`
+	Sender     User        `json:"sender"`
+	Content    emoji.Emoji `json:"content"`
 }
 
 type Chat struct {
-	ID               int32
+	ID               int
 	IsPrivate        bool
 	Users            []User
 	Name             string

@@ -56,7 +56,7 @@ func (db *appdbimpl) AddUserToGroup(chat string, user string) error {
 	return err
 }
 
-// GetConversation returns a chat given its ID. It also retrieves the last sent message
+// GetConversation returns a chat given its ChatID. It also retrieves the last sent message
 func (db *appdbimpl) GetConversation(chatId int) (customstructs.Chat, error) {
 	var returnChat customstructs.Chat
 
