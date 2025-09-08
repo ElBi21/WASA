@@ -61,14 +61,19 @@ type AppDatabase interface {
 	SetNewUserName(user string, newUserName string) error
 	SetNewDisplayName(user string, newDisplayName string) error
 	SetNewBiography(user string, newBiography string) error
-	SetNewPhoto(user string, newPhoto string) error
+	SetNewUserPhoto(user string, newPhoto string) error
 	CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error)
-	AddUserToGroup(chat string, user string) error
+	AddUserToGroup(chat int, user string) error
 	CreateMessage(newMessage customstructs.PrimordialMessage) (customstructs.Message, error)
 	ForwardMessage(message customstructs.Message) (int, error)
 	CreateReaction(message int, content emoji.Emoji, user string) (customstructs.Reaction, error)
 	DeleteReaction(reactionID int) error
 	DeleteMessage(messageID int) error
+	SetNewGroupDescription(chatID int, newDescription string) error
+	RemoveUserFromGroup(chatID int, userID string) error
+	DeleteChatAndMessages(chat customstructs.Chat) (error, error)
+	SetNewGroupName(chatID int, newName string) error
+	SetNewGroupPhoto(chatID int, newPhoto string) error
 
 	// Misc
 	Ping() error

@@ -9,6 +9,16 @@ import (
 
 // CreateConversation creates a new chat in the DB. The chat will be created only if all the users exist
 func (db *appdbimpl) CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error) {
+	var ID int
+	err := db.c.QueryRow(`SELECT id FROM Chats ORDER BY id DESC`).Scan(&ID)
+
+	// If there exists no chats, then this chat is the first ever created
+	if errors.Is(err, sql.ErrNoRows) {
+		ID = 1
+	} else {
+		ID += 1
+	}
+
 	// Create instance of struct that will be used
 	queryChat := customstructs.Chat{
 		IsPrivate:        private,
@@ -27,9 +37,9 @@ func (db *appdbimpl) CreateConversation(private bool, users []string, name strin
 	}
 
 	// After checking, create chat
-	_, err := db.c.Exec(
-		"INSERT INTO Chats (isPrivate, name, description, photo) VALUES (?, ?, ?, ?);",
-		private, name, description, photo)
+	_, err = db.c.Exec(
+		"INSERT INTO Chats (id, isPrivate, name, description, photo) VALUES (?, ?, ?, ?, ?);",
+		ID, private, name, description, photo)
 
 	if err != nil {
 		return queryChat,
@@ -38,7 +48,7 @@ func (db *appdbimpl) CreateConversation(private bool, users []string, name strin
 
 	// Add users to the chat
 	for _, user := range users {
-		_ = db.AddUserToGroup(name, user)
+		_ = db.AddUserToGroup(ID, user)
 		userStruct, _ := db.GetUserByName(user)
 		queryChat.Users = append(queryChat.Users, userStruct)
 	}
@@ -48,7 +58,7 @@ func (db *appdbimpl) CreateConversation(private bool, users []string, name strin
 
 // AddUserToGroup adds a given user into a given chat. The callee must make sure that the chat is not private
 // (aside from CreateConversation, which will use this function to add the users to any kind of chat)
-func (db *appdbimpl) AddUserToGroup(chat string, user string) error {
+func (db *appdbimpl) AddUserToGroup(chat int, user string) error {
 	_, err := db.c.Exec(
 		"INSERT INTO ChatsUsers (chat, user) VALUES (?, ?);",
 		chat, user)
@@ -76,17 +86,22 @@ func (db *appdbimpl) GetConversation(chatId int) (customstructs.Chat, error) {
 		&lastMsg.ID, &userID, &lastMsg.Content, &lastMsg.ChatID, &lastMsg.Timestamp, &lastMsg.Photo,
 		&lastMsg.Forwarded, &lastMsg.ReplyingTo, &lastMsg.Deleted)
 
+	// If there is a last sent message
 	if !errors.Is(err, sql.ErrNoRows) {
 		lastMsg.Sender, _ = db.GetUserByName(userID)
-	}
 
-	// Set last sent message
-	returnChat.LastSent = lastMsg
+		// Set last sent message
+		returnChat.LastSent = lastMsg
+
+		// Retrieve who received and saw last message
+		returnChat.LastSent.Received, _ = db.GetWhoReceivedMessage(returnChat.LastSent.ID)
+		returnChat.LastSent.Seen, _ = db.GetWhoSawMessage(returnChat.LastSent.ID)
+	}
 
 	// Retrieve users from chat
 	returnChat.Users = db.GetChatUsers(chatId)
 
-	return returnChat, err
+	return returnChat, nil
 }
 
 // GetChatUsers retrieves the users belonging to a chat
@@ -107,4 +122,40 @@ func (db *appdbimpl) GetChatUsers(chatId int) []customstructs.User {
 	}
 
 	return users
+}
+
+// SetNewGroupDescription sets a new description for a group
+func (db *appdbimpl) SetNewGroupDescription(chatID int, newDescription string) error {
+	_, err := db.c.Exec("UPDATE Chats SET description = ? WHERE id = ?", newDescription, chatID)
+
+	return err
+}
+
+// RemoveUserFromGroup removes a user from a group
+func (db *appdbimpl) RemoveUserFromGroup(chatID int, userID string) error {
+	_, err := db.c.Exec("DELETE FROM ChatsUsers WHERE chat = ? AND user = ?",
+		chatID, userID)
+
+	return err
+}
+
+// DeleteChatAndMessages removes all the messages belonging to a chat and the chat itself
+func (db *appdbimpl) DeleteChatAndMessages(chat customstructs.Chat) (error, error) {
+	_, errRemoveChat := db.c.Exec("DELETE FROM Chats WHERE id = ?", chat.ID)
+	_, errRemoveMessages := db.c.Exec("DELETE FROM Messages WHERE chat = ?", chat.ID)
+	return errRemoveChat, errRemoveMessages
+}
+
+// SetNewGroupName sets a new name for a specific group
+func (db *appdbimpl) SetNewGroupName(chatID int, newName string) error {
+	_, err := db.c.Exec("UPDATE Chats SET name = ? WHERE id = ?", newName, chatID)
+
+	return err
+}
+
+// SetNewGroupPhoto sets a new photo for a specific group
+func (db *appdbimpl) SetNewGroupPhoto(chatID int, newPhoto string) error {
+	_, err := db.c.Exec("UPDATE Chats SET photo = ? WHERE id = ?", newPhoto, chatID)
+
+	return err
 }

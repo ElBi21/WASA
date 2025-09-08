@@ -26,12 +26,12 @@
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
 | `deleteMessage`                  | ✓       | ✓            | ×              |
-| `addToGroup`                     | ×       | ×            | ×              |
-| `setGroupDescription` (Extra)    | ×       | ×            | ×              |
-| `leaveGroup`                     | ×       | ×            | ×              |
-| `setGroupName`                   | ×       | ×            | ×              |
+| `addToGroup`                     | ✓       | ✓            | ×              |
+| `setGroupDescription` (Extra)    | ✓       | ✓            | ×              |
+| `leaveGroup`                     | ✓       | ✓            | ×              |
+| `setGroupName`                   | ✓       | ✓            | ×              |
 | `setMyPhoto`                     | ✓       | ✓            | ×              |
-| `setGroupPhoto`                  | ×       | ×            | ×              |
+| `setGroupPhoto`                  | ✓       | ✓            | ×              |
 
 ---
 

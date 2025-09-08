@@ -84,7 +84,7 @@ func (db *appdbimpl) SetNewBiography(user string, newBiography string) error {
 
 // SetNewPhoto changes the profile picture of a user, given the user and a new biography.
 // The base64 encoding must be smaller than 4294967296 characters
-func (db *appdbimpl) SetNewPhoto(user string, newPhoto string) error {
+func (db *appdbimpl) SetNewUserPhoto(user string, newPhoto string) error {
 	_, err := db.c.Exec("UPDATE Users SET photo = ? WHERE name = ?",
 		newPhoto, user)
 

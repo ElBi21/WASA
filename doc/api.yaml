@@ -641,7 +641,6 @@ paths:
 
   /chat/{chat_id}:
     # GET = getConversation
-    # POST = leaveGroup
     parameters:
       - $ref: "#/components/parameters/chat_id"
 
@@ -670,28 +669,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/Chat"
 
-    delete:
-      tags: ["Chats", "Chat management"]
-      summary: Leave the group
-      operationId: leaveGroup
-      description: Leave the group
-      responses:
-        "204":
-          description: |
-            The user left the group successfully
-
-        '408':
-          description: |
-            There was an error while trying to leave the chat
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Chat"
 
   /chat/{chat_id}/users:
     parameters:
       - $ref: "#/components/parameters/chat_id"
     # POST = addToGroup
+    # DELETE = leaveGroup
 
     post:
       tags: ["Chats"]
@@ -724,6 +707,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Chat"
 
+        '400':
+          description: |
+            The user has already been added to the group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
         '404':
           description: |
             The user does not exist
@@ -732,9 +723,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
+    delete:
+      tags: [ "Chats", "Chat management" ]
+      summary: Leave the group
+      operationId: leaveGroup
+      description: Leave the group
+      requestBody:
+        description: |
+          User to be added to the group
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Object containing the username of the user that must be added
+              properties:
+                leaving_user:
+                  type: string
+                  description: User to be removed
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                  example: Marco
+        required: true
+
+      responses:
+        "200":
+          description: |
+            The user left the group successfully
+
+        '400':
+          description: |
+            There was an error while trying to leave the chat
+
   /chat/{chat_id}/name:
     parameters:
-        - $ref: "#/components/parameters/chat_id"
+    - $ref: "#/components/parameters/chat_id"
     # POST = setGroupName
     
     post:
@@ -759,31 +782,26 @@ paths:
                   example: The new fantastic four
         required: true
       responses:
-        "204":
+        "200":
           description: |
             The group name has been changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
         
-        '408':
+        '404':
           description: |
             There has been an error while trying to update the group name. Perhaps this is a private chat?
           content:
             application/json:
               schema:
-                type: object
-                description: New name of the group
-                properties:
-                  new_name:
-                    type: string
-                    description: New name of the group
-                    pattern: '^.*$'
-                    minLength: 1
-                    maxLength: 4096
-                    example: The new fantastic four
+                $ref: "#/components/schemas/Chat"
 
   /chat/{chat_id}/photo:
     parameters:
       - $ref: "#/components/parameters/chat_id"
-    # POST = setGroupPhoto
+    # POST = setGroupPhoto
     
     post:
       tags: ["Chats", "Chat management"]
@@ -807,33 +825,28 @@ paths:
                   maxLength: 4294967296
         required: true
       responses:
-        "204":
+        "200":
           description: |
             The photo of the group has been changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
-        '408':
+        '400':
           description: |
             There has been an error while trying to update the chat photo. Perhaps this is a private chat?
           content:
             application/json:
               schema:
-                type: object
-                description: New photo of the group
-                properties:
-                  new_photo:
-                    type: string
-                    format: byte
-                    pattern: '^.*$'
-                    description: New photo of the group, as a string
-                    minLength: 0
-                    maxLength: 4294967296
+                $ref: "#/components/schemas/Chat"
 
   /chat/{chat_id}/description:
     parameters:
     - $ref: "#/components/parameters/chat_id"
     # POST = setGroupDescription
 
-    put:
+    post:
       tags: ["Chats", "Chat management"]
       summary: Change the description of the group
       operationId: setGroupDescription
@@ -855,26 +868,21 @@ paths:
                   example: A new group! How cool!
         required: true
       responses:
-        "204":
+        "200":
           description: |
             The description of the group has been changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
-        '408':
+        '400':
           description: |
             There has been an error while trying to update the chat description. Perhaps this is a private chat?
           content:
             application/json:
               schema:
-                type: object
-                description: New description of the group
-                properties:
-                  new_description:
-                    type: string
-                    minLength: 0
-                    maxLength: 4098
-                    pattern: '^.*$'
-                    description: Description of the group. New lines aren't allowed
-                    example: A new group! How cool!
+                $ref: "#/components/schemas/Chat"
 
   /message:
     # PUT = sendMessage

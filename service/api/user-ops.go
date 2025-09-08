@@ -119,7 +119,7 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
 
 	// Check for new biography length
 	if len(queryInput.NewPhoto) <= 4294967296 {
-		_ = rt.db.SetNewPhoto(userId, queryInput.NewPhoto)
+		_ = rt.db.SetNewUserPhoto(userId, queryInput.NewPhoto)
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)

@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -16,7 +17,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 	// Get body of request
 	queryBody, _ := io.ReadAll(r.Body)
 	var newMsg customstructs.PrimordialMessage
-	newMsg.Timestamp = time.Now().Format("2006-01-02 15:04:05")
+	newMsg.Timestamp = time.Now().Format("2006-01-02 15:04:05.000")
 	newMsg.Forwarded = false
 
 	err := json.Unmarshal(queryBody, &newMsg)
@@ -33,6 +34,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// Return error code if failed to create message on the database
 	if err != nil {
+		fmt.Println("Hey")
 		w.WriteHeader(http.StatusTeapot)
 		jsonReturn, _ := json.Marshal(message)
 		_, _ = w.Write(jsonReturn)
