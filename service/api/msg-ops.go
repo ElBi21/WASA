@@ -12,6 +12,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// returnEmptyMessage returns an empty message through the API
+func returnEmptyMessage(w http.ResponseWriter, errorCode int) {
+	var emptyReaction customstructs.Message
+	w.WriteHeader(errorCode)
+	jsonReturn, _ := json.Marshal(emptyReaction)
+	_, _ = w.Write(jsonReturn)
+}
+
 // sendMessage sends a message in the chat specified
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Get body of request
@@ -137,17 +145,19 @@ func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps http
 	messageID, err := strconv.Atoi(param)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyMessage(w, http.StatusBadRequest)
 		return
 	}
 
 	// Flag the message as deleted
-	err = rt.db.DeleteMessage(messageID)
+	message, err := rt.db.DeleteMessage(messageID)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyMessage(w, http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
+	jsonReturn, _ := json.Marshal(message)
+	_, _ = w.Write(jsonReturn)
 }

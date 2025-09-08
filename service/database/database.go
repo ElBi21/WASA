@@ -68,7 +68,7 @@ type AppDatabase interface {
 	ForwardMessage(message customstructs.Message) (int, error)
 	CreateReaction(message int, content emoji.Emoji, user string) (customstructs.Reaction, error)
 	DeleteReaction(reactionID int) error
-	DeleteMessage(messageID int) error
+	DeleteMessage(messageID int) (customstructs.Message, error)
 	SetNewGroupDescription(chatID int, newDescription string) error
 	RemoveUserFromGroup(chatID int, userID string) error
 	DeleteChatAndMessages(chat customstructs.Chat) (error, error)

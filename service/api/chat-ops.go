@@ -73,14 +73,16 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 
 	chatId, err := strconv.Atoi(chatIdParam)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyChat(w, http.StatusBadRequest)
+		return
 	}
 
 	// Retrieve the chat
 	chat, err := rt.db.GetConversation(chatId)
 
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		returnEmptyChat(w, http.StatusNotFound)
+		return
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
@@ -184,17 +186,13 @@ func (rt *_router) setGroupDescription(w http.ResponseWriter, r *http.Request, p
 // leaveGroup removes a user from a group
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	chatParam := ps.ByName("chat_id")
-	chatID, errParam := strconv.Atoi(chatParam)
+	leaveUserID := ps.ByName("user_id")
 
-	queryBody, _ := io.ReadAll(r.Body)
-	var queryInput struct {
-		LeavingUser string `json:"leaving_user"`
-	}
+	user, errUser := rt.db.GetUserByName(leaveUserID)
+	chatID, errParamChat := strconv.Atoi(chatParam)
 
-	errInput := json.Unmarshal(queryBody, &queryInput)
-
-	if errParam != nil || errInput != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	if errParamChat != nil || errUser != nil {
+		returnEmptyUser(w, http.StatusBadRequest)
 		return
 	}
 
@@ -202,19 +200,19 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 	chat, errChat := rt.db.GetConversation(chatID)
 
 	if errChat != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyUser(w, http.StatusBadRequest)
 		return
 	}
 
 	userIsInChat := false
 	for _, user := range chat.Users {
-		if user.Name == queryInput.LeavingUser {
+		if user.Name == leaveUserID {
 			userIsInChat = true
 		}
 	}
 
 	if !userIsInChat {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyUser(w, http.StatusBadRequest)
 		return
 	}
 
@@ -225,7 +223,7 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 			err := rt.db.RemoveUserFromGroup(chatID, user.Name)
 
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
+				returnEmptyUser(w, http.StatusBadRequest)
 				return
 			}
 
@@ -233,28 +231,32 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 			errChatDelete, errMsgDelete := rt.db.DeleteChatAndMessages(chat)
 
 			if errChatDelete != nil || errMsgDelete != nil {
-				w.WriteHeader(http.StatusBadRequest)
+				returnEmptyUser(w, http.StatusBadRequest)
 				return
 			}
 		}
 	} else {
-		err := rt.db.RemoveUserFromGroup(chatID, queryInput.LeavingUser)
+		err := rt.db.RemoveUserFromGroup(chatID, leaveUserID)
 
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			returnEmptyUser(w, http.StatusBadRequest)
 			return
 		}
 
 		// If the user is the last one in the group, delete the group and the messages
-		if len(chat.Users) == 1 && chat.Users[0].Name == queryInput.LeavingUser {
+		if len(chat.Users) == 1 && chat.Users[0].Name == leaveUserID {
 			errChatDelete, errMsgDelete := rt.db.DeleteChatAndMessages(chat)
 
 			if errChatDelete != nil || errMsgDelete != nil {
-				w.WriteHeader(http.StatusBadRequest)
+				returnEmptyUser(w, http.StatusBadRequest)
 				return
 			}
 		}
 	}
+
+	w.WriteHeader(http.StatusOK)
+	jsonReturn, _ := json.Marshal(user)
+	_, _ = w.Write(jsonReturn)
 }
 
 // setGroupName sets a new group name for a group

@@ -236,8 +236,18 @@ func (db *appdbimpl) GetWhoSawMessage(messageID int) ([]customstructs.User, erro
 }
 
 // DeleteMessage flags a message as "removed"
-func (db *appdbimpl) DeleteMessage(messageID int) error {
-	_, err := db.c.Exec("UPDATE Messages SET deleted = 1 WHERE id = ?", messageID)
+func (db *appdbimpl) DeleteMessage(messageID int) (customstructs.Message, error) {
+	message, err := db.GetMessage(messageID, false)
 
-	return err
+	if err != nil {
+		return customstructs.Message{}, err
+	}
+
+	_, err = db.c.Exec("UPDATE Messages SET deleted = 1 WHERE id = ?", messageID)
+
+	if err != nil {
+		return customstructs.Message{}, err
+	}
+
+	return message, nil
 }

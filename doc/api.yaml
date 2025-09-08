@@ -129,17 +129,18 @@ components:
           maximum: 1048576 # Could be lower or higher, had to set a maximum
         sender:
           description: ID of the sender
-          type: integer
-          example: 2
-          minimum: 1
-          maximum: 2048
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
         chat:
           description: ID of the chat
           type: integer
           example: 1
           minimum: 1
           maximum: 65536
-        content:
+        message_content:
           description: Text of the message
           type: string
           pattern: '^.*$'
@@ -234,7 +235,7 @@ components:
           minLength: 3
           maxLength: 16
           example: Maria
-        content:
+        reaction_content:
           description: Content of the reaction
           type: string
           pattern: '^.*$'
@@ -265,10 +266,7 @@ components:
           description: List of users participating to the chat
           type: array
           items:
-            description: ID of the users
-            type: integer
-            minimum: 1
-            maximum: 2048
+            $ref: "#/components/schemas/User"
           minItems: 0
           maxItems: 4294967296
         name:
@@ -390,6 +388,7 @@ paths:
       summary: Get the chats of the user
       description: Get the chats of the user specified in the user ID
       operationId: getMyConversations
+
       responses:
         "200":
           description: |
@@ -444,10 +443,12 @@ paths:
                   maxLength: 16
                   example: Maria
         required: true
+
       responses:
         "204":
           description: |
             The username has been changed successfully
+
         "418":
           description: |
             The username wasn't changed due to an error
@@ -585,6 +586,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: The details for a new chat, be it private or a group
               properties:
                 is_private:
                   description: Defines whether the chat is private or is a group (if true, the chat is private; if false, the chat is a group)
@@ -660,6 +662,10 @@ paths:
         '400':
           description: |
             The specified chat_id is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
 
         '404':
           description: |
@@ -676,7 +682,7 @@ paths:
     # POST = addToGroup
     # DELETE = leaveGroup
 
-    post:
+    put:
       tags: ["Chats"]
       summary: Add user to group
       operationId: addToGroup
@@ -723,37 +729,34 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
+
+  /chat/{chat_id}/users/{user_id}:
+    parameters:
+      - $ref: "#/components/parameters/chat_id"
+      - $ref: "#/components/parameters/user_id"
+
     delete:
       tags: [ "Chats", "Chat management" ]
       summary: Leave the group
       operationId: leaveGroup
       description: Leave the group
-      requestBody:
-        description: |
-          User to be added to the group
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Object containing the username of the user that must be added
-              properties:
-                leaving_user:
-                  type: string
-                  description: User to be removed
-                  pattern: '^.*?$'
-                  minLength: 3
-                  maxLength: 16
-                  example: Marco
-        required: true
 
       responses:
         "200":
           description: |
             The user left the group successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
         '400':
           description: |
             There was an error while trying to leave the chat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
   /chat/{chat_id}/name:
     parameters:
@@ -910,10 +913,10 @@ paths:
                 chat:
                   description: ID of the chat where to send
                   type: integer
-                  example: 4
+                  example: 1
                   minimum: 1
                   maximum: 65536
-                content:
+                message_content:
                   description: Text of the message
                   type: string
                   pattern: '^.*$'
@@ -966,10 +969,18 @@ paths:
         "200":
           description: |
             The message has been deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
         "400":
           description: |
             Couldn't delete the message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
     post:
       tags: ["Chats"]
@@ -982,6 +993,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: Chat to which the message should be forwarded, and forwarding user
               properties:
                 sender:
                   description: ID of the sender
@@ -998,7 +1010,7 @@ paths:
                   maximum: 65536
         required: true
       responses:
-        "204":
+        "200":
           description: |
             The message has been forwarded to the chat
           content:
@@ -1028,6 +1040,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: Details for a new reaction
               properties:
                 message:
                   description: Message ID to which the reaction corresponds
@@ -1042,7 +1055,7 @@ paths:
                   minLength: 3
                   maxLength: 16
                   example: Maria
-                content:
+                reaction_content:
                   description: Content of the reaction
                   type: string
                   pattern: '^.*$'
@@ -1084,3 +1097,7 @@ paths:
         "400":
           description: |
             Couldn't delete the reaction. Are you part of the chat?
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reaction"

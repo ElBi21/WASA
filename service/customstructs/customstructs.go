@@ -40,7 +40,7 @@ type Reaction struct {
 	ID         int         `json:"reaction_id"`
 	RefMessage int         `json:"message"`
 	Sender     User        `json:"sender"`
-	Content    emoji.Emoji `json:"content"`
+	Content    emoji.Emoji `json:"reaction_content"`
 }
 
 type Chat struct {

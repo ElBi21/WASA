@@ -11,7 +11,7 @@ import (
 	"github.com/ucarion/emoji"
 )
 
-func endWithEmptyReaction(w http.ResponseWriter, errorCode int) {
+func returnEmptyReaction(w http.ResponseWriter, errorCode int) {
 	var emptyReaction customstructs.Reaction
 	w.WriteHeader(errorCode)
 	jsonReturn, _ := json.Marshal(emptyReaction)
@@ -23,7 +23,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	var queryInput struct {
 		Message int    `json:"message"`
 		Sender  string `json:"sender"`
-		Content string `json:"content"`
+		Content string `json:"reaction_content"`
 	}
 
 	queryBody, _ := io.ReadAll(r.Body)
@@ -33,7 +33,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	reactionContent, isItValid := emoji.Lookup(queryInput.Content)
 
 	if err != nil || !isItValid {
-		endWithEmptyReaction(w, http.StatusBadRequest)
+		returnEmptyReaction(w, http.StatusBadRequest)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	_, errMsg := rt.db.GetMessage(queryInput.Message, true)
 
 	if errMsg != nil {
-		endWithEmptyReaction(w, http.StatusBadRequest)
+		returnEmptyReaction(w, http.StatusBadRequest)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 				err = rt.db.DeleteReaction(reaction.ID)
 
 				if err != nil {
-					endWithEmptyReaction(w, http.StatusBadRequest)
+					returnEmptyReaction(w, http.StatusBadRequest)
 					return
 				}
 			}
@@ -66,7 +66,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	reaction, err := rt.db.CreateReaction(queryInput.Message, reactionContent, queryInput.Sender)
 
 	if err != nil {
-		endWithEmptyReaction(w, http.StatusBadRequest)
+		returnEmptyReaction(w, http.StatusBadRequest)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 	reactionID, err := strconv.Atoi(reactionToDelete)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyReaction(w, http.StatusBadRequest)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 	err = rt.db.DeleteReaction(reactionID)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		returnEmptyReaction(w, http.StatusBadRequest)
 		return
 	}
 
