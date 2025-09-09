@@ -48,6 +48,13 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
@@ -68,6 +75,13 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 // The setMyUserName function changes the username of the user in the URI path
 func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
@@ -88,6 +102,13 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 
 // setMyBio sets a new biography
 func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
@@ -108,6 +129,13 @@ func (rt *_router) setMyBio(w http.ResponseWriter, r *http.Request, ps httproute
 
 // setMyPhoto sets a new profile picture for the user
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// Take the user ChatID from the path of the request
 	userId := ps[0].Value
 	var queryInput struct {
@@ -128,6 +156,13 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
 
 // getMyConversations retrieves all the chats where the user belongs
 func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// Take the user ChatID from the path of the request
 	userID := ps[0].Value
 

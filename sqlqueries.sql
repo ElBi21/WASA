@@ -16,6 +16,11 @@ INSERT INTO ChatsUsers (chat, user) VALUES
 (2, 'sara'),
 (3, 'marco');
 
+INSERT INTO Reactions (id, message, content, user) VALUES
+(1, 4, '😍', 'sara'),
+(2, 4, '🗿', 'leo'),
+(3, 5, '⚒️', 'leo');
+
 -- Test for inner join
 SELECT r.id, r.isPrivate, r.name, r.description, r.photo
 FROM ChatsUsers l INNER JOIN Chats r ON l.chat = r.id WHERE user = 'leo';

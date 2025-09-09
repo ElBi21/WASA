@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -22,6 +21,13 @@ func returnEmptyMessage(w http.ResponseWriter, errorCode int) {
 
 // sendMessage sends a message in the chat specified
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyMessage(w, http.StatusUnauthorized)
+		return
+	}
+
 	// Get body of request
 	queryBody, _ := io.ReadAll(r.Body)
 	var newMsg customstructs.PrimordialMessage
@@ -42,10 +48,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// Return error code if failed to create message on the database
 	if err != nil {
-		fmt.Println("Hey")
-		w.WriteHeader(http.StatusTeapot)
-		jsonReturn, _ := json.Marshal(message)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusTeapot)
 		return
 	}
 
@@ -63,6 +66,13 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
 // forwardMessage forwards a message to another chat
 func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyMessage(w, http.StatusUnauthorized)
+		return
+	}
+
 	var queryInput struct {
 		Sender string `json:"sender"`
 		ChatID int    `json:"chat_id"`
@@ -72,10 +82,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	err := json.Unmarshal(queryBody, &queryInput)
 
 	if err != nil {
-		var message customstructs.Message
-		w.WriteHeader(http.StatusForbidden)
-		jsonReturn, _ := json.Marshal(message)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusForbidden)
 		return
 	}
 
@@ -84,10 +91,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	messageID, err := strconv.Atoi(messageIDParam)
 
 	if err != nil {
-		var message customstructs.Message
-		w.WriteHeader(http.StatusForbidden)
-		jsonReturn, _ := json.Marshal(message)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusForbidden)
 		return
 	}
 
@@ -141,6 +145,13 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 // deleteMessage deletes a message by flagging it in the DB as "removed". The message's ID
 // is specified in the URI path
 func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyMessage(w, http.StatusUnauthorized)
+		return
+	}
+
 	param := ps.ByName("message_id")
 	messageID, err := strconv.Atoi(param)
 

@@ -199,7 +199,7 @@ components:
       required:
         - message_id
         - sender
-        - content
+        - message_content
         - chat
         - timestamp
         - photo
@@ -245,7 +245,7 @@ components:
         - reaction_id
         - message
         - sender
-        - content
+        - reaction_content
 
     Chat:
       title: Chat
@@ -314,8 +314,24 @@ components:
         - last_sent
   
 security:
-  - bearerAuth: []
-
+  - bearerAuth:
+    - createConversation
+    - getConversation
+    - setGroupDescription
+    - setGroupName
+    - setGroupPhoto
+    - addToGroup
+    - leaveGroup
+    - commentMessage
+    - uncommentMessage
+    - sendMessage
+    - forwardMessage
+    - deleteMessage
+    - setMyBio
+    - getMyConversations
+    - setMyUserName
+    - setMyDisplayName
+    - setMyPhoto
 
 paths:
   /session:

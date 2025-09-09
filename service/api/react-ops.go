@@ -20,6 +20,13 @@ func returnEmptyReaction(w http.ResponseWriter, errorCode int) {
 
 // commentMessage comments a message with a given reaction
 func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyReaction(w, http.StatusUnauthorized)
+		return
+	}
+
 	var queryInput struct {
 		Message int    `json:"message"`
 		Sender  string `json:"sender"`
@@ -79,6 +86,13 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 // uncommentMessage removes a reaction specified in the path of the URI
 func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyReaction(w, http.StatusUnauthorized)
+		return
+	}
+
 	reactionToDelete := ps.ByName("comment_id")
 	reactionID, err := strconv.Atoi(reactionToDelete)
 

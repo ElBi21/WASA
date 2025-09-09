@@ -28,6 +28,13 @@ func returnEmptyChat(w http.ResponseWriter, statusCode int) {
 
 // createConversation retrieves all the chats where the user belongs
 func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	// Get body of request
 	queryBody, _ := io.ReadAll(r.Body)
 	var queryInput struct {
@@ -69,6 +76,13 @@ func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps
 
 // getConversation retrieves the data for a conversation, together with the last sent message.
 func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatIdParam := ps.ByName("chat_id")
 
 	chatId, err := strconv.Atoi(chatIdParam)
@@ -94,6 +108,13 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 
 // addToGroup adds a user to a group, specified in the URI of the request
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatParam := ps.ByName("chat_id")
 	chatID, errParam := strconv.Atoi(chatParam)
 
@@ -146,6 +167,13 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 // setGroupDescription sets a new description (max length of 4098) for a group, which must be a non-private chat
 func (rt *_router) setGroupDescription(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatParam := ps.ByName("chat_id")
 	chatID, errParam := strconv.Atoi(chatParam)
 
@@ -185,6 +213,13 @@ func (rt *_router) setGroupDescription(w http.ResponseWriter, r *http.Request, p
 
 // leaveGroup removes a user from a group
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatParam := ps.ByName("chat_id")
 	leaveUserID := ps.ByName("user_id")
 
@@ -261,6 +296,13 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 // setGroupName sets a new group name for a group
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatParam := ps.ByName("chat_id")
 	chatID, errParam := strconv.Atoi(chatParam)
 
@@ -302,6 +344,13 @@ func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httpr
 
 // setGroupName sets a new group picture for a group
 func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyChat(w, http.StatusUnauthorized)
+		return
+	}
+
 	chatParam := ps.ByName("chat_id")
 	chatID, errParam := strconv.Atoi(chatParam)
 

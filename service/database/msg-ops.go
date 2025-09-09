@@ -28,7 +28,6 @@ func (db *appdbimpl) CreateMessage(newMessage customstructs.PrimordialMessage) (
 	if errUser != nil {
 		return message, errUser
 	} else if errChat != nil {
-		fmt.Println("Hey DB", errChat, newMessage.ChatID)
 		return message, errChat
 	}
 
