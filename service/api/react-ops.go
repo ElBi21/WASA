@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"wasatext/service/customstructs"
 
 	"github.com/julienschmidt/httprouter"
@@ -21,6 +22,7 @@ func returnEmptyReaction(w http.ResponseWriter, errorCode int) {
 // commentMessage comments a message with a given reaction
 func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyReaction(w, http.StatusUnauthorized)
@@ -87,6 +89,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 // uncommentMessage removes a reaction specified in the path of the URI
 func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyReaction(w, http.StatusUnauthorized)

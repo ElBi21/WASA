@@ -5,7 +5,6 @@
 #
 # @author ENDERZOMBI102 <enderzombi102.end@gmail.com> 2024
 # @description Config for golangci-lint to conform the Prof's requests, reversed from the checker's errors.
-#
 version: "2"
 run:
   go: "1.17"

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"wasatext/service/customstructs"
 
 	"github.com/julienschmidt/httprouter"
@@ -29,6 +30,7 @@ func returnEmptyChat(w http.ResponseWriter, statusCode int) {
 // createConversation retrieves all the chats where the user belongs
 func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -77,6 +79,7 @@ func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps
 // getConversation retrieves the data for a conversation, together with the last sent message.
 func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -109,6 +112,7 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 // addToGroup adds a user to a group, specified in the URI of the request
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -168,6 +172,7 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 // setGroupDescription sets a new description (max length of 4098) for a group, which must be a non-private chat
 func (rt *_router) setGroupDescription(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -214,6 +219,7 @@ func (rt *_router) setGroupDescription(w http.ResponseWriter, r *http.Request, p
 // leaveGroup removes a user from a group
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -297,6 +303,7 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 // setGroupName sets a new group name for a group
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)
@@ -345,6 +352,7 @@ func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httpr
 // setGroupName sets a new group picture for a group
 func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyChat(w, http.StatusUnauthorized)

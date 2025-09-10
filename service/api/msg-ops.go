@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	"wasatext/service/customstructs"
 
@@ -22,6 +23,7 @@ func returnEmptyMessage(w http.ResponseWriter, errorCode int) {
 // sendMessage sends a message in the chat specified
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyMessage(w, http.StatusUnauthorized)
@@ -67,6 +69,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 // forwardMessage forwards a message to another chat
 func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyMessage(w, http.StatusUnauthorized)
@@ -146,6 +149,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 // is specified in the URI path
 func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
 	_, errAuth := rt.db.GetUserByName(auth)
 	if errAuth != nil {
 		returnEmptyMessage(w, http.StatusUnauthorized)
