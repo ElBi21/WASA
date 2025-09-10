@@ -100,11 +100,10 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 	if err != nil {
 		returnEmptyChat(w, http.StatusNotFound)
 		return
-	} else {
-		w.WriteHeader(http.StatusOK)
 	}
 
 	// Return the chat
+	w.WriteHeader(http.StatusOK)
 	jsonReturn, _ := json.Marshal(chat)
 	_, _ = w.Write(jsonReturn)
 }

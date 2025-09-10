@@ -40,9 +40,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// If there have been errors (so missing fields or inexistent chat number) then return 418
 	if err != nil || newMsg.Check() != nil {
-		w.WriteHeader(http.StatusTeapot)
-		jsonReturn, _ := json.Marshal(newMsg)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusTeapot)
 		return
 	}
 
@@ -104,17 +102,13 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 	// If message doesn't exist, return error
 	if errMessage != nil || errSender != nil {
-		w.WriteHeader(http.StatusNotFound)
-		jsonReturn, _ := json.Marshal(message)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusNotFound)
 		return
 	}
 
 	// If the user is trying to forward a deleted message, abort
 	if message.Deleted {
-		w.WriteHeader(http.StatusNotFound)
-		jsonReturn, _ := json.Marshal(message)
-		_, _ = w.Write(jsonReturn)
+		returnEmptyMessage(w, http.StatusNotFound)
 		return
 	}
 
@@ -127,7 +121,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	newID, err := rt.db.ForwardMessage(message)
 
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		returnEmptyMessage(w, http.StatusNotFound)
 		return
 	}
 

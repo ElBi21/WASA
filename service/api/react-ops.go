@@ -83,7 +83,6 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	w.WriteHeader(http.StatusOK)
 	jsonReturn, _ := json.Marshal(reaction)
 	_, _ = w.Write(jsonReturn)
-	return
 }
 
 // uncommentMessage removes a reaction specified in the path of the URI
@@ -113,5 +112,4 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-	return
 }
