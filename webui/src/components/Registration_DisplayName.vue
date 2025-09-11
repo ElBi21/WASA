@@ -7,8 +7,8 @@ export default {
             username: "",
             newDisplayName: "",
 
-            user_data: {},
-            text_json: text_json,
+            userData: {},
+            textJson: text_json,
 
             current_register_step: 0
         }
