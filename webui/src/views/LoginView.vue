@@ -7,6 +7,7 @@ export default {
         return {
             username: "",
             newDisplayName: "",
+            newBiography: "",
 
             user_data: {},
             text_json: text_json,
@@ -67,21 +68,23 @@ export default {
             setTimeout(function() {
                 loginInput.style.display = "none";
                 loginTitle.style.display = "none";
-            }, 400);
+            }, 410);
 
-            registrationTitle.style.display = "flex";
+            setTimeout(function() {
+                registrationTitle.style.display = "flex";
+            }, 600);
 
             setTimeout(function() {
                 registrationTitle.style.transition = "opacity 1s ease-in-out";
                 registrationTitle.style.opacity = "100%";
 
-                registrationDescription.style.display = "flex";
+                registrationDescription.style.display = "inline";
                 newDisplayForm.style.display = "flex";
                 progressBars.style.display = "flex";
-            }, 800);
+            }, 1000);
 
             setTimeout(function() {
-                registrationTitle.style.transition = "margin-top 1s ease-in-out";
+                registrationTitle.style.transition = "margin-top 0.8s ease-in-out";
                 registrationTitle.style.marginTop = "-10px";
             }, 2000);
 
@@ -116,6 +119,7 @@ export default {
 
                 console.log(response.data)
                 await this.color_new_progress_bar()
+                await this.prepare_set_new_bio()
 
                 this.current_register_step += 1;
             } catch (e) {
@@ -123,13 +127,68 @@ export default {
             }
         },
 
+        async set_new_biography() {
+            try {
+                let response = await this.$axios.post(`/user/${this.username}/bio`,
+                    {
+                        new_bio: this.newBiography
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.username}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                console.log(response.data)
+                await this.color_new_progress_bar()
+
+                this.current_register_step += 1;
+            } catch (e) {
+                console.log("Error!")
+            }
+        },
+
+        async prepare_set_new_bio() {
+            let newDispNameForm = document.getElementById("new_display_form")
+            let registrationDescription = document.getElementById("register_description");
+            let newBioForm = document.getElementById("new_bio_form")
+            let inputForm = document.getElementById("set_new_bio_input")
+
+            newDispNameForm.style.transition = "opacity 1s ease-in-out";
+            registrationDescription.style.transition = "opacity 1s ease-in-out";
+
+            newDispNameForm.style.opacity = "0";
+            registrationDescription.style.opacity = "0";
+
+            setTimeout(function() {
+                newDispNameForm.style.display = "none";
+                newBioForm.style.display = "flex";
+                // inputForm.reset()
+                registrationDescription.innerHTML = `Every user can set its own biography; if you want, you can set one now.
+                In case you don't want to set it up now, don't worry, you'll be able to change it in a later moment.`
+            }, 1010);
+
+            setTimeout(function() {
+                newBioForm.style.transition = "opacity 1s ease-in-out";
+                newBioForm.style.opacity = "1";
+                registrationDescription.style.opacity = "1";
+            }, 1050);
+        },
+
         async skip_register_step() {
             switch (this.current_register_step) {
                 case 0:
                     console.log("Test for skip");
+                    await this.prepare_set_new_bio()
                     await this.color_new_progress_bar()
+                    this.current_register_step += 1;
                     break
                 case 1:
+                    console.log("Skipping bio")
+                    await this.color_new_progress_bar()
+                    break
                     // Go to setPhoto
                 default:
                     // Go to WASAText
@@ -165,7 +224,9 @@ export default {
                     <div id="login_main_form">
                         <h1 id="login_title">WASAText</h1>
                         <h1 id="register_title">Welcome to WASAText</h1>
-                        <p id="register_description">Hi&nbsp<b>@{{ user_data.user_id }}</b>, do you want to set a new display name?</p>
+                        <p id="register_description">Hi <b>@{{user_data.user_id}}</b>, do you want to set a new display name?
+                        Don't worry, if you choose not to set it, <b>{{ user_data.user_id }}</b> will be used instead.
+                        You can change your display name anytime later in the settings</p>
                         <div id="login_form">
                             <input v-model="username" class="login_register_input" placeholder="Insert your username" v-on:keyup.enter="login">
                             <button id="login_button" @click="login">
@@ -180,6 +241,15 @@ export default {
                                 </button>
                             </div>
                             <button class="skip_step" @click="skip_register_step">I don't want to set a new display name</button>
+                        </div>
+                        <div id="new_bio_form">
+                            <div class="form_zone">
+                                <input v-model="newBiography" id="set_new_bio_input" class="login_register_input" placeholder="Choose a biography" v-on:keyup.enter="set_new_biography">
+                                <button id="login_button" @click="set_new_biography">
+                                    <img id="login_arrow" src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
+                                </button>
+                            </div>
+                            <button class="skip_step" @click="skip_register_step">I don't want to set a biography</button>
                         </div>
                         <div id="progress_bars">
                             <div class="progress" id="register_dispname"></div>

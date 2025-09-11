@@ -6,7 +6,7 @@
 # TODO List
 
 - [X] Build the API;
-- [ ] Build the backend;
+- [X] Build the backend;
 - [ ] Build the frontend;
 - [ ] Dockerize the application.
 
