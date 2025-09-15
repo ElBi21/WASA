@@ -10,6 +10,11 @@
     --bg-3-y: 90%;
 
     --progress-done-color: #05DF72;
+
+    --login-button-unavailable-bg: #D6D3D1;
+    --login-button-unavailable-hover-bg: #E7E5E4;
+    --login-button-bg: #105FCC;
+    --login-button-hover-bg: #458CED;
 }
 
 #login_body {
@@ -91,11 +96,10 @@
     border: 1.5px solid rgba(0, 0, 0, 0.4);
 }
 
-#login_button {
+.login_button_general {
     height: 40px;
     width: 40px;
 
-    background-color: #105FCC;
     border: none;
     border-radius: 20px;
 
@@ -107,13 +111,35 @@
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
+#login_button {
+    background-color: var(--login-button-bg);
+    transition: background-color var(--login-button-animation-duration) ease-in;
+}
+
 #login_button:hover {
-    background-color: #458CED;
+    background-color: var(--login-button-hover-bg);
+    transition: background-color var(--login-button-animation-duration) ease-in;
+}
+
+#login-button-unavailable {
+    background-color: var(--login-button-unavailable-bg);
+    transition: background-color var(--login-button-animation-duration) ease-in;
+}
+
+#login-button-unavailable:hover {
+    background-color: var(--login-button-unavailable-hover-bg);
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
 #login_arrow {
     width: 20px;
+    transition: background-color var(--login-button-animation-duration) ease-in;
+}
+
+#login_arrow-unavailable {
+    width: 20px;
+    transition: background-color var(--login-button-animation-duration) ease-in;
+    filter: invert(50%);
 }
 
 /* === REGISTER === */
@@ -161,10 +187,6 @@
 
     opacity: 0;
     display: none;
-}
-
-b {
-    margin: 0;
 }
 
 #new_display_form {
@@ -230,6 +252,46 @@ b {
 
 #set_new_bio_input {
     width: 400px !important;
+}
+
+/* === NEW PFP FORM === */
+
+#new_pfp_form {
+    width: 100%;
+    margin-top: 80px;
+
+    display: none;
+    opacity: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#set_new_pfp_label {
+    height: 40px;
+    width: 325px;
+
+    padding: 8px;
+    margin-right: 10px;
+
+    text-align: center;
+    font-size: 16px;
+
+    background-color: #FFFFFFA0;
+    border-radius: 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.4);
+
+    transition: box-shadow 0.1s ease-in-out;
+}
+
+#set_new_pfp_label:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0 5px inset;
+    transition: box-shadow 0.1s ease-in-out;
+}
+
+#set_new_pfp_input {
+    display: none;
 }
 
 /* === PROGRESS BAR === */

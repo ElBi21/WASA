@@ -7,7 +7,7 @@ async function start_registration() {
     let loginTitle = document.getElementById("login_title");
     let registrationTitle = document.getElementById("register_title");
     let registrationDescription = document.getElementById("register_description");
-    let newDisplayForm = document.getElementById("new_display_form");
+    let newDisplayNameForm = document.getElementById("new_display_form");
     let progressBars = document.getElementById("progress_bars");
 
     // Start performing all the animations
@@ -30,7 +30,7 @@ async function start_registration() {
         registrationTitle.style.opacity = "100%";
 
         registrationDescription.style.display = "inline";
-        newDisplayForm.style.display = "flex";
+        newDisplayNameForm.style.display = "flex";
         progressBars.style.display = "flex";
     }, 800);
 
@@ -43,8 +43,8 @@ async function start_registration() {
         registrationDescription.style.transition = "opacity 1s ease-in-out";
         registrationDescription.style.opacity = "100%";
 
-        newDisplayForm.style.transition = "opacity 1s ease-in-out";
-        newDisplayForm.style.opacity = "1";
+        newDisplayNameForm.style.transition = "opacity 1s ease-in-out";
+        newDisplayNameForm.style.opacity = "1";
 
         progressBars.style.transition = "opacity 1s ease-in-out";
         progressBars.style.opacity = "1";
@@ -52,19 +52,18 @@ async function start_registration() {
 }
 
 async function start_register_new_bio() {
-    let newDispNameForm = document.getElementById("new_display_form")
     let registrationDescription = document.getElementById("register_description");
-    let newBioForm = document.getElementById("new_bio_form")
-    // let inputForm = document.getElementById("set_new_bio_input")
+    let newDisplayNameForm = document.getElementById("new_display_form");
+    let newBioForm = document.getElementById("new_bio_form");
 
-    newDispNameForm.style.transition = "opacity 1s ease-in-out";
+    newDisplayNameForm.style.transition = "opacity 1s ease-in-out";
     registrationDescription.style.transition = "opacity 1s ease-in-out";
 
-    newDispNameForm.style.opacity = "0";
+    newDisplayNameForm.style.opacity = "0";
     registrationDescription.style.opacity = "0";
 
     setTimeout(function() {
-        newDispNameForm.style.display = "none";
+        newDisplayNameForm.style.display = "none";
         newBioForm.style.display = "flex";
         // inputForm.reset()
         registrationDescription.innerHTML = `Every user can set its own biography; if you want, you can set one now.
@@ -74,6 +73,37 @@ async function start_register_new_bio() {
     setTimeout(function() {
         newBioForm.style.transition = "opacity 1s ease-in-out";
         newBioForm.style.opacity = "1";
+        registrationDescription.style.opacity = "1";
+    }, 1050);
+}
+
+async function start_register_new_pfp() {
+    let registrationDescription = document.getElementById("register_description");
+    let newBioForm = document.getElementById("new_bio_form");
+    let newPfpForm = document.getElementById("new_pfp_form");
+    let confirmButton = document.getElementById("login_button");
+
+    newBioForm.style.transition = "opacity 1s ease-in-out";
+    registrationDescription.style.transition = "opacity 1s ease-in-out";
+
+    newBioForm.style.opacity = "0";
+    registrationDescription.style.opacity = "0";
+
+    setTimeout(function() {
+        newBioForm.style.display = "none";
+        newPfpForm.style.display = "flex";
+
+        confirmButton.style.backgroundColor = "var(--login-button-unavailable-bg)";
+
+        // inputForm.reset()
+        registrationDescription.innerHTML = `You can set up also a profile picture. In the case where you don't want to
+        upload a picture of your own, we'll provide an automatic one for you. You can also change it later in 
+        the settings`
+    }, 1010);
+
+    setTimeout(function() {
+        newPfpForm.style.transition = "opacity 1s ease-in-out";
+        newPfpForm.style.opacity = "1";
         registrationDescription.style.opacity = "1";
     }, 1050);
 }
@@ -88,6 +118,7 @@ async function skip_registration_step(register_step) {
         case 1:
             // Go to setPhoto
             console.log("Skipping bio");
+            await start_register_new_pfp();
             break
         default:
             // Go to WASAText
@@ -120,6 +151,7 @@ async function color_new_progress_bar(register_step) {
 export {
     start_registration,
     start_register_new_bio,
+    start_register_new_pfp,
 
     skip_registration_step,
     color_new_progress_bar

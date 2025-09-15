@@ -61,8 +61,27 @@ async function API_set_new_biography(username, newBiography) {
     })
 }
 
+// The API_set_new_pfp function calls the API to change the PFP of the user
+async function API_set_new_pfp(username, newPfpBlob) {
+    await axios.post(`/user/${username}/photo`,
+        {
+            new_photo: newPfpBlob
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    ).catch((error) => {
+        // TODO: Call an error message
+        console.log(error)
+    })
+}
+
 export {
     API_login,
     API_set_new_display_name,
-    API_set_new_biography
+    API_set_new_biography,
+    API_set_new_pfp
 };

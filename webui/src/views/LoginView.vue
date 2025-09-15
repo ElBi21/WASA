@@ -3,7 +3,8 @@ import textJson from "../assets/texts/login.json"
 import {
     API_login,
     API_set_new_display_name,
-    API_set_new_biography
+    API_set_new_biography,
+    API_set_new_pfp
 } from "../services/user-ops"
 import * as register_ops from "../services/registration";
 
@@ -14,6 +15,7 @@ export default {
             username: "",
             newDisplayName: "",
             newBiography: "",
+            newPfp: null,
 
             // Full object with user data
             userData: {
@@ -26,7 +28,8 @@ export default {
 
             // Flags
             should_register: false,
-            current_register_step: 0
+            current_register_step: 0,
+            can_upload_pfp: false,
         }
     },
 
@@ -66,9 +69,32 @@ export default {
 
                 register_ops.color_new_progress_bar(this.current_register_step);
                 this.current_register_step += 1;
-                // Start register new photo
-                // regist_ops.start_register_new_bio();
+                register_ops.start_register_new_pfp();
             })
+        },
+
+        upload_pfp(event) {
+            if (!event.target.files.length) return;
+
+            // Save pfp
+            this.newPfp = event.target.files[0];
+            document.getElementsByClassName("login_button_general")[3].id = "login_button";
+            document.getElementById("login_arrow-unavailable").id = "login_arrow";
+            this.can_upload_pfp = true;
+        },
+
+        async set_new_pfp() {
+            if (!this.can_upload_pfp) return;
+
+            let reader = new FileReader();
+            let base64Pfp = null;
+            reader.onload = function() {
+                base64Pfp = reader.result.replace("data:", "").replace(/^.+,/, "");
+            }
+            reader.readAsDataURL(this.newPfp);
+
+            await API_set_new_pfp(this.userData.user_id, base64Pfp);
+            // Log into WASAText
         },
 
         // Wrapper for the library call
@@ -93,14 +119,14 @@ export default {
                         You can change your display name anytime later in the settings</p>
                         <div id="login_form">
                             <input v-model="username" class="login_register_input" placeholder="Insert your username" v-on:keyup.enter="login">
-                            <button id="login_button" @click="login">
+                            <button class="login_button_general" id="login_button" @click="login">
                                 <img id="login_arrow" src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
                             </button>
                         </div>
                         <div id="new_display_form">
                             <div class="form_zone">
                                 <input v-model="newDisplayName" class="login_register_input" placeholder="Choose a display name" v-on:keyup.enter="set_new_display_name">
-                                <button id="login_button" @click="set_new_display_name">
+                                <button class="login_button_general" id="login_button" @click="set_new_display_name">
                                     <img id="login_arrow" src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
                                 </button>
                             </div>
@@ -109,11 +135,24 @@ export default {
                         <div id="new_bio_form">
                             <div class="form_zone">
                                 <input v-model="newBiography" id="set_new_bio_input" class="login_register_input" placeholder="Choose a biography" v-on:keyup.enter="set_new_biography">
-                                <button id="login_button" @click="set_new_biography">
+                                <button class="login_button_general" id="login_button" @click="set_new_biography">
                                     <img id="login_arrow" src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
                                 </button>
                             </div>
                             <button class="skip_step" @click="skip_registration_step">I don't want to set a biography</button>
+                        </div>
+                        <div id="new_pfp_form">
+                            <div class="form_zone">
+                                <label id="set_new_pfp_label">
+                                    Click to upload a profile picture
+                                    <input id="set_new_pfp_input" class="login_register_input" type="file"
+                                           accept="image/*" @change="upload_pfp">
+                                </label>
+                                <button class="login_button_general" id="login_button-unavailable" @click="set_new_pfp">
+                                    <img id="login_arrow-unavailable" src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
+                                </button>
+                            </div>
+                            <button class="skip_step" @click="skip_registration_step">I don't want to set a profile picture</button>
                         </div>
                         <div id="progress_bars">
                             <div class="progress" id="register_dispname"></div>
