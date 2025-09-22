@@ -111,33 +111,35 @@
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login_button {
+.login_button-available {
     background-color: var(--login-button-bg);
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login_button:hover {
+.login_button-available:hover {
     background-color: var(--login-button-hover-bg);
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login-button-unavailable {
+.login-button-unavailable {
     background-color: var(--login-button-unavailable-bg);
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login-button-unavailable:hover {
+.login-button-unavailable:hover {
     background-color: var(--login-button-unavailable-hover-bg);
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login_arrow {
+.login_arrow {
     width: 20px;
+}
+
+.login_arrow-available {
     transition: background-color var(--login-button-animation-duration) ease-in;
 }
 
-#login_arrow-unavailable {
-    width: 20px;
+.login_arrow-unavailable {
     transition: background-color var(--login-button-animation-duration) ease-in;
     filter: invert(50%);
 }

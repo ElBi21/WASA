@@ -95,7 +95,7 @@ func (rt *_router) setMyDisplayName(w http.ResponseWriter, r *http.Request, ps h
 	_ = json.Unmarshal(queryBody, &queryInput)
 
 	// Check for new display name length
-	if len(queryInput.NewDisplayName) >= 3 && len(queryInput.NewDisplayName) <= 32 {
+	if len(queryInput.NewDisplayName) >= 1 && len(queryInput.NewDisplayName) <= 32 {
 		_ = rt.db.SetNewDisplayName(userId, queryInput.NewDisplayName)
 		w.WriteHeader(http.StatusNoContent)
 	} else {

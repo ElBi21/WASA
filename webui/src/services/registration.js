@@ -81,7 +81,7 @@ async function start_register_new_pfp() {
     let registrationDescription = document.getElementById("register_description");
     let newBioForm = document.getElementById("new_bio_form");
     let newPfpForm = document.getElementById("new_pfp_form");
-    let confirmButton = document.getElementById("login_button");
+    // let confirmButton = document.getElementById("login_button");
 
     newBioForm.style.transition = "opacity 1s ease-in-out";
     registrationDescription.style.transition = "opacity 1s ease-in-out";
@@ -92,8 +92,6 @@ async function start_register_new_pfp() {
     setTimeout(function() {
         newBioForm.style.display = "none";
         newPfpForm.style.display = "flex";
-
-        confirmButton.style.backgroundColor = "var(--login-button-unavailable-bg)";
 
         // inputForm.reset()
         registrationDescription.innerHTML = `You can set up also a profile picture. In the case where you don't want to
@@ -148,11 +146,35 @@ async function color_new_progress_bar(register_step) {
     progBar.style.backgroundColor = "var(--progress-done-color)";
 }
 
+// check_enter_button changes the color and the flags
+async function color_enter_button(val_to_check, minLen, maxLen, element, flag_to_check) {
+    // Select button and arrow
+    let button = document.getElementsByClassName("login_button_general")[element];
+    let arrow = document.getElementsByClassName("login_arrow")[element];
+
+    // Change the arrow and button
+    if (val_to_check.length >= minLen && val_to_check.length <= maxLen && !flag_to_check) {
+        arrow.classList.replace("login_arrow-unavailable", "login-arrow-available")
+        button.classList.replace("login_button-unavailable", "login_button-available");
+
+        return true;
+    } else if ((val_to_check.length <= minLen || val_to_check.length >= maxLen) && flag_to_check)  {
+        arrow.classList.replace("login_arrow-available", "login_arrow-unavailable");
+        button.classList.replace("login_button-available", "login_button-unavailable");
+
+        return false;
+    }
+
+    return flag_to_check;
+}
+
 export {
     start_registration,
     start_register_new_bio,
     start_register_new_pfp,
 
     skip_registration_step,
-    color_new_progress_bar
+    color_new_progress_bar,
+
+    color_enter_button
 };
