@@ -6,7 +6,7 @@ import ErrorMsg from './components/ErrorMsg.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
 
 // CSS imports
-import './assets/css/dashboard.css'
+import './assets/temp/dashboard.css'
 import './assets/css/main.css'
 import './assets/css/login.css'
 

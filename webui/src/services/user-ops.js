@@ -79,9 +79,30 @@ async function API_set_new_pfp(username, newPfpBlob) {
     })
 }
 
+async function API_get_conversations(username) {
+    let userChats = null;
+
+    await axios.get(`/user/${username}/chats`,
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    ).then((result) => {
+        userChats = result.data;
+    }).catch((error) => {
+        // TODO: Call an error message
+        console.log(error)
+    })
+
+    return userChats;
+}
+
 export {
     API_login,
     API_set_new_display_name,
     API_set_new_biography,
-    API_set_new_pfp
+    API_set_new_pfp,
+    API_get_conversations
 };

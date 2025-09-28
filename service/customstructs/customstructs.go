@@ -28,7 +28,7 @@ type Message struct {
 type PrimordialMessage struct {
 	ID         int
 	Sender     string `json:"sender"`
-	Content    string `json:"content"`
+	Content    string `json:"message_content"`
 	ChatID     int    `json:"chat"`
 	Timestamp  string `json:"timestamp"`
 	Photo      string `json:"photo"`

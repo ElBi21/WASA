@@ -14,7 +14,7 @@
 
 | API Endpoint                     | OpenAPI | Go (Backend) | Vue (Frontend) |
 |----------------------------------|---------|--------------|----------------|
-| `doLogin` (see simplified login) | ✓       | ✓            | ×              |
+| `doLogin` (see simplified login) | ✓       | ✓            | ✓              |
 | `setMyUserName`                  | ✓       | ✓            | ×              |
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ×              |
 | `setMyBio` (Extra)               | ✓       | ✓            | ×              |

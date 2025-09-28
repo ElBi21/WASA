@@ -82,7 +82,7 @@ func (db *appdbimpl) SetNewBiography(user string, newBiography string) error {
 	return nil
 }
 
-// SetNewPhoto changes the profile picture of a user, given the user and a new biography.
+// SetNewUserPhoto changes the profile picture of a user, given the user and a new biography.
 // The base64 encoding must be smaller than 4294967296 characters
 func (db *appdbimpl) SetNewUserPhoto(user string, newPhoto string) error {
 	_, err := db.c.Exec("UPDATE Users SET photo = ? WHERE name = ?",
@@ -96,11 +96,38 @@ func (db *appdbimpl) SetNewUserPhoto(user string, newPhoto string) error {
 }
 
 // GetUserConversations gets all the chats to which a user belongs. Returns a customstructs.Chat struct
-func (db *appdbimpl) GetUserConversations(user string) (resChats []customstructs.Chat) {
+func (db *appdbimpl) GetUserConversations(user string) []customstructs.Chat {
 	var chats []customstructs.Chat
-	queryChats, err := db.c.Query(
-		`SELECT r.id, r.isPrivate, r.name, r.description, r.photo FROM ChatsUsers l
-			INNER JOIN Chats r ON l.chat = r.id WHERE user = ?;`, user)
+	queryChats, err := db.c.Query(`WITH user_chats AS (
+    SELECT r.id, r.isPrivate, r.name, r.description, r.photo
+    FROM ChatsUsers l INNER JOIN Chats r ON l.chat = r.id
+    WHERE user = ?
+	),
+	chats_with_message AS (
+		WITH last_messages AS (
+			SELECT id, chat, max(timestamp) AS "order_tstamp"
+			FROM Messages
+			GROUP BY chat
+		)
+		SELECT r.id, l.order_tstamp, 1 AS custom_order
+		FROM last_messages l INNER JOIN user_chats r ON l.chat = r.id
+	),
+	chats_without_messages AS (
+		SELECT id, 0 AS order_tstamp, 2 AS custom_order 
+		FROM (
+			SELECT id
+			FROM user_chats
+				EXCEPT
+			SELECT id
+			FROM chats_with_message
+    	)
+	)
+	SELECT *
+	FROM chats_without_messages
+		UNION
+	SELECT *
+	FROM chats_with_message
+	ORDER BY custom_order DESC, order_tstamp DESC;`, user)
 
 	// If the user belongs to no chats, then return an empty array
 	if err != nil || queryChats.Err() != nil {
@@ -112,32 +139,13 @@ func (db *appdbimpl) GetUserConversations(user string) (resChats []customstructs
 
 	for queryChats.Next() {
 		var userChat customstructs.Chat
-		err = queryChats.Scan(&userChat.ID, &userChat.IsPrivate, &userChat.Name, &userChat.GroupDescription, &userChat.Photo)
+		var chatID int
+		_ = queryChats.Scan(&chatID, nil, nil)
+
+		userChat, err = db.GetConversation(chatID)
 
 		if err != nil {
 			return chats
-		}
-
-		// Get users belonging to a chat
-		usersQuery, errUsers := db.c.Query(`SELECT r.name, r.display_name, r.photo, r.bio FROM ChatsUsers l
-    		INNER JOIN Users r ON l.user = r.name WHERE l.chat = ?;`, userChat.ID)
-
-		// Check if either the scan of the query or the second query got errors. In case, return
-		if errUsers != nil || usersQuery.Err() != nil {
-			return chats
-		}
-
-		// For each user, scan its values into the struct and append it to the chat
-		for usersQuery.Next() {
-			var chatUser customstructs.User
-			err = usersQuery.Scan(&chatUser.Name, &chatUser.DisplayName, &chatUser.ProfilePic, &chatUser.Biography)
-
-			if err != nil {
-				return chats
-			}
-
-			// Append user to list of users belonging to chat
-			userChat.Users = append(userChat.Users, chatUser)
 		}
 
 		// Append chat to return array

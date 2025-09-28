@@ -44,9 +44,9 @@
     background: radial-gradient(circle at var(--bg-3-x) var(--bg-3-y), rgba(255, 170, 138, 0.45) 5%, transparent 48.05%);
 }
 
-.fade {
+/*.fade {
     animation: fadeBG 0.5 linear;
-}
+}*/
 
 #login_main_form {
     width: 450px;

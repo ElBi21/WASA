@@ -1,0 +1,220 @@
+:root {
+    --backdrop: 5px;
+    --chat-photo-size: 65px;
+
+    --color-hover: rgba(179, 187, 190, 0.42);
+}
+
+.chat_list_back {
+    width: 27%;
+    height: 100%;
+
+    border-radius: 16px;
+    border: 3px solid white;
+    padding: 8px;
+
+    background: rgba(255, 255, 255, 0.42);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+    overflow: visible;
+}
+
+.chat_list_main {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 6px 0 6px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+    overflow-y: scroll;
+}
+
+.chat_bar_title {
+    width: auto;
+
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -2.5px;
+    margin: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.wasatext_bar {
+    width: 100%;
+    padding: 12px 6px 24px 12px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.home_button {
+    width: 3em;
+    height: 3em;
+
+    margin: 0 0 0 8px;
+    border-radius: 1.5em;
+    border: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(255, 255, 255, 0.42);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+
+    transition: background-color 0.2s ease-in-out;
+}
+
+.home_button:hover {
+    background-color: var(--color-hover);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.home_actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.home_button_icon {
+    width: 2em;
+    height: 2em;
+    transition: transform 0.2s ease-in-out;
+}
+
+#settings_button_icon:hover {
+    transition: transform 0.2s ease-in-out;
+    transform: rotate(60deg);
+}
+
+#new_chat_button_icon {
+    width: 1.8em;
+    height: 1.8em;
+}
+
+#new_chat_button_icon:hover {
+    transition: transform 0.1s ease-in-out;
+    transform: scale(115%);
+}
+
+.single_chat {
+    width: 100%;
+    height: 80px;
+
+    padding: 0 0 0 8px;
+    margin: 4px 0 4px 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    border-radius: 24px;
+
+    background: rgba(255, 255, 255, 0.42);
+    transition: background 0.2s ease-in-out, box-shadow 0.4s ease-in-out;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+}
+
+.single_chat:hover {
+    background: var(--color-hover);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#single_chat_selected {
+    transition: background 0.2s ease-in-out, box-shadow 0.4s ease-in-out;
+    background: rgba(153, 217, 217, 0.42);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2) inset;
+}
+
+.chat_photo {
+    width: var(--chat-photo-size);
+    height: var(--chat-photo-size);
+
+    margin: 7.5px 0 7.5px 0;
+    padding: 0;
+    border-radius: calc(var(--chat-photo-size) / 2);
+
+    background-color: #0f5132;
+}
+
+.chat_details {
+    width: calc(100% - var(--chat-photo-size));
+    padding: 0 12px 0 8px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+
+.chat_name {
+    width: 100%;
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 550;
+    letter-spacing: -1px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat_last_message, .chat_date {
+    letter-spacing: -0.5px;
+}
+
+.chat_last_msg_date {
+    width: 100%;
+    margin: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat_last_message {
+    font-size: 16px;
+    font-weight: 300;
+    margin: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat_date {
+    font-size: 11px;
+    font-style: italic;
+    margin: 2px 0 0 4px;
+}

@@ -41,6 +41,8 @@ func (db *appdbimpl) CreateMessage(newMessage customstructs.PrimordialMessage) (
 		return message, err
 	}
 
+	// _, err = db.c.Exec(`UPDATE Chats SET `)
+
 	// Switch from PrimordialMessage to Message
 	message.ID = ID
 	message.Sender = userSender
