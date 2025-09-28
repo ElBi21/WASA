@@ -1,3 +1,7 @@
+:root {
+
+}
+
 .main_activity_space {
     width: 73%;
     height: 100%;
@@ -11,14 +15,14 @@
 }
 
 .no_chat_open_main {
-    width: 500px;
-    height: 600px;
+    width: 700px;
+    height: 550px;
 
     border-radius: 16px;
     border: 3px solid white;
     padding: 8px;
 
-    background: rgba(255, 255, 255, 0.42);
+    background: var(--glass-background);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(var(--backdrop));
     -webkit-backdrop-filter: blur(var(--backdrop));
@@ -33,4 +37,60 @@
     font-weight: 700;
     font-size: 28px;
     letter-spacing: -2px;
+}
+
+.no_chat_description {
+    font-size: 16px;
+    text-align: center;
+    line-height: 18px;
+
+    margin: 0 50px 0 50px;
+}
+
+.no_chat_suggestions {
+    width: calc(var(--single-suggestion-width) * 2 + 50px);
+    height: auto;
+
+    margin: 50px 0 0 0;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.no_chat_single_suggestion {
+    width: var(--single-suggestion-width);
+    height: 120px;
+
+    margin: 5px 10px 5px 10px;
+
+    background-color: var(--glass-background);
+    border-radius: 12px;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.no_chat_suggestion_icon {
+    width: 40px;
+    height: 40px;
+
+    margin: 0 0 8px 0;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#sugg_new_chat:hover {
+    transition: background-color 0.2s ease-in-out;
+    background-color: #D9436820;
+}
+
+#sugg_prof_settings:hover {
+    transition: background-color 0.2s ease-in-out;
+    background-color: #1C71D820;
 }

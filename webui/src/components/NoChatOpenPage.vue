@@ -1,6 +1,31 @@
+<script>
+export default {
+    props: [ "user_display_name" ],
+
+    data: function() {
+        return {
+            user_data: {
+                display_name: "Leo"
+            }
+        }
+    }
+}
+</script>
+
 <template>
     <div class="no_chat_open_main">
-        <h1 class="no_chat_title">Welcome to WASAText</h1>
+        <h1 class="no_chat_title">Welcome {{ this.user_data.display_name }}</h1>
+        <p class="no_chat_description"> Hey there, let's do something great today!
+            If you're new to WASAText, you should start with some of the suggestions listed here below</p>
+
+        <div class="no_chat_suggestions">
+            <div class="no_chat_single_suggestion" id="sugg_new_chat" role="button">
+                <img class="no_chat_suggestion_icon" src="../assets/icons/chats-solid-full.svg">
+                Start a chat</div>
+            <div class="no_chat_single_suggestion" id="sugg_prof_settings" role="button">
+                <img class="no_chat_suggestion_icon" src="../assets/icons/user-solid-full.svg">
+                Change your profile</div>
+        </div>
     </div>
 </template>
 

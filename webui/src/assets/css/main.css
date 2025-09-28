@@ -1,6 +1,44 @@
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
+/* All variables */
+:root {
+    --login-backdrop: 5px;
+    --login-button-animation-duration: 0.1s;
+
+    --bg-1-x: 10%;
+    --bg-1-y: 30%;
+    --bg-2-x: 95%;
+    --bg-2-y: 60%;
+    --bg-3-x: 70%;
+    --bg-3-y: 90%;
+
+    --progress-done-color: #05DF72;
+    --progress-empty-color: #C2C2C2;
+
+    --button-unavailable-background: #D6D3D1;
+    --button-unavailable-hover-background: #E7E5E4;
+    --button-background: #105FCC;
+    --button-hover-background: #458CED;
+    --login-form-background: #FFFFFFA0;
+    --login-skip-step-color: #0A53BE;
+
+    --button-secondary-background: #32B851;
+    --button-hover-secondary-background: #299140;
+
+    --glass-background: rgba(255, 255, 255, 0.42);
+    --glass-background-hover: rgba(179, 187, 190, 0.42);
+    --glass-background-strong: rgba(255, 255, 255, 0.80);
+
+    --backdrop: 5px;
+    --chat-photo-size: 65px;
+    --color-selected: rgba(153, 217, 217, 0.42);
+
+    --single-suggestion-width: 180px;
+    --user-panel-height: 80px;
+}
+
+
 html, body, #app, main {
     height: 100%;
 }
@@ -85,4 +123,14 @@ span {
     flex-direction: row;
     justify-content: start;
     align-content: center;
+}
+
+.separator_vertical {
+    width: 1.5px;
+    height: 80%;
+
+    border-radius: 0.75px;
+
+    background-color: dimgray;
+    opacity: 0.3;
 }
