@@ -1,0 +1,23 @@
+# Start from Go
+FROM golang:latest AS back_builder
+
+# Set WORKDIR and copy all files
+WORKDIR /src/
+COPY . .
+
+# Build backend
+RUN go build -o /app/webapi ./cmd/webapi/
+
+
+# Final container
+FROM debian:bookworm
+
+# Expose PORT 3000
+EXPOSE 3000
+
+# Copy final executable
+WORKDIR /app/
+COPY --from=back_builder /app/webapi ./
+
+# Set webapi to be the main program
+CMD ["/app/webapi"]

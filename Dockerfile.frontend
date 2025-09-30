@@ -1,0 +1,16 @@
+# Start from Node LTS
+FROM node:lts AS front_builder
+
+# Copy frontend code
+WORKDIR /app
+COPY ./webui .
+
+# Build into prod
+RUN yarn install
+RUN yarn build-prod
+
+
+# Create final server
+FROM nginx:stable
+
+COPY --from=front_builder /app/dist /usr/share/nginx/html
