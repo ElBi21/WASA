@@ -1,11 +1,13 @@
 <script>
 import {API_get_all_users, API_get_conversations} from "../services/user-ops";
-import {retrieveFromStorage} from "../services/utils";
-import UserButton from "./UserButton.vue";
 import {API_create_conversation} from "../services/chat-ops";
+import {img_to_base64, retrieveFromStorage} from "../services/utils";
+import UserButton from "./UserButton.vue";
+import defaultGroupPicture from "../assets/defaults/default_group.png";
 
 export default {
     components: {UserButton},
+
     data: function() {
         return {
             userID: null,
@@ -30,8 +32,9 @@ export default {
     emits: [ "closeNewChatDial" ],
 
     methods: {
-        async upload_group_picture() {
-
+        async upload_group_picture(event) {
+            let picture = event.target.files[0];
+            this.newGroupPhoto = await img_to_base64(picture);
         },
 
         async toggle_user_in_conversation(userParam, flagIndex) {
@@ -148,6 +151,16 @@ export default {
         for (let _ of this.privateChatUsers) {
             this.usersPrivateFlags.push(false);
         }
+
+        let imageDefault = await fetch(defaultGroupPicture);
+        let imageBlob = await imageDefault.blob();
+        let groupDefault = new File([imageBlob], "default_group.png",
+            {
+                type: "image/png"
+            }
+        );
+
+        this.newGroupPhoto = await img_to_base64(groupDefault);
 
         this.readyToDraw = true;
     },

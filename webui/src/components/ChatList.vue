@@ -5,10 +5,7 @@ import UserPanel from "./UserPanel.vue";
 import {retrieveFromStorage} from "../services/utils";
 
 export default {
-    components: {
-        UserPanel,
-        SingleChat
-    },
+    components: {SingleChat, UserPanel},
 
     data: function() {
         return {
@@ -19,7 +16,7 @@ export default {
         }
     },
 
-    emits: [ "chatSelectedEmit" ],
+    emits: [ "chatSelectedEmit", "openNewChatDialCL" ],
 
     methods: {
         async select_chat(chatObj, event) {
@@ -41,6 +38,10 @@ export default {
 
         async prepare_chat_for_display(chatID) {
 
+        },
+
+        openChatDialEXT() {
+            this.$emit("openNewChatDialCL");
         }
     },
 
@@ -63,11 +64,11 @@ export default {
             <div class="wasatext_bar">
                 <h1 class="chat_bar_title">WASAText</h1>
                 <div class="home_actions">
-                    <button class="home_button">
+                    <button class="home_button" role="button" @click="openChatDialEXT">
                         <img class="home_button_icon" id="new_chat_button_icon"
                              src="../assets/icons/comments-solid-full.svg" alt="Settings">
                     </button>
-                    <button class="home_button">
+                    <button class="home_button" role="button">
                         <img class="home_button_icon" id="settings_button_icon"
                              src="../assets/icons/gear-solid-full.svg" alt="Settings">
                     </button>
@@ -75,7 +76,7 @@ export default {
             </div>
             <div class="chat_list_main">
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
-                            :chat-name="chat.Name" :last-message-sender="chat.LastSent.sender.display_name"
+                            :last-message-sender="chat.LastSent.sender.display_name"
                             :last-message-body="chat.LastSent.content" :last-message-date="chat.LastSent.timestamp"
                             @click="select_chat(chat, $event)">
                 </SingleChat>

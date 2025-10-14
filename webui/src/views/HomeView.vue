@@ -19,8 +19,9 @@ export default {
                 profile_pic: undefined
             },
 
-            chatSelected: null
-		}
+            chatSelected: null,
+            openNewChatDial: false,
+        }
 	},
 
     // emits: [ "chatSelectedEmit" ],
@@ -28,6 +29,14 @@ export default {
 	methods: {
         handleClickedChatButton(chatID) {
             this.chatSelected = chatID;
+        },
+
+        openChatDial() {
+            this.openNewChatDial = true;
+        },
+
+        closeChatDial() {
+            this.openNewChatDial = false;
         }
 	},
 
@@ -42,8 +51,9 @@ export default {
     <Background>
         <div class="main_view">
             <ChatList v-if="this.user_data.user_id !== undefined" :user-id='this.user_data.user_id'
-            @chat-selected-emit="handleClickedChatButton"></ChatList>
-            <ActivityField :selected-chat-id-prop="this.chatSelected"></ActivityField>
+                @chat-selected-emit="handleClickedChatButton" @openNewChatDialCL="openChatDial"></ChatList>
+            <ActivityField :selected-chat-id-prop="this.chatSelected" :open-chat-dial-external="openNewChatDial"
+                @closeChatDialExternal="closeChatDial"></ActivityField>
         </div>
     </Background>
 </template>

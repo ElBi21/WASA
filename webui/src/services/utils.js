@@ -2,18 +2,19 @@ import * as register_ops from "./registration";
 import {ref, onMounted} from 'vue';
 
 async function img_to_base64(image) {
-    let reader = new FileReader();
-    let base64Pfp = null;
-    reader.onloadend = async () => {
-        base64Pfp = reader.result
-            .replace("data:", "")
-            .replace(/^.+,/, "");
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onloadend = () => {
+            let base64Pfp = reader.result
+                .replace("data:", "")
+                .replace(/^.+,/, "");
 
-        return base64Pfp;
-    }
+            resolve(base64Pfp);
+        };
 
-    reader.readAsDataURL(image);
-    return base64Pfp;
+        reader.onerror = reject;
+        reader.readAsDataURL(image);
+    });
 }
 
 

@@ -151,8 +151,6 @@
     margin: 7.5px 0 7.5px 0;
     padding: 0;
     border-radius: calc(var(--chat-photo-size) / 2);
-
-    background-color: #0f5132;
 }
 
 .chat_details {

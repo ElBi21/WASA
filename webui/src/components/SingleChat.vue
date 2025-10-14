@@ -15,6 +15,7 @@ export default {
             to_render: true,
 
             chatName: '',
+            chatPicture: '',
             lastMessageFormattedDate: null
         }
     },
@@ -34,8 +35,10 @@ export default {
         if (chat.IsPrivate === true) {
             let otherParticipantIndex = chat.Users.findIndex(user => user.user_id !== userData.user_id);
             this.chatName = chat.Users[otherParticipantIndex].display_name;
+            this.chatPicture = `data:image/jpeg;base64,` + chat.Users[otherParticipantIndex].profile_pic;
         } else {
             this.chatName = chat.Name;
+            this.chatPicture = `data:image/jpeg;base64,` + chat.Photo;
         }
     }
 }
@@ -43,7 +46,7 @@ export default {
 
 <template>
     <div class="single_chat" role="button">
-        <div class="chat_photo"></div>
+        <img :src="chatPicture" v-if="chatPicture !== ''" class="chat_photo" alt="Chat picture"></img>
         <div class="chat_details">
             <p class="chat_name">{{ chatName }}</p>
             <div class="chat_last_msg_date">

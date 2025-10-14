@@ -15,18 +15,20 @@ export default {
         }
     },
 
+    emits: [ "closeChatDialExternal" ],
+
     methods: {
         closeNewChatDial() {
             this.openNewChatDialFlag = false;
+            this.$emit("closeChatDialExternal");
         },
 
         async openNewChatDial() {
-            console.log(this.openNewChatDialFlag);
             this.openNewChatDialFlag = true;
         }
     },
 
-    props: [ "selectedChatIdProp" ],
+    props: [ "selectedChatIdProp", "openChatDialExternal" ],
 
     watch: {
         selectedChatIdProp(chatID) {
@@ -38,7 +40,7 @@ export default {
 
 <template>
     <div class="main_activity_space">
-        <div v-if="openNewChatDialFlag === true" class="dial_container">
+        <div v-if="openNewChatDialFlag === true || openChatDialExternal === true" class="dial_container">
             <NewChat @close-new-chat-dial="closeNewChatDial"></NewChat>
         </div>
 
