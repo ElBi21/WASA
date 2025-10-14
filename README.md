@@ -19,7 +19,7 @@
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ✓ (1/2)        |
 | `setMyBio` (Extra)               | ✓       | ✓            | ✓ (1/2)        |
 | `getMyConversations`             | ✓       | ✓            | ✓              |
-| `createConversation`             | ✓       | ✓            | ✓ (1/2)        |
+| `createConversation`             | ✓       | ✓            | ✓              |
 | `getConversation`                | ✓       | ✓            | ✓              |
 | `sendMessage`                    | ✓       | ✓            | ×              |
 | `forwardMessage`                 | ✓       | ✓            | ×              |
