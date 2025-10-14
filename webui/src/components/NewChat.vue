@@ -105,6 +105,10 @@ export default {
 
             this.$emit("closeNewChatDial");
         },
+
+        async close_dial() {
+            this.$emit("closeNewChatDial");
+        }
     },
 
     async mounted() {
@@ -177,13 +181,18 @@ export default {
 
         async newGroupName() {
             this.safeToCreate = await this.check_chat_flags();
-        }
+        },
     }
 }
 </script>
 
 <template>
 <div class="new_chat_dial">
+    <div class="new_chat_close_div">
+        <div class="new_chat_close_button" role="button" @click="close_dial">
+            <img src="../assets/icons/xmark-solid-full.svg" alt="close" class="new_chat_close_img">
+        </div>
+    </div>
     <h2 class="new_chat_title">Create a new chat</h2>
     <div class="new_chat_selector">
         <button :class="['new_chat_selector_button', { active: selectedOption === 'private' }]"
@@ -199,7 +208,6 @@ export default {
         <div class="new_chat_group_settings_text">
             <p class="new_chat_text">Group Name</p>
             <input
-                id="groupName"
                 v-model="newGroupName"
                 type="text"
                 placeholder="What's the group name?"
@@ -208,7 +216,6 @@ export default {
 
             <p class="new_chat_text">Description</p>
             <textarea
-                id="description"
                 v-model="newGroupDescription"
                 placeholder="What's this group for?"
                 class="new_chat_textarea"
@@ -217,7 +224,8 @@ export default {
         </div>
 
         <div class="new_chat_group_settings_picture">
-            <label class="new_chat_group_picture_label">
+            <label class="new_chat_group_picture_label"
+                   :style="{ backgroundImage: `url(data:image/jpeg;base64,${newGroupPhoto})` }">
                 Click to upload a group picture
                 <input class="new_chat_group_picture_button" type="file"
                        accept="image/*" @change="upload_group_picture">

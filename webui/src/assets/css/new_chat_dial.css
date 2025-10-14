@@ -20,7 +20,7 @@
 }
 
 .new_chat_title {
-    margin: 24px 0 12px 0;
+    margin: -8px 0 12px 0;
 
     font-family: "DM Sans", serif;
     font-weight: 550;
@@ -127,17 +127,22 @@
     font-size: 14px;
     line-height: 16px;
 
-    background: var(--login-form-background);
+    background-size: 120px 120px;
     border-radius: 90px;
     border: 1.5px solid rgba(0, 0, 0, 0.4);
 
     cursor: pointer;
+
+    color: transparent;
+    transition: all 0.1s ease-in-out;
 }
 
 .new_chat_group_picture_label:hover {
     cursor: pointer;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 0 5px inset;
-    transition: box-shadow 0.1s ease-in-out;
+
+    color: black;
+    box-shadow: 0 0 250px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.1s ease-in-out;
 }
 
 .new_chat_group_picture_button {
@@ -298,4 +303,52 @@
     background: radial-gradient(circle at 10% 50%, rgba(21, 203, 87, 0.8) 5%, rgba(15, 147, 63, 0.6) 100%) !important;
     color: #ffffff !important;
     transition: all 0.2s ease-in-out;
+}
+
+.new_chat_close_div {
+    width: 100%;
+    height: 32px;
+    margin: 0;
+    padding: 16px 8px 0 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+.new_chat_close_button {
+    width: 32px;
+    height: 32px;
+    margin: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 16px;
+
+    background-color: var(--glass-background);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+
+    transition: background-color 0.2s ease-in-out;
+}
+
+.new_chat_close_img {
+    width: 20px;
+    height: 20px;
+    transition: all 0.2s ease-in-out;
+}
+
+.new_chat_close_img:hover {
+    transform: rotate(90deg);
+    transition: all 0.2s ease-in-out;
+}
+
+.new_chat_close_button:hover {
+    background-color: var(--glass-background-hover);
+    transition: background-color 0.2s ease-in-out;
 }

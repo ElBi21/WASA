@@ -49,10 +49,19 @@
 }
 
 #send_button {
-    background-color: var(--button-background);
+    background-color: var(--button-unavailable-background);
 }
 
 #send_button:hover {
+    transition: background-color 0.1s ease-in-out;
+    background-color: var(--button-unavailable-hover-background);
+}
+
+#send_button_available {
+    background-color: var(--button-background);
+}
+
+#send_button_available:hover {
     transition: background-color 0.1s ease-in-out;
     background-color: var(--button-hover-background);
 }
