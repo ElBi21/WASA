@@ -19,7 +19,7 @@
 | `setMyDisplayName` (Extra)       | ✓       | ✓            | ✓ (1/2)        |
 | `setMyBio` (Extra)               | ✓       | ✓            | ✓ (1/2)        |
 | `getMyConversations`             | ✓       | ✓            | ✓              |
-| `createConversation`             | ✓       | ✓            | ×              |
+| `createConversation`             | ✓       | ✓            | ✓ (1/2)        |
 | `getConversation`                | ✓       | ✓            | ✓              |
 | `sendMessage`                    | ✓       | ✓            | ×              |
 | `forwardMessage`                 | ✓       | ✓            | ×              |
@@ -27,12 +27,12 @@
 | `uncommentMessage`               | ✓       | ✓            | ×              |
 | `deleteMessage`                  | ✓       | ✓            | ×              |
 | `addToGroup`                     | ✓       | ✓            | ×              |
-| `setGroupDescription` (Extra)    | ✓       | ✓            | ×              |
+| `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |
 | `leaveGroup`                     | ✓       | ✓            | ×              |
-| `setGroupName`                   | ✓       | ✓            | ×              |
-| `setMyPhoto`                     | ✓       | ✓            | ×              |
-| `setGroupPhoto`                  | ✓       | ✓            | ×              |
-| `getAllUsers`                    | ✓       | ✓            | ×              |
+| `setGroupName`                   | ✓       | ✓            | ✓ (1/2)        |
+| `setMyPhoto`                     | ✓       | ✓            | ✓ (1/2)        |
+| `setGroupPhoto`                  | ✓       | ✓            | ✓ (1/2)        |
+| `getAllUsers`                    | ✓       | ✓            | ✓              |
 
 ---
 
