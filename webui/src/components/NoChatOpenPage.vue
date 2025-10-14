@@ -1,14 +1,22 @@
 <script>
 export default {
-    props: [ "user_display_name" ],
-
     data: function() {
         return {
             user_data: {
                 display_name: "Leo"
             }
         }
-    }
+    },
+
+    emits: [ "openNewChatDial" ],
+
+    methods: {
+        openNewChatDialEmit() {
+            this.$emit('openNewChatDial');
+        }
+    },
+
+    props: [ "user_display_name" ]
 }
 </script>
 
@@ -19,7 +27,8 @@ export default {
             If you're new to WASAText, you should start with some of the suggestions listed here below</p>
 
         <div class="no_chat_suggestions">
-            <div class="no_chat_single_suggestion" id="sugg_new_chat" role="button">
+            <div class="no_chat_single_suggestion" id="sugg_new_chat"
+                 role="button" @click="openNewChatDialEmit">
                 <img class="no_chat_suggestion_icon" src="../assets/icons/chats-solid-full.svg">
                 Start a chat</div>
             <div class="no_chat_single_suggestion" id="sugg_prof_settings" role="button">

@@ -30,6 +30,8 @@
     --glass-background-hover: rgba(179, 187, 190, 0.42);
     --glass-background-strong: rgba(255, 255, 255, 0.80);
 
+    --new-chat-dial-widget-background: #f3f4f6;
+
     --backdrop: 5px;
     --chat-photo-size: 65px;
     --color-selected: rgba(153, 217, 217, 0.42);
@@ -133,4 +135,10 @@ span {
 
     background-color: dimgray;
     opacity: 0.3;
+}
+
+.text-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

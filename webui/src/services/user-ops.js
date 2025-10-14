@@ -99,10 +99,28 @@ async function API_get_conversations(username) {
     return userChats;
 }
 
+async function API_get_all_users(username) {
+    let allUsers = null;
+
+    await axios.get(`/users`,
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    ).then((result) => {
+        allUsers = result.data;
+    })
+
+    return allUsers;
+}
+
 export {
     API_login,
     API_set_new_display_name,
     API_set_new_biography,
     API_set_new_pfp,
-    API_get_conversations
+    API_get_conversations,
+    API_get_all_users
 };

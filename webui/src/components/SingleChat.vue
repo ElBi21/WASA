@@ -1,8 +1,10 @@
 <script>
+import {API_get_conversation} from "../services/chat-ops";
+import {retrieveFromStorage} from "../services/utils";
+
 export default {
     props: [
         "chatId",
-        "chatName",
         "lastMessageBody",
         "lastMessageSender",
         "lastMessageDate"
@@ -10,18 +12,31 @@ export default {
 
     data: function () {
         return {
-            "to_render": true,
-            "lastMessageFormattedDate": null
+            to_render: true,
+
+            chatName: '',
+            lastMessageFormattedDate: null
         }
     },
 
     async mounted() {
+        let userData = await retrieveFromStorage();
+
         if (!this.lastMessageBody.length || !this.lastMessageSender === null) {
             this.to_render = false;
         }
 
         let messageTimestamp = new Date(Date.parse(this.lastMessageDate));
         this.lastMessageFormattedDate = `${messageTimestamp.getHours().toString().padStart(2, '0')}:${messageTimestamp.getMinutes().toString().padStart(2, '0')}`;
+
+        let chat = await API_get_conversation(this.chatId, userData.user_id);
+
+        if (chat.IsPrivate === true) {
+            let otherParticipantIndex = chat.Users.findIndex(user => user.user_id !== userData.user_id);
+            this.chatName = chat.Users[otherParticipantIndex].display_name;
+        } else {
+            this.chatName = chat.Name;
+        }
     }
 }
 </script>

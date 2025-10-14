@@ -16,18 +16,14 @@ async function img_to_base64(image) {
     return base64Pfp;
 }
 
-async function base64_to_img(base64, reference) {
-    let format = "png"
 
-    if (!base64.startsWith('data:image/')) {
-        base64 = `data:image/${format};base64,` + base64;
-    }
-
-    reference.value = base64;
+async function retrieveFromStorage() {
+    let userDataFromLogin = JSON.parse(localStorage.getItem("user"));
+    return userDataFromLogin
 }
 
 
 export {
     img_to_base64,
-    base64_to_img
+    retrieveFromStorage
 }

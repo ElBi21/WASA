@@ -110,16 +110,16 @@ async function start_register_new_pfp() {
 async function skip_registration_step(register_step) {
     switch (register_step) {
         case 0:
-            console.log("Skipping display name");
+            // Go to setBio
             await start_register_new_bio();
             break
         case 1:
             // Go to setPhoto
-            console.log("Skipping bio");
             await start_register_new_pfp();
             break
         default:
-            // Go to WASAText
+            // Go to WASAText (done in the LogicView.vue file)
+            break
     }
 
     await color_new_progress_bar(register_step);

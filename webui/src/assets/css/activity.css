@@ -6,12 +6,25 @@
     width: 73%;
     height: 100%;
 
-    /* background-color: red; */
+    position: relative;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.dial_container {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
 }
 
 .no_chat_open_main {
@@ -87,10 +100,10 @@
 
 #sugg_new_chat:hover {
     transition: background-color 0.2s ease-in-out;
-    background-color: #D9436820;
+    background-color: #D9436850;
 }
 
 #sugg_prof_settings:hover {
     transition: background-color 0.2s ease-in-out;
-    background-color: #1C71D820;
+    background-color: #1C71D850;
 }

@@ -154,3 +154,29 @@ func (db *appdbimpl) GetUserConversations(user string) []customstructs.Chat {
 
 	return chats
 }
+
+// GetAllUsers retrieves all the users in the database
+func (db *appdbimpl) GetAllUsers() []customstructs.User {
+	var users []customstructs.User
+
+	queryUsers, err := db.c.Query("SELECT * FROM Users ORDER BY name;")
+
+	if err != nil || queryUsers.Err() != nil {
+		return users
+	}
+
+	defer queryUsers.Close()
+
+	for queryUsers.Next() {
+		var user customstructs.User
+		err = queryUsers.Scan(&user.Name, &user.DisplayName, &user.ProfilePic, &user.Biography)
+
+		if err != nil {
+			return users
+		}
+
+		users = append(users, user)
+	}
+
+	return users
+}

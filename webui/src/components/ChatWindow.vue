@@ -1,34 +1,31 @@
 <script setup>
-import {ref, onMounted} from 'vue';
 import TypingBar from "./TypingBar.vue";
-import {API_login} from "../services/user-ops";
 import ChatTopBar from "./ChatTopBar.vue";
+</script>
 
-const imageSource = ref('');
+<script>
+export default {
+    data: function() {
+        return {
+            currentChat: null
+        }
+    },
 
-onMounted(async () => {
-    let base64String = null;
-    await API_login("leo").then((result) => {
-        base64String = result.userData.profile_pic;
-    });
+    props: [ "selectedChatId" ],
 
-    let format = "jpeg"
-
-    if (!base64String.startsWith('data:image/')) {
-        base64String = `data:image/${format};base64,` + base64String;
+    watch: {
+        selectedChatID(chat) {
+            this.currentChat = chat;
+        }
     }
 
-    console.log(base64String);
 
-    // Set the src attribute of an img element
-    imageSource.value = base64String;
-})
+}
 </script>
 
 <template>
     <div class="chat_window">
-        <ChatTopBar></ChatTopBar>
-        <img :src="imageSource" alt="Boh" style="display: none;">
+        <ChatTopBar :chatId="selectedChatId"></ChatTopBar>
         <TypingBar></TypingBar>
     </div>
 </template>

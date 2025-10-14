@@ -16,6 +16,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/user/:user_id/bio", rt.setMyBio)
 	rt.router.GET("/user/:user_id/chats", rt.getMyConversations)
 	rt.router.POST("/user/:user_id/photo", rt.setMyPhoto)
+	rt.router.GET("/users", rt.getAllUsers)
 
 	rt.router.PUT("/chat", rt.createConversation)
 	rt.router.GET("/chat/:chat_id", rt.getConversation)

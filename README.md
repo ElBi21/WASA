@@ -8,19 +8,19 @@
 - [X] Build the API;
 - [X] Build the backend;
 - [ ] Build the frontend;
-- [ ] Dockerize the application.
+- [X] Dockerize the application.
 
 ## List of all the tasks to do
 
 | API Endpoint                     | OpenAPI | Go (Backend) | Vue (Frontend) |
 |----------------------------------|---------|--------------|----------------|
 | `doLogin` (see simplified login) | ✓       | ✓            | ✓              |
-| `setMyUserName`                  | ✓       | ✓            | ×              |
-| `setMyDisplayName` (Extra)       | ✓       | ✓            | ×              |
-| `setMyBio` (Extra)               | ✓       | ✓            | ×              |
-| `getMyConversations`             | ✓       | ✓            | ×              |
+| `setMyUserName`                  | ✓       | ✓            | ✓ (1/2)        |
+| `setMyDisplayName` (Extra)       | ✓       | ✓            | ✓ (1/2)        |
+| `setMyBio` (Extra)               | ✓       | ✓            | ✓ (1/2)        |
+| `getMyConversations`             | ✓       | ✓            | ✓              |
 | `createConversation`             | ✓       | ✓            | ×              |
-| `getConversation`                | ✓       | ✓            | ×              |
+| `getConversation`                | ✓       | ✓            | ✓              |
 | `sendMessage`                    | ✓       | ✓            | ×              |
 | `forwardMessage`                 | ✓       | ✓            | ×              |
 | `commentMessage`                 | ✓       | ✓            | ×              |
@@ -32,6 +32,7 @@
 | `setGroupName`                   | ✓       | ✓            | ×              |
 | `setMyPhoto`                     | ✓       | ✓            | ×              |
 | `setGroupPhoto`                  | ✓       | ✓            | ×              |
+| `getAllUsers`                    | ✓       | ✓            | ×              |
 
 ---
 

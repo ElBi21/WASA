@@ -2,43 +2,58 @@
 import SingleChat from "./SingleChat.vue";
 import {API_get_conversations} from "../services/user-ops";
 import UserPanel from "./UserPanel.vue";
+import {retrieveFromStorage} from "../services/utils";
 
 export default {
-    props: [
-        "userId"
-    ],
+    components: {
+        UserPanel,
+        SingleChat
+    },
 
     data: function() {
         return {
             userChats: [],
 
-            currently_opened_chat: null,
+            currently_opened_chat_id: null,
+            currently_opened_chat_html: null,
+        }
+    },
+
+    emits: [ "chatSelectedEmit" ],
+
+    methods: {
+        async select_chat(chatObj, event) {
+            // Set CSS ID
+            let chatHTML = event.currentTarget;
+            let chatID = chatObj.ID;
+            chatHTML.id = "single_chat_selected";
+
+            if (this.currently_opened_chat_html !== chatHTML && this.currently_opened_chat_html !== null) {
+                this.currently_opened_chat_html.id = "";
+            }
+
+            this.currently_opened_chat_html = chatHTML;
+            this.currently_opened_chat_id = chatID;
+
+            // Send value upstream
+            this.$emit("chatSelectedEmit", chatObj.ID);
+        },
+
+        async prepare_chat_for_display(chatID) {
+
         }
     },
 
     // Starting point of page
     async mounted() {
-        this.userChats = await API_get_conversations("leo");
-        console.log(this.userChats)
+        await API_get_conversations(this.userId).then((result) => {
+            this.userChats = result;
+        });
     },
 
-    methods: {
-        async select_chat(event) {
-            let chat = event.currentTarget;
-            chat.id = "single_chat_selected";
-
-            if (this.currently_opened_chat !== chat && this.currently_opened_chat !== null) {
-                this.currently_opened_chat.id = "";
-            }
-
-            this.currently_opened_chat = chat;
-        }
-    },
-
-    components: {
-        UserPanel,
-        SingleChat
-    }
+    props: [
+        "userId"
+    ],
 }
 </script>
 
@@ -62,7 +77,7 @@ export default {
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
                             :chat-name="chat.Name" :last-message-sender="chat.LastSent.sender.display_name"
                             :last-message-body="chat.LastSent.content" :last-message-date="chat.LastSent.timestamp"
-                            @click="select_chat">
+                            @click="select_chat(chat, $event)">
                 </SingleChat>
             </div>
         </div>

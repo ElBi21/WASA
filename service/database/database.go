@@ -55,6 +55,7 @@ type AppDatabase interface {
 	GetWhoReceivedMessage(messageID int) ([]customstructs.User, error)
 	GetWhoSawMessage(messageID int) ([]customstructs.User, error)
 	GetReactions(messageID int) ([]customstructs.Reaction, error)
+	GetAllUsers() []customstructs.User
 
 	// Write
 	RegisterNewUser(newUserName string) (customstructs.User, error)

@@ -622,6 +622,72 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
+  /users:
+    # GET = getAllUsers
+
+    get:
+      tags: [ "User operations" ]
+      summary: Get all users
+      description: Gets a list with all the users
+      operationId: getAllUsers
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: All users successfully retrieven
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Object containing an array of all users
+                properties:
+                  all_users:
+                    type: array
+                    description: Array with the users
+                    items:
+                      $ref: "#/components/schemas/User"
+                    minItems: 0
+                    maxItems: 4294967296
+                required:
+                  - all_users
+
+        '400':
+          description: Error while retrieving users
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Object containing an array of all users
+                properties:
+                  all_users:
+                    type: array
+                    description: Array with the users
+                    items:
+                      $ref: "#/components/schemas/User"
+                    minItems: 0
+                    maxItems: 4294967296
+                required:
+                  - all_users
+
+        "401":
+          description: |
+            Authorization error
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Object containing an array of all users
+                properties:
+                  all_users:
+                    type: array
+                    description: Array with the users
+                    items:
+                      $ref: "#/components/schemas/User"
+                    minItems: 0
+                    maxItems: 4294967296
+                required:
+                  - all_users
+
   /chat:
     # PUT = createConversation
     put:

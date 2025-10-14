@@ -4,13 +4,13 @@
 }
 
 #bg_1 {
-    background: #dfe4e8;
+    background: rgba(173, 236, 171, 0.88);
 }
 
 #bg_2 {
-    background: radial-gradient(circle at 95% 15%, rgba(231, 202, 85, 0.4) 5%, transparent 48.05%);
+    background: radial-gradient(circle at 95% 25%, rgba(232, 196, 78, 0.8) 5%, transparent 53.05%);
 }
 
 #bg_3 {
-    background: radial-gradient(circle at 5% 90%, rgba(123, 226, 236, 0.4) 5%, transparent 48.05%);
+    background: radial-gradient(circle at 5% 90%, rgba(123, 226, 236, 0.9) 5%, transparent 68.05%);
 }

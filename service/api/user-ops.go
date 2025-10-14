@@ -185,3 +185,21 @@ func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(jsonChat)
 }
+
+// getAllUsers retrieves all the users using WASAText
+func (rt *_router) getAllUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user exists, in case return 404
+	users := rt.db.GetAllUsers()
+
+	jsonChat, _ := json.Marshal(users)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(jsonChat)
+}
