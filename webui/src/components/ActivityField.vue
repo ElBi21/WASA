@@ -46,7 +46,7 @@ export default {
 
         <NoChatOpenPage v-if="selectedChatID === null || showNoChatPage === true"
             @open-new-chat-dial="openNewChatDial"></NoChatOpenPage>
-        <ChatWindow v-else :selected-chat-id="selectedChatID"></ChatWindow>
+        <ChatWindow v-else :selectedChatId="selectedChatID"></ChatWindow>
     </div>
 </template>
 

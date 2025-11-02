@@ -6,42 +6,42 @@ export default {
     data: function() {
         return {
             userData: null,
-            chatObj: null,
-            chatPhoto: null,
 
-            chatUsersString: ""
+            chatTitle: "",
+            chatPhoto: null,
+            chatUsersString: "",
+            chatIsPrivate: false,
         }
     },
 
     methods: {
-        async loadChatData(chat_id, user_id) {
-            this.chatObj = await API_get_conversation(chat_id, user_id);
-
+        async loadChatData() {
             if (!this.chatObj.IsPrivate) {
-                this.chatPhoto = `data:image/jpeg;base64,` + this.chatObj.Photo
+                this.chatPhoto = `data:image/jpeg;base64,` + this.chatObj.Photo;
+
+                this.chatTitle = this.chatObj.Name;
+                this.chatUsersString = this.chatObj.Users.map(user => user.display_name).join(', ');
+            } else {
+                let otherUser = this.chatObj.Users[0].user_id === this.userData.user_id ? this.chatObj.Users[1] : this.chatObj.Users[0];
+                this.chatPhoto = `data:image/jpeg;base64,` + otherUser.profile_pic;
+
+                this.chatUsersString = "";
+                this.chatTitle = otherUser.display_name;
             }
         },
-
-        async createUsersString() {
-            this.chatUsersString = this.chatObj.Users.map(user => user.display_name).join(', ');
-        }
     },
 
     async mounted() {
-        let userData = await retrieveFromStorage();
-        await this.loadChatData(this.chatId, userData.user_id);
-        await this.createUsersString();
+        this.userData = await retrieveFromStorage();
 
-        console.log(this.chatUsersString);
+        await this.loadChatData();
     },
 
-    props: [ "chatId" ],
+    props: [ "chatObj" ],
 
     watch: {
-        async chatId(chat_id) {
-            let userData = await retrieveFromStorage();
-            await this.loadChatData(chat_id, userData.user_id);
-            await this.createUsersString();
+        async chatObj(newValue) {
+            await this.loadChatData();
         }
     }
 }
@@ -49,15 +49,15 @@ export default {
 
 <template>
 <div class="chat_top_bar text-wrapper" v-if="chatObj">
-    <img :src="chatPhoto" class="chat_top_image" alt="chat pfp">
-    <div class="chat_top_info text-wrapper">
-        <div class="chat_top_name_desc">
-            <h1 class="chat_top_title text-wrapper">{{ chatObj.Name }}</h1>
-            <p class="chat_top_paragraph text-wrapper">{{ chatObj.GroupDescription }}</p>
+    <div class="chat_top_main_info">
+        <img :src="chatPhoto" class="chat_top_image" alt="chat pfp">
+        <div class="chat_top_info text-wrapper">
+            <h1 class="chat_top_title text-wrapper">{{ this.chatTitle }}</h1>
+            <p v-if="!this.chatObj.IsPrivate" class="chat_top_paragraph text-wrapper">{{ chatUsersString }}</p>
+            <p v-if="!this.chatObj.IsPrivate && this.chatObj.GroupDescription" id="chat_top_desc" class="chat_top_paragraph text-wrapper">{{ chatObj.GroupDescription }}</p>
         </div>
-        <p class="chat_top_paragraph text-wrapper">{{ chatUsersString }}</p>
     </div>
-    <div class="separator_vertical"></div>
+    <!--<div class="separator_vertical"></div>-->
 </div>
 </template>
 

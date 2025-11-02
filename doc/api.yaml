@@ -812,10 +812,72 @@ paths:
                 $ref: "#/components/schemas/Chat"
 
 
+  /chat/{chat_id}/messages:
+    # GET = getConversationMessages
+    parameters:
+      - $ref: "#/components/parameters/chat_id"
+
+    get:
+      tags: ["User operations", "Chats"]
+      summary: Get the chat's messages
+      description: Get the messages given a chat
+      operationId: getConversationMessages
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Messages retrieven
+          content:
+            application/json:
+              schema:
+                type: object
+                description: An object containing the array of messages sent, most recent first
+                properties:
+                  messages:
+                    type: array
+                    minItems: 0
+                    maxItems: 44294967296
+                    items:
+                      $ref: "#/components/schemas/Message"
+
+
+        '400':
+          description: |
+            The specified chat_id is not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                description: An object containing the array of messages sent, most recent first
+                properties:
+                  messages:
+                    type: array
+                    minItems: 0
+                    maxItems: 44294967296
+                    items:
+                      $ref: "#/components/schemas/Message"
+
+        "401":
+          description: |
+            Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+
+        '404':
+          description: |
+            The chat does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+
+
   /chat/{chat_id}/users:
     parameters:
       - $ref: "#/components/parameters/chat_id"
-    # POST = addToGroup
+    # PUT = addToGroup
     # DELETE = leaveGroup
 
     put:

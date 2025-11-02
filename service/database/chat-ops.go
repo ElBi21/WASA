@@ -159,3 +159,51 @@ func (db *appdbimpl) SetNewGroupPhoto(chatID int, newPhoto string) error {
 
 	return err
 }
+
+// GetConversationMessages returns all messages belonging to a chat, in reversed chronological order
+func (db *appdbimpl) GetConversationMessages(chatId int) ([]customstructs.Message, error) {
+	var returnMessages []customstructs.Message
+
+	// Get the chat
+	rows, err := db.c.Query(`
+		SELECT l.id, r.name, r.display_name, l.content, l.timestamp, l.photo,
+       		   l.forwarded, l.replying_to, l.deleted 
+		FROM Messages l INNER JOIN Users r ON l.sender = r.name 
+		WHERE chat = ? ORDER BY timestamp;`, chatId)
+
+	if errors.Is(err, sql.ErrNoRows) || rows.Err() != nil {
+		return returnMessages, fmt.Errorf("[DB] chat does not exist\n (%w)", err)
+	}
+
+	for rows.Next() {
+		var message customstructs.Message
+		var sender customstructs.User
+		var errRecv, errSeen error
+
+		err = rows.Scan(&message.ID, &sender.Name, &sender.DisplayName, &message.Content,
+			&message.Timestamp, &message.Photo, &message.Forwarded, &message.ReplyingTo, &message.Deleted)
+
+		message.Sender = sender
+
+		if err != nil {
+			return returnMessages, err
+		}
+
+		message.Received, errRecv = db.GetWhoReceivedMessage(message.ID)
+		message.Seen, errSeen = db.GetWhoSawMessage(message.ID)
+
+		if errRecv != nil || errSeen != nil {
+			return returnMessages, fmt.Errorf("[DB] Error while retrieving who received/saw the message")
+		}
+
+		message.Reactions, err = db.GetReactions(message.ID)
+
+		if err != nil {
+			return returnMessages, err
+		}
+
+		returnMessages = append(returnMessages, message)
+	}
+
+	return returnMessages, nil
+}

@@ -396,3 +396,38 @@ func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps http
 	jsonReturn, _ := json.Marshal(chat)
 	_, _ = w.Write(jsonReturn)
 }
+
+// The getConversationMessages retrieves all the sent messages in a chat, sorted with the most recent ones first
+func (rt *_router) getConversationMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var returnStruct struct {
+		Messages []customstructs.Message `json:"messages"`
+	}
+	var err error
+
+	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
+	_, errAuth := rt.db.GetUserByName(auth)
+
+	if errAuth != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		jsonReturn, _ := json.Marshal(returnStruct)
+		_, _ = w.Write(jsonReturn)
+		return
+	}
+
+	chatParam := ps.ByName("chat_id")
+	chatID, errParam := strconv.Atoi(chatParam)
+
+	returnStruct.Messages, err = rt.db.GetConversationMessages(chatID)
+
+	if err != nil || errParam != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonReturn, _ := json.Marshal(returnStruct)
+		_, _ = w.Write(jsonReturn)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	jsonReturn, _ := json.Marshal(returnStruct)
+	_, _ = w.Write(jsonReturn)
+}

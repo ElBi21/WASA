@@ -35,7 +35,25 @@ async function API_create_conversation(isPrivate, users, name, groupDescription,
     )
 }
 
+async function API_get_conversation_messages(chat_id, username) {
+    let all_messages = null;
+
+    await axios.get(`/chat/${chat_id}/messages`,
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    ).then((result) => {
+        all_messages = result.data.messages;
+    })
+
+    return all_messages;
+}
+
 export {
     API_get_conversation,
-    API_create_conversation
+    API_create_conversation,
+    API_get_conversation_messages
 }

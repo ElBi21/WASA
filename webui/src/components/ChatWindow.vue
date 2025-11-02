@@ -5,18 +5,34 @@ import ChatMessages from "./ChatMessages.vue";
 </script>
 
 <script>
+import {API_get_conversation} from "../services/chat-ops";
+import {retrieveFromStorage} from "../services/utils";
+
 export default {
     data: function() {
         return {
-            currentChat: null
+            // currentChat: null,
+            chatObj: null,
+            userData: null
         }
+    },
+
+    methods: {
+        async updateChatObject() {
+            this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+        }
+    },
+
+    async mounted() {
+        this.userData = await retrieveFromStorage();
+        this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
     },
 
     props: [ "selectedChatId" ],
 
     watch: {
-        selectedChatID(chat) {
-            this.currentChat = chat;
+        async selectedChatId() {
+            this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
         }
     }
 }
@@ -24,9 +40,9 @@ export default {
 
 <template>
     <div class="chat_window">
-        <ChatTopBar :chatId="selectedChatId"></ChatTopBar>
-        <ChatMessages></ChatMessages>
-        <TypingBar :chatID="selectedChatId"></TypingBar>
+        <ChatTopBar v-if="chatObj" :chatObj="chatObj"></ChatTopBar>
+        <ChatMessages v-if="chatObj" :chatObj="chatObj"></ChatMessages>
+        <TypingBar v-if="chatObj" :chatID="selectedChatId"></TypingBar>
     </div>
 </template>
 

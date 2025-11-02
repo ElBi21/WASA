@@ -33,6 +33,7 @@
 | `setMyPhoto`                     | ✓       | ✓            | ✓ (1/2)        |
 | `setGroupPhoto`                  | ✓       | ✓            | ✓ (1/2)        |
 | `getAllUsers`                    | ✓       | ✓            | ✓              |
+| `getConversationMessages`        | ✓       | ×            | ×              |
 
 ---
 

@@ -91,7 +91,7 @@
 
 .chat_top_bar {
     width: 100%;
-    height: 108px;
+    height: 124px;
 
     margin: -8px 0 0 0;
     padding: 0 16px 0 16px;
@@ -104,13 +104,13 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
     display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
 }
 
 .chat_top_info {
-    width: 70%;
+    width: 100%;
     height: 100%;
 
     margin: 0 0 0 8px;
@@ -122,7 +122,7 @@
 }
 
 .chat_top_title {
-    width: auto;
+    width: 100%;
 
     font-size: 22px;
     font-weight: 600;
@@ -159,4 +159,16 @@
     border-radius: 40px;
     border: 1.5px solid white;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.chat_top_main_info {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+#chat_top_desc {
+    margin: 8px 0 0 0;
+    color: #606060;
 }

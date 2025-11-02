@@ -5,6 +5,13 @@ import UserPanel from "./UserPanel.vue";
 import {retrieveFromStorage} from "../services/utils";
 
 export default {
+    async beforeDestroy() {
+        if (this.refresh_timer_ID) {
+            clearInterval(this.refresh_timer_ID);
+            this.refresh_timer_ID = null;
+        }
+    },
+
     components: {SingleChat, UserPanel},
 
     data: function() {
@@ -13,6 +20,9 @@ export default {
 
             currently_opened_chat_id: null,
             currently_opened_chat_html: null,
+
+            refresh_timer_ID: null,
+            refresh_timer_interval: 1500
         }
     },
 
@@ -36,9 +46,9 @@ export default {
             this.$emit("chatSelectedEmit", chatObj.ID);
         },
 
-        async prepare_chat_for_display(chatID) {
+        /*async prepare_chat_for_display(chatID) {
 
-        },
+        },*/
 
         openChatDialEXT() {
             this.$emit("openNewChatDialCL");
@@ -50,6 +60,12 @@ export default {
         await API_get_conversations(this.userId).then((result) => {
             this.userChats = result;
         });
+
+        this.refresh_timer_ID = setInterval(async () => {
+            await API_get_conversations(this.userId).then((result) => {
+                this.userChats = result;
+            });
+        }, this.refresh_timer_interval);
     },
 
     props: [

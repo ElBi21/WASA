@@ -56,6 +56,7 @@ type AppDatabase interface {
 	GetWhoSawMessage(messageID int) ([]customstructs.User, error)
 	GetReactions(messageID int) ([]customstructs.Reaction, error)
 	GetAllUsers() []customstructs.User
+	GetConversationMessages(chatId int) ([]customstructs.Message, error)
 
 	// Write
 	RegisterNewUser(newUserName string) (customstructs.User, error)
