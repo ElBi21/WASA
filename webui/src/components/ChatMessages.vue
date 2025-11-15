@@ -16,7 +16,7 @@ export default {
     async mounted() {
         this.userData = await retrieveFromStorage();
         this.messages = await API_get_conversation_messages(this.chatObj.ID, this.userData.user_id);
-
+        
         console.log(this.messages);
     },
 
