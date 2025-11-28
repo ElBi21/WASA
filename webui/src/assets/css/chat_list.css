@@ -3,7 +3,7 @@
     height: calc(100% - var(--user-panel-height) - 8px);
 
     border-radius: 16px;
-    border: 3px solid white;
+    border: 0px solid white;
     padding: 8px;
 
     background: var(--glass-background);
@@ -16,7 +16,8 @@
     justify-content: start;
     align-items: start;
 
-    overflow: visible;
+    overflow-y: visible;
+    overflow-x: hidden;
 }
 
 .chat_list_main {
@@ -217,7 +218,7 @@
     height: var(--user-panel-height);
 
     border-radius: 16px;
-    border: 3px solid white;
+    border: 0px solid white;
     padding: 8px;
     margin: 8px 0 0 0;
 

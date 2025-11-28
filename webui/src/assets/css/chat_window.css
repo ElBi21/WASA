@@ -10,6 +10,8 @@
 }
 
 .typing_bar_container {
+    margin: -48px 0 0 0;
+
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -19,6 +21,8 @@
 .type_bar {
     width: calc(100% - 80px - 16px);
     height: 40px;
+
+    z-index: 10;
 
     padding: 4px 0 4px 12px;
 
@@ -34,6 +38,8 @@
 .bar_button {
     width: 40px;
     height: 40px;
+
+    z-index: 10;
 
     margin: 0 0 0 8px;
 
@@ -91,7 +97,8 @@
 
 .chat_top_bar {
     width: 100%;
-    height: 124px;
+    min-height: 124px;
+    z-index: 10;
 
     margin: -8px 0 0 0;
     padding: 0 16px 0 16px;

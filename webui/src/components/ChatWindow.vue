@@ -41,11 +41,28 @@ export default {
 <template>
     <div class="chat_window">
         <ChatTopBar v-if="chatObj" :chatObj="chatObj"></ChatTopBar>
-        <ChatMessages v-if="chatObj" :chatObj="chatObj"></ChatMessages>
+        <div class="scroll_container">
+            <ChatMessages v-if="chatObj" :chatObj="chatObj"></ChatMessages>
+        </div>
         <TypingBar v-if="chatObj" :chatID="selectedChatId"></TypingBar>
     </div>
 </template>
 
 <style scoped>
 @import url("../assets/css/chat_window.css");
+
+.scroll_container {
+    height: calc(100% + 108px);
+    z-index: 1;
+
+    margin: -124px 0 0 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow-y: visible;
+    overflow-x: hidden;
+}
 </style>

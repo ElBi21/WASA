@@ -837,6 +837,7 @@ paths:
                     type: array
                     minItems: 0
                     maxItems: 44294967296
+                    description: Array of messages sent in a chat
                     items:
                       $ref: "#/components/schemas/Message"
 
@@ -854,6 +855,7 @@ paths:
                     type: array
                     minItems: 0
                     maxItems: 44294967296
+                    description: Array of messages sent in a chat
                     items:
                       $ref: "#/components/schemas/Message"
 

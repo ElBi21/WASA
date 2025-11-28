@@ -166,7 +166,7 @@ func (db *appdbimpl) GetConversationMessages(chatId int) ([]customstructs.Messag
 
 	// Get the chat
 	rows, err := db.c.Query(`
-		SELECT l.id, r.name, r.display_name, l.content, l.timestamp, l.photo,
+		SELECT l.id, r.name, r.display_name, r.photo, l.content, l.timestamp, l.photo,
        		   l.forwarded, l.replying_to, l.deleted 
 		FROM Messages l INNER JOIN Users r ON l.sender = r.name 
 		WHERE chat = ? ORDER BY timestamp;`, chatId)
@@ -180,7 +180,7 @@ func (db *appdbimpl) GetConversationMessages(chatId int) ([]customstructs.Messag
 		var sender customstructs.User
 		var errRecv, errSeen error
 
-		err = rows.Scan(&message.ID, &sender.Name, &sender.DisplayName, &message.Content,
+		err = rows.Scan(&message.ID, &sender.Name, &sender.DisplayName, &sender.ProfilePic, &message.Content,
 			&message.Timestamp, &message.Photo, &message.Forwarded, &message.ReplyingTo, &message.Deleted)
 
 		message.Sender = sender
