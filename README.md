@@ -21,7 +21,7 @@
 | `getMyConversations`             | ✓       | ✓            | ✓              |
 | `createConversation`             | ✓       | ✓            | ✓              |
 | `getConversation`                | ✓       | ✓            | ✓              |
-| `sendMessage`                    | ✓       | ✓            | ×              |
+| `sendMessage`                    | ✓       | ✓            | ✓              |
 | `forwardMessage`                 | ✓       | ✓            | ×              |
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
@@ -33,7 +33,7 @@
 | `setMyPhoto`                     | ✓       | ✓            | ✓ (1/2)        |
 | `setGroupPhoto`                  | ✓       | ✓            | ✓ (1/2)        |
 | `getAllUsers`                    | ✓       | ✓            | ✓              |
-| `getConversationMessages`        | ✓       | ×            | ×              |
+| `getConversationMessages`        | ✓       | ✓            | ✓              |
 
 ---
 
