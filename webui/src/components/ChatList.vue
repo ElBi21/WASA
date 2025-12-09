@@ -1,7 +1,7 @@
 <script>
 import SingleChat from "./SingleChat.vue";
-import {API_get_conversations} from "../services/user-ops";
 import UserPanel from "./UserPanel.vue";
+import {API_get_conversations} from "../services/user-ops";
 import {retrieveFromStorage} from "../services/utils";
 
 export default {
@@ -22,11 +22,13 @@ export default {
             currently_opened_chat_html: null,
 
             refresh_timer_ID: null,
-            refresh_timer_interval: 1500
+            refresh_timer_interval: 1500,
+
+            stopReloading: true,
         }
     },
 
-    emits: [ "chatSelectedEmit", "openNewChatDialCL" ],
+    emits: [ "chatSelectedEmit", "openNewChatDialCL", "logOutClicked" ],
 
     methods: {
         async select_chat(chatObj, event) {
@@ -46,25 +48,33 @@ export default {
             this.$emit("chatSelectedEmit", chatObj.ID);
         },
 
-        /*async prepare_chat_for_display(chatID) {
-
-        },*/
-
         openChatDialEXT() {
             this.$emit("openNewChatDialCL");
+        },
+
+        logOutHandler() {
+            this.$emit('logOutClicked', 1);
+            this.stopReloading = 1;
         }
     },
 
     // Starting point of page
     async mounted() {
+        this.stopReloading = false;
         await API_get_conversations(this.userId).then((result) => {
             this.userChats = result;
         });
 
         this.refresh_timer_ID = setInterval(async () => {
-            await API_get_conversations(this.userId).then((result) => {
-                this.userChats = result;
-            });
+            if (this.stopReloading) {
+                this.stopReloading = !this.stopReloading;
+                clearInterval(this.refresh_timer_ID);
+                this.refresh_timer_interval = null;
+            } else {
+                await API_get_conversations(this.userId).then((result) => {
+                    this.userChats = result;
+                });
+            }
         }, this.refresh_timer_interval);
     },
 
@@ -93,12 +103,13 @@ export default {
             <div class="chat_list_main">
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
                             :last-message-sender="chat.LastSent.sender.display_name"
-                            :last-message-body="chat.LastSent.content" :last-message-date="chat.LastSent.timestamp"
+                            :last-message-body="chat.LastSent.content"
+                            :last-message-date="chat.LastSent.timestamp"
                             @click="select_chat(chat, $event)">
                 </SingleChat>
             </div>
         </div>
-        <UserPanel></UserPanel>
+        <UserPanel @logOutClicked="logOutHandler"></UserPanel>
     </div>
 </template>
 

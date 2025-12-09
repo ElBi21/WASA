@@ -5,13 +5,16 @@ import NewChat from "./NewChat.vue";
 </script>
 
 <script>
+import {retrieveFromStorage} from "@/services/utils";
+
 export default {
     data: function() {
         return {
             selectedChatID: null,
-            showNoChatPage: false,
 
-            openNewChatDialFlag: false
+            showNoChatPage: false,
+            openNewChatDialFlag: false,
+            stopTimersFlag: 0
         }
     },
 
@@ -28,11 +31,16 @@ export default {
         }
     },
 
-    props: [ "selectedChatIdProp", "openChatDialExternal" ],
+    props: [ "selectedChatIdProp", "openChatDialExternal", "logOutStopTimer" ],
 
     watch: {
         selectedChatIdProp(chatID) {
             this.selectedChatID = chatID;
+        },
+
+        logOutStopTimer() {
+            this.stopTimersFlag = 1;
+            console.log("Hey there");
         }
     }
 }
@@ -46,7 +54,7 @@ export default {
 
         <NoChatOpenPage v-if="selectedChatID === null || showNoChatPage === true"
             @open-new-chat-dial="openNewChatDial"></NoChatOpenPage>
-        <ChatWindow v-else :selectedChatId="selectedChatID"></ChatWindow>
+        <ChatWindow v-else :selectedChatId="selectedChatID" :logOutStopTimer="stopTimersFlag"></ChatWindow>
     </div>
 </template>
 

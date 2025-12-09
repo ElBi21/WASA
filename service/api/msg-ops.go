@@ -52,9 +52,14 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
+	chatObj, _ := rt.db.GetConversation(message.ChatID)
+
 	// Place the message in the tables of received and read from the sender
-	_ = rt.db.AddReceivedMessage(message.ID, message.Sender.Name)
-	message.Received = append(message.Received, message.Sender)
+	for _, groupUser := range chatObj.Users {
+		_ = rt.db.AddReceivedMessage(message.ID, groupUser.Name)
+		message.Received = append(message.Received, groupUser)
+	}
+
 	_ = rt.db.AddSeenMessage(message.ID, message.Sender.Name)
 	message.Seen = append(message.Seen, message.Sender)
 

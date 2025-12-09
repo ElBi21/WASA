@@ -19,12 +19,18 @@ async function img_to_base64(image) {
 
 
 async function retrieveFromStorage() {
-    let userDataFromLogin = JSON.parse(localStorage.getItem("user"));
+    let userDataFromLogin = JSON.parse(sessionStorage.getItem("user"));
     return userDataFromLogin
+}
+
+
+async function clearSessionStorage() {
+    sessionStorage.removeItem("user");
 }
 
 
 export {
     img_to_base64,
-    retrieveFromStorage
+    retrieveFromStorage,
+    clearSessionStorage
 }

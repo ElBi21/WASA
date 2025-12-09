@@ -406,7 +406,7 @@ func (rt *_router) getConversationMessages(w http.ResponseWriter, r *http.Reques
 
 	auth := r.Header.Get("Authorization")
 	auth = strings.TrimPrefix(auth, "Bearer ")
-	_, errAuth := rt.db.GetUserByName(auth)
+	user, errAuth := rt.db.GetUserByName(auth)
 
 	if errAuth != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -419,6 +419,13 @@ func (rt *_router) getConversationMessages(w http.ResponseWriter, r *http.Reques
 	chatID, errParam := strconv.Atoi(chatParam)
 
 	returnStruct.Messages, err = rt.db.GetConversationMessages(chatID)
+
+	// fmt.Printf("User %s has seen new messages\n", user.Name)
+
+	for index, message := range returnStruct.Messages {
+		_ = rt.db.AddSeenMessage(message.ID, user.Name)
+		returnStruct.Messages[index].Seen = append(returnStruct.Messages[index].Seen, user)
+	}
 
 	if err != nil || errParam != nil {
 		w.WriteHeader(http.StatusBadRequest)

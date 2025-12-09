@@ -1,5 +1,9 @@
 <script>
+import MessageCheck from "@/components/MessageCheck.vue";
+
 export default {
+    components: {MessageCheck},
+
     data: function() {
         return {
             messageFormattedDate: null,
@@ -14,14 +18,14 @@ export default {
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
     },
 
-    props: [ "userLogged", "messageObj" ]
+    props: [ "userLogged", "messageObj", "isChatPrivate" ]
 }
 </script>
 
 <template>
 <div :class="['message_container', { active: messageObj.sender.user_id === userLogged }]">
     <div :class="['message_shape', { active: messageObj.sender.user_id === userLogged }]">
-        <div class="message_sender_info">
+        <div class="message_sender_info" v-if="!isChatPrivate">
             <img class="message_sender_photo" v-if="messageObj.sender.user_id !== userLogged"
                  :src="this.senderPFP" alt="User PFP">
             <p class="message_sender_display_name" v-if="messageObj.sender.user_id !== userLogged">{{ this.messageObj.sender.display_name }}</p>
@@ -29,7 +33,7 @@ export default {
         <p class="message_content">{{ this.messageObj.content }}</p>
         <div class="message_metadata">
             <p class="message_time">{{ this.messageFormattedDate }}</p>
-            <div class="message_status"></div>
+            <MessageCheck></MessageCheck>
         </div>
     </div>
 </div>

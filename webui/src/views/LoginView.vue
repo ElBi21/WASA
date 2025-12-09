@@ -53,7 +53,7 @@ export default {
                 this.should_register = value.shouldRegister;
 
                 // Save in local storage
-                localStorage.setItem("user", JSON.stringify(value.userData));
+                sessionStorage.setItem("user", JSON.stringify(value.userData));
             })
 
             // If the user is new, perform registration
@@ -96,7 +96,7 @@ export default {
 
             await API_set_new_pfp(this.userData.user_id, this.userData.profile_pic).then((_) => {
                 // Save to local storage and go to home
-                localStorage.setItem("user", JSON.stringify(this.userData));
+                sessionStorage.setItem("user", JSON.stringify(this.userData));
             });
 
             this.$router.push({ path: "/home", replace: true });

@@ -1,9 +1,11 @@
 <script>
+import {retrieveFromStorage} from "@/services/utils";
+
 export default {
     data: function() {
         return {
             user_data: {
-                display_name: "Leo"
+                display_name: "",
             }
         }
     },
@@ -14,6 +16,10 @@ export default {
         openNewChatDialEmit() {
             this.$emit('openNewChatDial');
         }
+    },
+
+    async mounted() {
+        this.user_data = await retrieveFromStorage();
     },
 
     props: [ "user_display_name" ]

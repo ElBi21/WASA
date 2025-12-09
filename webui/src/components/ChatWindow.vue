@@ -11,15 +11,22 @@ import {retrieveFromStorage} from "../services/utils";
 export default {
     data: function() {
         return {
-            // currentChat: null,
             chatObj: null,
-            userData: null
+            userData: null,
+
+            forceRefreshFlag: false,
+            stopTimersFlag: 0
         }
     },
 
     methods: {
         async updateChatObject() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+        },
+
+        refreshChatMessages() {
+            console.log(`User ${this.userData.user_id} refreshed the chat`);
+            this.forceRefreshFlag = !this.forceRefreshFlag;
         }
     },
 
@@ -28,11 +35,17 @@ export default {
         this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
     },
 
-    props: [ "selectedChatId" ],
+    props: [ "selectedChatId", "logOutStopTimer" ],
 
     watch: {
         async selectedChatId() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+            this.refreshChatMessages();
+        },
+
+        async logOutStopTimer() {
+            this.stopTimersFlag = 1;
+            console.log(`It's time to STOP!`);
         }
     }
 }
@@ -42,27 +55,14 @@ export default {
     <div class="chat_window">
         <ChatTopBar v-if="chatObj" :chatObj="chatObj"></ChatTopBar>
         <div class="scroll_container">
-            <ChatMessages v-if="chatObj" :chatObj="chatObj"></ChatMessages>
+            <ChatMessages v-if="chatObj" :chatObj="chatObj"
+                          :refreshFlag="forceRefreshFlag" :stopRefreshFlag="stopTimersFlag"></ChatMessages>
         </div>
-        <TypingBar v-if="chatObj" :chatID="selectedChatId"></TypingBar>
+        <TypingBar v-if="chatObj" :chatID="selectedChatId"
+                   @refresh_chat_view="refreshChatMessages"></TypingBar>
     </div>
 </template>
 
 <style scoped>
 @import url("../assets/css/chat_window.css");
-
-.scroll_container {
-    height: calc(100% + 108px);
-    z-index: 1;
-
-    margin: -124px 0 0 0;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    overflow-y: visible;
-    overflow-x: hidden;
-}
 </style>

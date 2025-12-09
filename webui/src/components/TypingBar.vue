@@ -14,6 +14,8 @@ export default {
         }
     },
 
+    emits: [ "refresh_chat_view" ],
+
     methods: {
         async send_message() {
             this.messageBuffer = this.messageBuffer.trimStart();
@@ -22,6 +24,8 @@ export default {
             await API_send_message(this.userID, this.chatID, this.messageBuffer, this.messagePhoto, this.isReplying);
 
             this.messageBuffer = '';
+
+            this.$emit("refresh_chat_view");
         }
     },
 

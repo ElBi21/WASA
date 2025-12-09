@@ -45,7 +45,7 @@
 }
 
 .message_shape.active {
-    background-color: rgba(28, 104, 204, 0.43);
+    background-color: rgba(74, 200, 232, 0.53);
     border: rgba(28, 104, 204, 0.23) 1px solid;
 }
 
@@ -91,5 +91,13 @@
 .message_status {
     height: 10px;
     width: 10px;
-    background-color: cornflowerblue;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.message_status_icon {
+    width: 10px;
+    height: 10px;
 }

@@ -21,6 +21,7 @@ export default {
 
             chatSelected: null,
             openNewChatDial: false,
+            logOutStopTimers: 0
         }
 	},
 
@@ -37,12 +38,19 @@ export default {
 
         closeChatDial() {
             this.openNewChatDial = false;
+        },
+
+        logOutClicked() {
+            this.logOutStopTimers = 1;
+            console.log(this.logOutStopTimers);
         }
 	},
 
 	async mounted() {
 		let userData = await retrieveFromStorage();
         Object.assign(this.user_data, userData);
+
+        this.logOutStopTimers = 0;
 	}
 }
 </script>
@@ -51,9 +59,11 @@ export default {
     <Background>
         <div class="main_view">
             <ChatList v-if="this.user_data.user_id !== undefined" :user-id='this.user_data.user_id'
-                @chat-selected-emit="handleClickedChatButton" @openNewChatDialCL="openChatDial"></ChatList>
+                @chat-selected-emit="handleClickedChatButton"
+                @openNewChatDialCL="openChatDial"
+                @logOutClicked="logOutClicked"></ChatList>
             <ActivityField :selected-chat-id-prop="this.chatSelected" :open-chat-dial-external="openNewChatDial"
-                @closeChatDialExternal="closeChatDial"></ActivityField>
+                :logOutStopTimer="this.logOutStopTimers" @closeChatDialExternal="closeChatDial"></ActivityField>
         </div>
     </Background>
 </template>

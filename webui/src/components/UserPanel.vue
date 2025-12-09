@@ -1,33 +1,37 @@
-<script setup>
-import {ref, onMounted} from 'vue';
-
-const imageSource = ref('');
-const userData = ref('');
-
-onMounted(async () => {
-    let user_data = {};
-    let userDataFromLogin = JSON.parse(localStorage.getItem("user"));
-    Object.assign(user_data, userDataFromLogin);
-
-    userData.value = user_data;
-
-    let format = "jpeg";
-
-    if (!user_data.profile_pic.startsWith('data:image/')) {
-        user_data.profile_pic = `data:image/${format};base64,` + user_data.profile_pic;
-    }
-
-    // Set the src attribute of an img element
-    imageSource.value = user_data.profile_pic;
-})
-</script>
-
 <script>
+import {clearSessionStorage, retrieveFromStorage} from "../services/utils.js";
+
 export default {
+    data: function () {
+        return {
+            imageSource: "",
+            userData: null
+        }
+    },
+
+    emits: [ "logOutClicked" ],
+
     methods: {
         async goToLogin() {
-            this.$router.push({ path: "/", replace: true });
+            await clearSessionStorage();
+            this.$emit("logOutClicked");
+            this.$router.push({path: "/", replace: true});
+        },
+
+        async prepareUserData() {
+            let format = "jpeg";
+
+            if (!this.userData.profile_pic.startsWith('data:image/')) {
+                this.userData.profile_pic = `data:image/${format};base64,` + this.userData.profile_pic;
+            }
+
+            this.imageSource = this.userData.profile_pic;
         }
+    },
+
+    async mounted () {
+        this.userData = await retrieveFromStorage();
+        await this.prepareUserData();
     }
 }
 </script>
@@ -35,9 +39,9 @@ export default {
 <template>
     <div class="user_panel">
         <img :src="imageSource" alt="User PFP" class="user_pfp">
-        <div class="user_data">
-            <p class="user_info"><b>{{ userData.display_name }}</b>&nbsp(@{{ userData.user_id }})</p>
-            <p class="user_bio">{{ userData.biography }}</p>
+        <div class="user_data" v-if="this.userData !== null">
+            <p class="user_info"><b>{{ this.userData.display_name }}</b>&nbsp(@{{ this.userData.user_id }})</p>
+            <p class="user_bio">{{ this.userData.biography }}</p>
         </div>
         <button class="home_button" id="logout_button" @click="goToLogin">
             <img class="home_button_icon" id="logout_button_icon"
