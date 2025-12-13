@@ -76,6 +76,7 @@ type AppDatabase interface {
 	DeleteChatAndMessages(chat customstructs.Chat) (error, error)
 	SetNewGroupName(chatID int, newName string) error
 	SetNewGroupPhoto(chatID int, newPhoto string) error
+	DeleteSeenAndRecv(chatID int) (error, error)
 
 	// Misc
 	Ping() error

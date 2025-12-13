@@ -143,7 +143,19 @@ func (db *appdbimpl) RemoveUserFromGroup(chatID int, userID string) error {
 func (db *appdbimpl) DeleteChatAndMessages(chat customstructs.Chat) (error, error) {
 	_, errRemoveChat := db.c.Exec("DELETE FROM Chats WHERE id = ?", chat.ID)
 	_, errRemoveMessages := db.c.Exec("DELETE FROM Messages WHERE chat = ?", chat.ID)
+
 	return errRemoveChat, errRemoveMessages
+}
+
+func (db *appdbimpl) DeleteSeenAndRecv(chatID int) (error, error) {
+	_, errRemoveRecv := db.c.Exec(`
+		WITH MarkedMessages AS (SELECT ID FROM Messages WHERE chat = ?)
+		SELECT * FROM ReceivedMessages WHERE message IN (SELECT id FROM MarkedMessages)`, chatID)
+	_, errRemoveSeen := db.c.Exec(`
+		WITH MarkedMessages AS (SELECT ID FROM Messages WHERE chat = ?)
+		SELECT * FROM SeenMessages WHERE message IN (SELECT id FROM MarkedMessages)`, chatID)
+
+	return errRemoveRecv, errRemoveSeen
 }
 
 // SetNewGroupName sets a new name for a specific group

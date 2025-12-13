@@ -269,8 +269,10 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 			// Delete private chat between them
 			errChatDelete, errMsgDelete := rt.db.DeleteChatAndMessages(chat)
+			errRecvDelete, errSeenDelete := rt.db.DeleteSeenAndRecv(chat.ID)
 
-			if errChatDelete != nil || errMsgDelete != nil {
+			if errChatDelete != nil || errMsgDelete != nil ||
+				errRecvDelete != nil || errSeenDelete != nil {
 				returnEmptyUser(w, http.StatusBadRequest)
 				return
 			}
@@ -286,8 +288,10 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 		// If the user is the last one in the group, delete the group and the messages
 		if len(chat.Users) == 1 && chat.Users[0].Name == leaveUserID {
 			errChatDelete, errMsgDelete := rt.db.DeleteChatAndMessages(chat)
+			errRecvDelete, errSeenDelete := rt.db.DeleteSeenAndRecv(chat.ID)
 
-			if errChatDelete != nil || errMsgDelete != nil {
+			if errChatDelete != nil || errMsgDelete != nil ||
+				errRecvDelete != nil || errSeenDelete != nil {
 				returnEmptyUser(w, http.StatusBadRequest)
 				return
 			}

@@ -26,7 +26,7 @@
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
 | `deleteMessage`                  | ✓       | ✓            | ×              |
-| `addToGroup`                     | ✓       | ✓            | ×              |
+| `addToGroup`                     | ✓       | ✓            | ✓              |
 | `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |
 | `leaveGroup`                     | ✓       | ✓            | ✓              |
 | `setGroupName`                   | ✓       | ✓            | ✓ (1/2)        |
