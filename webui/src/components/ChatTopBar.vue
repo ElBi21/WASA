@@ -1,5 +1,5 @@
 <script>
-import {API_get_conversation} from "../services/chat-ops";
+import {API_get_conversation, API_leave_group} from "../services/chat-ops";
 import {retrieveFromStorage} from "../services/utils";
 
 export default {
@@ -13,6 +13,8 @@ export default {
             chatIsPrivate: false,
         }
     },
+
+    emits: [ "openAddUserDial" ],
 
     methods: {
         async loadChatData() {
@@ -29,12 +31,22 @@ export default {
                 this.chatTitle = otherUser.display_name;
             }
         },
+
+        async leaveGroup() {
+            await API_leave_group(this.chatObj.ID, this.userData.user_id);
+        },
+
+        openAddUserDial() {
+            this.$emit("openAddUserDial");
+        }
     },
 
     async mounted() {
         this.userData = await retrieveFromStorage();
 
         await this.loadChatData();
+
+        console.log(this.chatObj);
     },
 
     props: [ "chatObj" ],
@@ -57,7 +69,16 @@ export default {
             <p v-if="!this.chatObj.IsPrivate && this.chatObj.GroupDescription" id="chat_top_desc" class="chat_top_paragraph text-wrapper">{{ chatObj.GroupDescription }}</p>
         </div>
     </div>
-    <!--<div class="separator_vertical"></div>-->
+    <div class="chat_top_actions">
+        <button class="home_button" role="button" id="addUserToGroup" @click="openAddUserDial()">
+            <img class="home_button_icon"
+                 src="../assets/icons/user-plus-solid-full.svg" alt="Add user">
+        </button>
+        <button class="home_button" role="button" id="leaveGroup" @click="leaveGroup">
+            <img class="home_button_icon"
+                 src="../assets/icons/person-walking-arrow-right-solid-full.svg" alt="Add user">
+        </button>
+    </div>
 </div>
 </template>
 

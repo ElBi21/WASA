@@ -43,13 +43,12 @@ export default {
     props: [ "chatObj", "refreshFlag", "stopRefreshFlag" ],
 
     watch: {
-        async forceRefreshFlag() {
+        async refreshFlag() {
             await this.refreshMessages();
         },
 
         stopRefreshFlag() {
             this.stopReloading = true;
-            console.log(`Hello`);
         }
     }
 }
@@ -58,7 +57,8 @@ export default {
 <template>
 <div class="chat_messages_container">
     <SingleMessage v-for="message in messages"
-       :user-logged="userData.user_id" :message-obj="message" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
+       :user-logged="userData.user_id" :message-obj="message"
+       :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>
 </template>
 

@@ -418,13 +418,30 @@ func (rt *_router) getConversationMessages(w http.ResponseWriter, r *http.Reques
 	chatParam := ps.ByName("chat_id")
 	chatID, errParam := strconv.Atoi(chatParam)
 
+	chatObj, _ := rt.db.GetConversation(chatID)
+	isUserInGroup := false
+
+	for _, chatMember := range chatObj.Users {
+		if user.Name == chatMember.Name {
+			isUserInGroup = true
+		}
+	}
+
+	if !isUserInGroup {
+		w.WriteHeader(http.StatusUnauthorized)
+		jsonReturn, _ := json.Marshal(returnStruct)
+		_, _ = w.Write(jsonReturn)
+		return
+	}
+
 	returnStruct.Messages, err = rt.db.GetConversationMessages(chatID)
 
-	// fmt.Printf("User %s has seen new messages\n", user.Name)
-
 	for index, message := range returnStruct.Messages {
-		_ = rt.db.AddSeenMessage(message.ID, user.Name)
-		returnStruct.Messages[index].Seen = append(returnStruct.Messages[index].Seen, user)
+		errSeen := rt.db.AddSeenMessage(message.ID, user.Name)
+
+		if errSeen == nil {
+			returnStruct.Messages[index].Seen = append(returnStruct.Messages[index].Seen, user)
+		}
 	}
 
 	if err != nil || errParam != nil {

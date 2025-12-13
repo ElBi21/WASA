@@ -19,14 +19,19 @@ export default {
         }
     },
 
+    emits: [ "openAddUserDial" ],
+
     methods: {
         async updateChatObject() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
         },
 
         refreshChatMessages() {
-            console.log(`User ${this.userData.user_id} refreshed the chat`);
             this.forceRefreshFlag = !this.forceRefreshFlag;
+        },
+
+        openAddUserDial() {
+            this.$emit("openAddUserDial");
         }
     },
 
@@ -35,17 +40,21 @@ export default {
         this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
     },
 
-    props: [ "selectedChatId", "logOutStopTimer" ],
+    props: [ "selectedChatId", "logOutStopTimer", "refreshChat" ],
 
     watch: {
         async selectedChatId() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+            console.log("New chat clicked");
             this.refreshChatMessages();
+        },
+
+        async refreshChat() {
+            this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
         },
 
         async logOutStopTimer() {
             this.stopTimersFlag = 1;
-            console.log(`It's time to STOP!`);
         }
     }
 }
@@ -53,7 +62,7 @@ export default {
 
 <template>
     <div class="chat_window">
-        <ChatTopBar v-if="chatObj" :chatObj="chatObj"></ChatTopBar>
+        <ChatTopBar v-if="chatObj" :chatObj="chatObj" @openAddUserDial="openAddUserDial"></ChatTopBar>
         <div class="scroll_container">
             <ChatMessages v-if="chatObj" :chatObj="chatObj"
                           :refreshFlag="forceRefreshFlag" :stopRefreshFlag="stopTimersFlag"></ChatMessages>

@@ -52,8 +52,34 @@ async function API_get_conversation_messages(chat_id, username) {
     return all_messages;
 }
 
+async function API_leave_group(chat_id, username) {
+    await axios.delete(`/chat/${chat_id}/users/${username}`,
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    )
+}
+
+async function API_add_to_group(chat_id, user_id_to_add, username) {
+    await axios.put(`/chat/${chat_id}/users`, {
+            new_user: user_id_to_add
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+        }
+    )
+}
+
 export {
     API_get_conversation,
     API_create_conversation,
-    API_get_conversation_messages
+    API_get_conversation_messages,
+    API_leave_group,
+    API_add_to_group
 }

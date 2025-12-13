@@ -28,7 +28,7 @@
 | `deleteMessage`                  | ✓       | ✓            | ×              |
 | `addToGroup`                     | ✓       | ✓            | ×              |
 | `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |
-| `leaveGroup`                     | ✓       | ✓            | ×              |
+| `leaveGroup`                     | ✓       | ✓            | ✓              |
 | `setGroupName`                   | ✓       | ✓            | ✓ (1/2)        |
 | `setMyPhoto`                     | ✓       | ✓            | ✓ (1/2)        |
 | `setGroupPhoto`                  | ✓       | ✓            | ✓ (1/2)        |

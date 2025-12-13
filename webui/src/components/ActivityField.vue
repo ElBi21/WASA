@@ -2,6 +2,7 @@
 import NoChatOpenPage from "./NoChatOpenPage.vue";
 import ChatWindow from "./ChatWindow.vue";
 import NewChat from "./NewChat.vue";
+import AddUsersDial from "@/components/AddUsersDial.vue";
 </script>
 
 <script>
@@ -14,7 +15,9 @@ export default {
 
             showNoChatPage: false,
             openNewChatDialFlag: false,
-            stopTimersFlag: 0
+            addUserDialFlag: false,
+            stopTimersFlag: 0,
+            refreshChatCounter: 0
         }
     },
 
@@ -26,8 +29,17 @@ export default {
             this.$emit("closeChatDialExternal");
         },
 
+        async closeAddUserDial() {
+            this.addUserDialFlag = false;
+            this.refreshChatCounter += 1;
+        },
+
         async openNewChatDial() {
             this.openNewChatDialFlag = true;
+        },
+
+        async openAddUserDial() {
+            this.addUserDialFlag = true;
         }
     },
 
@@ -36,11 +48,11 @@ export default {
     watch: {
         selectedChatIdProp(chatID) {
             this.selectedChatID = chatID;
+            this.addUserDialFlag = false;
         },
 
         logOutStopTimer() {
             this.stopTimersFlag = 1;
-            console.log("Hey there");
         }
     }
 }
@@ -48,13 +60,18 @@ export default {
 
 <template>
     <div class="main_activity_space">
-        <div v-if="openNewChatDialFlag === true || openChatDialExternal === true" class="dial_container">
+        <div v-if="openNewChatDialFlag || openChatDialExternal " class="dial_container">
             <NewChat @close-new-chat-dial="closeNewChatDial"></NewChat>
+        </div>
+
+        <div v-if="addUserDialFlag" class="dial_container">
+            <AddUsersDial @close-new-chat-dial="closeAddUserDial" :chatID="selectedChatID"></AddUsersDial>
         </div>
 
         <NoChatOpenPage v-if="selectedChatID === null || showNoChatPage === true"
             @open-new-chat-dial="openNewChatDial"></NoChatOpenPage>
-        <ChatWindow v-else :selectedChatId="selectedChatID" :logOutStopTimer="stopTimersFlag"></ChatWindow>
+        <ChatWindow v-else :selectedChatId="selectedChatID" :logOutStopTimer="stopTimersFlag"
+                    :refreshChat="refreshChatCounter" @openAddUserDial="openAddUserDial"></ChatWindow>
     </div>
 </template>
 

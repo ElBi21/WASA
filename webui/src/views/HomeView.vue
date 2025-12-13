@@ -42,7 +42,6 @@ export default {
 
         logOutClicked() {
             this.logOutStopTimers = 1;
-            console.log(this.logOutStopTimers);
         }
 	},
 

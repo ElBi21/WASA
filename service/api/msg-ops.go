@@ -60,8 +60,8 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 		message.Received = append(message.Received, groupUser)
 	}
 
-	_ = rt.db.AddSeenMessage(message.ID, message.Sender.Name)
-	message.Seen = append(message.Seen, message.Sender)
+	// _ = rt.db.AddSeenMessage(message.ID, message.Sender.Name)
+	// message.Seen = append(message.Seen, message.Sender)
 
 	// Return the message through the API
 	w.WriteHeader(http.StatusOK)

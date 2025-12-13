@@ -18,7 +18,7 @@ export default {
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
     },
 
-    props: [ "userLogged", "messageObj", "isChatPrivate" ]
+    props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers" ]
 }
 </script>
 
@@ -33,7 +33,7 @@ export default {
         <p class="message_content">{{ this.messageObj.content }}</p>
         <div class="message_metadata">
             <p class="message_time">{{ this.messageFormattedDate }}</p>
-            <MessageCheck></MessageCheck>
+            <MessageCheck :recvList="messageObj.received" :seenList="messageObj.seen" :userList="chatUsers"></MessageCheck>
         </div>
     </div>
 </div>
