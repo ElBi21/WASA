@@ -70,7 +70,7 @@ export default {
         </div>
     </div>
     <div class="chat_top_actions">
-        <button class="home_button" role="button" id="addUserToGroup" @click="openAddUserDial()">
+        <button v-if="!this.chatObj.IsPrivate" class="home_button" role="button" id="addUserToGroup" @click="openAddUserDial()">
             <img class="home_button_icon"
                  src="../assets/icons/user-plus-solid-full.svg" alt="Add user">
         </button>
