@@ -101,3 +101,81 @@
     width: 10px;
     height: 10px;
 }
+
+.message_side_container {
+    height: 100%;
+    width: 40px;
+
+    margin: 0 8px 0 8px;
+
+    display: none;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 0;
+}
+
+.message_side_logged_user {
+    align-items: end;
+}
+
+.message_side_button {
+    width: 20px;
+    height: 20px;
+    background-color: var(--glass-background);
+    transition: background-color 0.2s ease-in;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.message_side_button:hover {
+    background-color: var(--glass-background-hover);
+    transition: background-color 0.2s ease-in;
+}
+
+.msg_btn_top {
+    border-radius: 8px 8px 0 0;
+}
+
+.msg_btn_bottom {
+    border-radius: 0 0 8px 8px;
+}
+
+.msg_btn_round {
+    border-radius: 8px;
+}
+
+.msg_side_icon {
+    width: 12px;
+    height: 12px;
+    margin: 0;
+}
+
+.message_container:hover .message_side_container {
+    display: flex;
+}
+
+.message_deleted {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.message_deleted_icon {
+    width: 16px;
+    height: 16px;
+}
+
+.message_deleted_text {
+    padding: 0;
+    margin: 0 0 0 4px;
+
+    font-size: 16px;
+    font-style: italic;
+
+    color: #696866;
+}

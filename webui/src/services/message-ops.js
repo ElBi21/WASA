@@ -18,6 +18,17 @@ async function API_send_message(username, chatID, content, photo, replying) {
     )
 }
 
+async function API_delete_message(message_id, username) {
+    await axios.delete(`/message/${message_id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${username}`
+            },
+        }
+    )
+}
+
 export {
-    API_send_message
+    API_send_message,
+    API_delete_message
 }

@@ -3,6 +3,7 @@ import NoChatOpenPage from "./NoChatOpenPage.vue";
 import ChatWindow from "./ChatWindow.vue";
 import NewChat from "./NewChat.vue";
 import AddUsersDial from "@/components/AddUsersDial.vue";
+import ForwardDial from "@/components/ForwardDial.vue";
 </script>
 
 <script>
@@ -16,6 +17,7 @@ export default {
             showNoChatPage: false,
             openNewChatDialFlag: false,
             addUserDialFlag: false,
+            forwardMessageDial: false,
             stopTimersFlag: 0,
             refreshChatCounter: 0
         }
@@ -66,6 +68,10 @@ export default {
 
         <div v-if="addUserDialFlag" class="dial_container">
             <AddUsersDial @close-new-chat-dial="closeAddUserDial" :chatID="selectedChatID"></AddUsersDial>
+        </div>
+
+        <div v-if="forwardMessageDial" class="dial_container">
+            <ForwardDial @close-new-chat-dial="closeAddUserDial" :chatID="selectedChatID"></ForwardDial>
         </div>
 
         <NoChatOpenPage v-if="selectedChatID === null || showNoChatPage === true"

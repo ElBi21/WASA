@@ -56,7 +56,7 @@ export default {
 
 <template>
 <div class="chat_messages_container">
-    <SingleMessage v-for="message in messages"
+    <SingleMessage v-for="message in messages" @refreshChat="refreshMessages"
        :user-logged="userData.user_id" :message-obj="message"
        :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>

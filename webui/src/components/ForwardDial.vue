@@ -4,15 +4,19 @@ import {API_add_to_group, API_create_conversation, API_get_conversation} from ".
 import {img_to_base64, retrieveFromStorage} from "../services/utils";
 import UserButton from "./UserButton.vue";
 import defaultGroupPicture from "../assets/defaults/default_group.png";
+import ChatButton from "@/components/ChatButton.vue";
 
 export default {
-    components: {UserButton},
+    components: {ChatButton, UserButton},
 
     data: function() {
         return {
             userID: null,
             allUsers: [],
             availableUsers: [],
+
+            allChats: [],
+            chatsFlags: [],
 
             usersToAdd: [],
             usersFlags: [],
@@ -24,9 +28,9 @@ export default {
     emits: [ "closeNewChatDial" ],
 
     methods: {
-        async toggle_user_in_conversation(userToCheck) {
-            let isUserAddedAlready = this.usersToAdd.findIndex(user => user.user_id === userToCheck.user_id);
-            let flagIndex = this.availableUsers.findIndex(user => user.user_id === userToCheck.user_id);
+        async toggle_chat_in_conversation(userToCheck) {
+            let isUserAddedAlready = this.allChats.findIndex(user => user.user_id === userToCheck.user_id);
+            let flagIndex = this.chatsFlags.findIndex(user => user.user_id === userToCheck.user_id);
 
             // If the user is already added
             if (isUserAddedAlready !== -1) {
@@ -61,15 +65,22 @@ export default {
         let userData = await retrieveFromStorage();
         this.userID = userData.user_id;
 
-        let chatObj = await API_get_conversation(this.chatID, this.userID);
-        this.allUsers = await API_get_all_users(this.userID);
+        let userChats = await API_get_conversations(this.userID);
 
-        let chatUsers = new Set(chatObj.Users.map(user => user.user_id));
+        for (let chat of userChats) {
+            if (chat.ID !== this.chatID) {
+                this.allChats.push(chat);
+                this.chatsFlags.push(false);
+            }
+        }
+
+
+        /* let chatUsers = new Set(chatObj.Users.map(user => user.user_id));
         this.availableUsers = this.allUsers.filter(user => !chatUsers.has(user.user_id));
 
         for (let _ of this.availableUsers) {
             this.usersFlags.push(false);
-        }
+        } */
     },
 
     props: [ "chatID" ],
@@ -77,32 +88,31 @@ export default {
 </script>
 
 <template>
-<div class="new_chat_dial">
-    <div class="new_chat_close_div">
-        <div class="new_chat_close_button" role="button" @click="close_dial">
-            <img src="../assets/icons/xmark-solid-full.svg" alt="close" class="new_chat_close_img">
+<div class="forward_msg_dial">
+    <div class="forward_msg_close_div">
+        <div class="forward_msg_close_button" role="button" @click="close_dial">
+            <img src="../assets/icons/xmark-solid-full.svg" alt="close" class="forward_msg_close_img">
         </div>
     </div>
-    <h2 class="new_chat_title">Add a user</h2>
+    <h2 class="forward_msg_title">Forward message</h2>
 
-    <div class="new_chat_users_list">
-        <UserButton v-if="allUsers.length > 0"
-                    v-for="[index, user] in availableUsers.entries()"
-                    :user-object="user"
-                    :kind-of-chat="selectedOption"
-                    :is-selected="usersFlags[index]"
-                    @click="toggle_user_in_conversation(user, index)"></UserButton>
-        <p v-else>Seems like no one else uses WASAText yet. Make someone join in order to add them in this group chat</p>
+    <div class="forward_msg_users_list">
+        <ChatButton v-if="allChats.length > 0"
+                    v-for="[index, chat] in allChats.entries()"
+                    :chat-object="chat"
+                    :is-selected="chatsFlags[index]"
+                    @click="toggle_chat_in_conversation(chat, index)"></ChatButton>
+        <p v-else>Seems like you don't have other chats open at the moment. Create a chat first</p>
     </div>
 
-    <div v-if="safeToCreate === true" class="new_chat_button_container">
-        <button class="new_chat_confirm_button" style="width: 225px" @click="add_selected_users">
-            Add selected user(s)
+    <div v-if="safeToCreate === true" class="forward_msg_button_container">
+        <button class="forward_msg_confirm_button" style="width: 225px" @click="add_selected_users">
+            Forward message
         </button>
     </div>
 </div>
 </template>
 
 <style scoped>
-@import url("../assets/css/new_chat_dial.css");
+@import url("../assets/css/forward_msg_dial.css");
 </style>
