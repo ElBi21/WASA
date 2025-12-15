@@ -25,7 +25,7 @@
 | `forwardMessage`                 | ✓       | ✓            | ×              |
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
-| `deleteMessage`                  | ✓       | ✓            | ×              |
+| `deleteMessage`                  | ✓       | ✓            | ✓              |
 | `addToGroup`                     | ✓       | ✓            | ✓              |
 | `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |
 | `leaveGroup`                     | ✓       | ✓            | ✓              |
