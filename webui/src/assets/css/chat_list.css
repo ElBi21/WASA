@@ -139,7 +139,7 @@
     transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-#single_chat_selected {
+.single_chat.active {
     transition: background 0.2s ease-in-out, box-shadow 0.4s ease-in-out;
     background: var(--color-selected);
     box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2) inset;

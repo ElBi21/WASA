@@ -46,7 +46,8 @@ export default {
         "chatId",
         "lastMessageBody",
         "lastMessageSender",
-        "lastMessageDate"
+        "lastMessageDate",
+        "isChatSelected"
     ],
 
     watch: {
@@ -58,7 +59,7 @@ export default {
 </script>
 
 <template>
-    <div class="single_chat" role="button">
+    <div :class="['single_chat', { active: isChatSelected }]" role="button">
         <img :src="chatPicture" v-if="chatPicture !== ''" class="chat_photo" alt="Chat picture"></img>
         <div class="chat_details">
             <p class="chat_name">{{ chatName }}</p>

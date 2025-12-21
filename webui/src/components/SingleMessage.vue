@@ -12,12 +12,16 @@ export default {
         }
     },
 
-    emits: [ "refreshChat" ],
+    emits: [ "refreshChat", "openForwardDial" ],
 
     methods: {
         async deleteMessage() {
             await API_delete_message(this.messageObj.message_id, this.userLogged);
             this.$emit("refreshChat");
+        },
+
+        openForwardDial() {
+            this.$emit("openForwardDial", this.messageObj);
         }
     },
 
@@ -27,7 +31,7 @@ export default {
 
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
 
-        // console.log(this.messageObj, this.userLogged);
+        console.log(this.messageObj);
     },
 
     props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers" ]
@@ -40,7 +44,7 @@ export default {
         <div class="message_side_button msg_btn_top" role="button" @click="deleteMessage" v-if="!this.messageObj.deleted">
             <img src="../assets/icons/trash-can-solid-full.svg" class="msg_side_icon" alt="Edit the message">
         </div>
-        <div class="message_side_button" role="button" v-if="!this.messageObj.deleted">
+        <div class="message_side_button" role="button" v-if="!this.messageObj.deleted" @click="openForwardDial">
             <img src="../assets/icons/arrows-turn-right-solid-full.svg" class="msg_side_icon" alt="Forward the message">
         </div>
         <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']" role="button">
@@ -63,6 +67,7 @@ export default {
         <div class="message_metadata">
             <p class="message_time">{{ this.messageFormattedDate }}</p>
             <MessageCheck :recvList="messageObj.received" :seenList="messageObj.seen" :userList="chatUsers"></MessageCheck>
+            <img v-if="messageObj.forwarded" src="../assets/icons/arrows-turn-right-solid-full.svg" class="forwarded_icon" alt="Forwarded message">
         </div>
     </div>
     <div class="message_side_container" v-if="messageObj.sender.user_id !== userLogged">

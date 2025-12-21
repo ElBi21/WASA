@@ -28,7 +28,22 @@ async function API_delete_message(message_id, username) {
     )
 }
 
+async function API_forward_message(message_obj, chat_to_forward, username) {
+    await axios.post(`/message/${message_obj.message_id}`,
+        {
+            sender: message_obj.sender.user_id,
+            chat_id: chat_to_forward
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${username}`,
+                "Content-Type": "application/json",
+            },
+    })
+}
+
 export {
     API_send_message,
-    API_delete_message
+    API_delete_message,
+    API_forward_message
 }

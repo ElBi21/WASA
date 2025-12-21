@@ -179,3 +179,10 @@
 
     color: #696866;
 }
+
+.forwarded_icon {
+    width: 10px;
+    height: 10px;
+    margin: 0 0 0 4px;
+    filter: invert(0.3);
+}

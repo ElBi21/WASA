@@ -22,7 +22,7 @@
 | `createConversation`             | ✓       | ✓            | ✓              |
 | `getConversation`                | ✓       | ✓            | ✓              |
 | `sendMessage`                    | ✓       | ✓            | ✓              |
-| `forwardMessage`                 | ✓       | ✓            | ×              |
+| `forwardMessage`                 | ✓       | ✓            | ✓              |
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
 | `deleteMessage`                  | ✓       | ✓            | ✓              |

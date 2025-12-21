@@ -2,7 +2,6 @@
 import SingleChat from "./SingleChat.vue";
 import UserPanel from "./UserPanel.vue";
 import {API_get_conversations} from "../services/user-ops";
-import {retrieveFromStorage} from "../services/utils";
 
 export default {
     async beforeDestroy() {
@@ -31,18 +30,8 @@ export default {
     emits: [ "chatSelectedEmit", "openNewChatDialCL", "logOutClicked" ],
 
     methods: {
-        async select_chat(chatObj, event) {
-            // Set CSS ID
-            let chatHTML = event.currentTarget;
-            let chatID = chatObj.ID;
-            chatHTML.id = "single_chat_selected";
-
-            if (this.currently_opened_chat_html !== chatHTML && this.currently_opened_chat_html !== null) {
-                this.currently_opened_chat_html.id = "";
-            }
-
-            this.currently_opened_chat_html = chatHTML;
-            this.currently_opened_chat_id = chatID;
+        async select_chat(chatObj) {
+            this.currently_opened_chat_id = chatObj.ID;
 
             // Send value upstream
             this.$emit("chatSelectedEmit", chatObj.ID);
@@ -103,9 +92,10 @@ export default {
             <div class="chat_list_main">
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
                             :last-message-sender="chat.LastSent.sender.display_name"
-                            :last-message-body="chat.LastSent.content"
+                            :last-message-body="chat.LastSent.deleted ? 'Deleted message' : chat.LastSent.content"
                             :last-message-date="chat.LastSent.timestamp"
-                            @click="select_chat(chat, $event)">
+                            :isChatSelected="chat.ID === currently_opened_chat_id"
+                            @click="select_chat(chat)">
                 </SingleChat>
             </div>
         </div>

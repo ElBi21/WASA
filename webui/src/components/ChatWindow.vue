@@ -19,7 +19,7 @@ export default {
         }
     },
 
-    emits: [ "openAddUserDial" ],
+    emits: [ "openAddUserDial", "openForwardDial" ],
 
     methods: {
         async updateChatObject() {
@@ -32,6 +32,10 @@ export default {
 
         openAddUserDial() {
             this.$emit("openAddUserDial");
+        },
+
+        openForwardDial(messageObj) {
+            this.$emit("openForwardDial", messageObj);
         }
     },
 
@@ -45,7 +49,6 @@ export default {
     watch: {
         async selectedChatId() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
-            console.log("New chat clicked");
             this.refreshChatMessages();
         },
 
@@ -64,7 +67,7 @@ export default {
     <div class="chat_window">
         <ChatTopBar v-if="chatObj" :chatObj="chatObj" @openAddUserDial="openAddUserDial"></ChatTopBar>
         <div class="scroll_container">
-            <ChatMessages v-if="chatObj" :chatObj="chatObj"
+            <ChatMessages v-if="chatObj" :chatObj="chatObj" @openForwardDial="openForwardDial"
                           :refreshFlag="forceRefreshFlag" :stopRefreshFlag="stopTimersFlag"></ChatMessages>
         </div>
         <TypingBar v-if="chatObj" :chatID="selectedChatId"

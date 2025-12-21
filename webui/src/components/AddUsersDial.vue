@@ -86,7 +86,7 @@ export default {
     <h2 class="new_chat_title">Add a user</h2>
 
     <div class="new_chat_users_list">
-        <UserButton v-if="allUsers.length > 0"
+        <UserButton v-if="availableUsers.length > 0"
                     v-for="[index, user] in availableUsers.entries()"
                     :user-object="user"
                     :kind-of-chat="selectedOption"

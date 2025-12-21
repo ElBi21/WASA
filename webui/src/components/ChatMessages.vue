@@ -19,9 +19,15 @@ export default {
         }
     },
 
+    emits: [ "openForwardDial" ],
+
     methods: {
         async refreshMessages() {
             this.messages = await API_get_conversation_messages(this.chatObj.ID, this.userData.user_id);
+        },
+
+        openForwardDial(messageObj) {
+            this.$emit("openForwardDial", messageObj);
         }
     },
 
@@ -56,7 +62,8 @@ export default {
 
 <template>
 <div class="chat_messages_container">
-    <SingleMessage v-for="message in messages" @refreshChat="refreshMessages"
+    <SingleMessage v-for="message in messages"
+       @refreshChat="refreshMessages" @openForwardDial="openForwardDial"
        :user-logged="userData.user_id" :message-obj="message"
        :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>

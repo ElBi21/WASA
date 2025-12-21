@@ -13,6 +13,7 @@ export default {
     data: function() {
         return {
             selectedChatID: null,
+            messageToForward: null,
 
             showNoChatPage: false,
             openNewChatDialFlag: false,
@@ -36,12 +37,22 @@ export default {
             this.refreshChatCounter += 1;
         },
 
+        async closeForwardDial() {
+            this.forwardMessageDial = false;
+            this.messageToForward = null;
+        },
+
         async openNewChatDial() {
             this.openNewChatDialFlag = true;
         },
 
         async openAddUserDial() {
             this.addUserDialFlag = true;
+        },
+
+        async openForwardDial(messageObj) {
+            this.forwardMessageDial = true;
+            this.messageToForward = messageObj;
         }
     },
 
@@ -71,13 +82,15 @@ export default {
         </div>
 
         <div v-if="forwardMessageDial" class="dial_container">
-            <ForwardDial @close-new-chat-dial="closeAddUserDial" :chatID="selectedChatID"></ForwardDial>
+            <ForwardDial @close-new-chat-dial="closeForwardDial"
+                         :chatID="selectedChatID" :messageObj="messageToForward"></ForwardDial>
         </div>
 
         <NoChatOpenPage v-if="selectedChatID === null || showNoChatPage === true"
             @open-new-chat-dial="openNewChatDial"></NoChatOpenPage>
         <ChatWindow v-else :selectedChatId="selectedChatID" :logOutStopTimer="stopTimersFlag"
-                    :refreshChat="refreshChatCounter" @openAddUserDial="openAddUserDial"></ChatWindow>
+                    :refreshChat="refreshChatCounter"
+                    @openAddUserDial="openAddUserDial" @openForwardDial="openForwardDial"></ChatWindow>
     </div>
 </template>
 
