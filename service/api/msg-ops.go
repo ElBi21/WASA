@@ -60,8 +60,38 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 		message.Received = append(message.Received, groupUser)
 	}
 
-	// _ = rt.db.AddSeenMessage(message.ID, message.Sender.Name)
-	// message.Seen = append(message.Seen, message.Sender)
+	// Return the message through the API
+	w.WriteHeader(http.StatusOK)
+	jsonReturn, _ := json.Marshal(message)
+	_, _ = w.Write(jsonReturn)
+}
+
+// retrieveMessage retrieves a specific message
+func (rt *_router) retrieveMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	auth := r.Header.Get("Authorization")
+	auth = strings.TrimPrefix(auth, "Bearer ")
+	_, errAuth := rt.db.GetUserByName(auth)
+	if errAuth != nil {
+		returnEmptyMessage(w, http.StatusUnauthorized)
+		return
+	}
+
+	// Retrieve ID of message to forward
+	messageIDParam := ps.ByName("message_id")
+	messageID, err := strconv.Atoi(messageIDParam)
+
+	if err != nil {
+		returnEmptyMessage(w, http.StatusForbidden)
+		return
+	}
+
+	message, err := rt.db.GetMessage(messageID, false)
+
+	// Return error code if failed to create message on the database
+	if err != nil {
+		returnEmptyMessage(w, http.StatusBadRequest)
+		return
+	}
 
 	// Return the message through the API
 	w.WriteHeader(http.StatusOK)

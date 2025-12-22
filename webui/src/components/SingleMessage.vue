@@ -1,6 +1,6 @@
 <script>
 import MessageCheck from "@/components/MessageCheck.vue";
-import {API_delete_message} from "@/services/message-ops";
+import {API_delete_message, API_retrieve_message} from "@/services/message-ops";
 
 export default {
     components: {MessageCheck},
@@ -8,11 +8,14 @@ export default {
     data: function() {
         return {
             messageFormattedDate: null,
-            senderPFP: null
+            senderPFP: null,
+
+            repliedMessage: null,
+            replyToText: ''
         }
     },
 
-    emits: [ "refreshChat", "openForwardDial" ],
+    emits: [ "refreshChat", "openForwardDial", "startReplyToMessage" ],
 
     methods: {
         async deleteMessage() {
@@ -22,6 +25,10 @@ export default {
 
         openForwardDial() {
             this.$emit("openForwardDial", this.messageObj);
+        },
+
+        startReply() {
+            this.$emit("startReplyToMessage", this.messageObj);
         }
     },
 
@@ -32,6 +39,10 @@ export default {
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
 
         console.log(this.messageObj);
+        if (this.messageObj.replying !== 0) {
+            this.repliedMessage = await API_retrieve_message(this.messageObj.replying, this.userLogged);
+            // this.repliedMessage.content = this.repliedMessage.content.substring(0, 100);
+        }
     },
 
     props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers" ]
@@ -58,6 +69,11 @@ export default {
             <p class="message_sender_display_name" v-if="messageObj.sender.user_id !== userLogged">{{ this.messageObj.sender.display_name }}</p>
         </div>
 
+        <div class="reply_preview_container" v-if="repliedMessage !== null">
+            <img src="../assets/icons/comment-dots-regular-full.svg" class="reply_icon" alt="Original message">
+            <p class="reply_preview_content">{{ repliedMessage.content }}</p>
+        </div>
+
         <p v-if="!this.messageObj.deleted" class="message_content">{{ this.messageObj.content }}</p>
         <div v-else class="message_deleted">
             <img src="../assets/icons/ban-solid-full.svg" class="message_deleted_icon">
@@ -73,6 +89,9 @@ export default {
     <div class="message_side_container" v-if="messageObj.sender.user_id !== userLogged">
         <div class="message_side_button msg_btn_top" role="button" v-if="!this.messageObj.deleted">
             <img src="../assets/icons/arrows-turn-right-solid-full.svg" class="msg_side_icon" alt="Forward the message">
+        </div>
+        <div class="message_side_button" role="button" v-if="!this.messageObj.deleted" @click="startReply">
+            <img src="../assets/icons/comment-dots-regular-full.svg" class="msg_side_icon" alt="Reply to the message">
         </div>
         <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']" role="button">
             <img src="../assets/icons/heart-circle-plus-solid-full.svg" class="msg_side_icon" alt="React to the message">

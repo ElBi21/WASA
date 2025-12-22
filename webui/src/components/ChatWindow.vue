@@ -13,6 +13,7 @@ export default {
         return {
             chatObj: null,
             userData: null,
+            replyMessage: null,
 
             forceRefreshFlag: false,
             stopTimersFlag: 0
@@ -36,6 +37,14 @@ export default {
 
         openForwardDial(messageObj) {
             this.$emit("openForwardDial", messageObj);
+        },
+
+        startReplyToMessage(messageObj) {
+            this.replyMessage = messageObj;
+        },
+
+        stopReply() {
+            this.replyMessage = null;
         }
     },
 
@@ -68,10 +77,11 @@ export default {
         <ChatTopBar v-if="chatObj" :chatObj="chatObj" @openAddUserDial="openAddUserDial"></ChatTopBar>
         <div class="scroll_container">
             <ChatMessages v-if="chatObj" :chatObj="chatObj" @openForwardDial="openForwardDial"
+                          @startForwardToMessage="startReplyToMessage"
                           :refreshFlag="forceRefreshFlag" :stopRefreshFlag="stopTimersFlag"></ChatMessages>
         </div>
-        <TypingBar v-if="chatObj" :chatID="selectedChatId"
-                   @refresh_chat_view="refreshChatMessages"></TypingBar>
+        <TypingBar v-if="chatObj" :chatID="selectedChatId" :replyMessage="replyMessage"
+                   @refresh_chat_view="refreshChatMessages" @stop_reply="stopReply"></TypingBar>
     </div>
 </template>
 

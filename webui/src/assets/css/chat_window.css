@@ -210,3 +210,54 @@
     overflow-x: hidden;
     overflow-anchor: auto;
 }
+
+.reply_container {
+    width: 500px;
+    height: 24px;
+    background-color: #3d84ead0;
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+    z-index: 10;
+
+    position: absolute;
+    bottom: 0;
+    margin: 0 0 40px 20px;
+
+    border-radius: 8px 8px 0 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.reply_text {
+    width: calc(100% - 24px);
+    height: 12px;
+    margin: -4px 0 0 12px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+}
+
+.reply_close {
+    width: 24px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0 8px 0 0;
+}
+
+.reply_close:hover {
+    background-color: #176fedd0;
+    backdrop-filter: blur(var(--backdrop));
+    -webkit-backdrop-filter: blur(var(--backdrop));
+}
+
+.reply_close_img {
+    width: 12px;
+    height: 12px;
+}

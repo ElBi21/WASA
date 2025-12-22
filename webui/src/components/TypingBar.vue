@@ -8,24 +8,32 @@ export default {
             userID: '',
             messageBuffer: '',
             messagePhoto: '',
+
             isReplying: false,
+            replyingTo: '',
 
             canSend: false
         }
     },
 
-    emits: [ "refresh_chat_view" ],
+    emits: [ "refresh_chat_view", "stop_reply" ],
 
     methods: {
         async send_message() {
             this.messageBuffer = this.messageBuffer.trimStart();
             this.messageBuffer = this.messageBuffer.trimEnd();
 
-            await API_send_message(this.userID, this.chatID, this.messageBuffer, this.messagePhoto, this.isReplying);
+            await API_send_message(this.userID, this.chatID, this.messageBuffer,
+                this.messagePhoto, this.isReplying ? this.replyMessage.message_id : 0);
 
             this.messageBuffer = '';
+            this.stopReply();
 
             this.$emit("refresh_chat_view");
+        },
+
+        stopReply() {
+            this.$emit("stop_reply");
         }
     },
 
@@ -34,7 +42,7 @@ export default {
         this.userID = userData.user_id;
     },
 
-    props: [ "chatID" ],
+    props: [ "chatID", "replyMessage" ],
 
     watch: {
         messageBuffer() {
@@ -46,6 +54,11 @@ export default {
 
         chatID() {
             this.messageBuffer = '';
+        },
+
+        replyMessage() {
+            this.replyingTo = this.replyMessage !== null ? this.replyMessage.content : '';
+            this.isReplying = this.replyMessage !== null;
         }
     }
 }
@@ -53,6 +66,12 @@ export default {
 
 <template>
     <div class="typing_bar_container">
+        <div class="reply_container" v-if="replyMessage !== null">
+            <p class="reply_text"><b>Replying to:</b> {{ replyingTo }}</p>
+            <div role="button" class="reply_close" @click="stopReply">
+                <img src="../assets/icons/xmark-solid-full.svg" class="reply_close_img" alt="Close reply">
+            </div>
+        </div>
         <input class="type_bar" placeholder="What do you feel like sharing?" v-model="messageBuffer"
             v-on:keyup.enter="send_message">
         <div class="bar_button" id="photo_button" role="button">
