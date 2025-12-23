@@ -137,20 +137,4 @@ export default {
 
 <style scoped>
 @import url("../assets/css/chat_messages.css");
-
-.message_picture {
-    width: 250px;
-    height: fit-content;
-
-    margin: 4px 0 8px 0;
-}
-
-.message_image {
-    width: 100%;
-    height: auto;
-
-    border-radius: 8px;
-
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-}
 </style>

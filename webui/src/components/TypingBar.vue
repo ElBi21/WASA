@@ -105,29 +105,4 @@ export default {
 
 <style scoped>
 @import url("../assets/css/chat_window.css");
-
-#loaded_pic {
-    border-radius: 4px !important;
-    border: 1.5px solid white;
-}
-
-.loaded_pic_img {
-    width: 100%;
-    height: 100%;
-
-    margin: 0;
-
-    display: flex;
-}
-
-.photo_remove {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-
-    opacity: 0.3;
-    filter: invert(0);
-
-    z-index: 100;
-}
 </style>
