@@ -1,17 +1,23 @@
 <script>
 import MessageCheck from "@/components/MessageCheck.vue";
 import {API_delete_message, API_retrieve_message} from "@/services/message-ops";
+import CommentSelector from "@/components/CommentSelector.vue";
+import SingleReaction from "@/components/SingleReaction.vue";
 
 export default {
-    components: {MessageCheck},
+    components: {SingleReaction, CommentSelector, MessageCheck},
 
     data: function() {
         return {
             messageFormattedDate: null,
             senderPFP: null,
 
+            openCommentSelector: false,
+
             repliedMessage: null,
-            replyToText: ''
+            replyToText: '',
+
+            messageReactions: null
         }
     },
 
@@ -29,6 +35,14 @@ export default {
 
         startReply() {
             this.$emit("startReplyToMessage", this.messageObj);
+        },
+
+        async closeCommentSelector() {
+            let thisMessage = await API_retrieve_message(this.messageObj.message_id, this.userLogged);
+            this.messageReactions = thisMessage.reactions;
+
+            this.openCommentSelector = false;
+            this.$emit("refreshChat");
         }
     },
 
@@ -38,14 +52,16 @@ export default {
 
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
 
-        console.log(this.messageObj);
         if (this.messageObj.replying !== 0) {
             this.repliedMessage = await API_retrieve_message(this.messageObj.replying, this.userLogged);
-            // this.repliedMessage.content = this.repliedMessage.content.substring(0, 100);
         }
+
+        this.messageReactions = this.messageObj.reactions;
+
+        console.log(this.messageObj.photo);
     },
 
-    props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers" ]
+    props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer" ]
 }
 </script>
 
@@ -58,9 +74,13 @@ export default {
         <div class="message_side_button" role="button" v-if="!this.messageObj.deleted" @click="openForwardDial">
             <img src="../assets/icons/arrows-turn-right-solid-full.svg" class="msg_side_icon" alt="Forward the message">
         </div>
-        <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']" role="button">
+        <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']"
+             role="button" @click="openCommentSelector = !openCommentSelector">
             <img src="../assets/icons/heart-circle-plus-solid-full.svg" class="msg_side_icon" alt="React to the message">
         </div>
+        <CommentSelector :showSelector="openCommentSelector" @closeSelector="closeCommentSelector"
+                         :messageID="messageObj.message_id" :commentingUserID="userLogged"
+                         :position="messageObj.sender.user_id !== userLogged ? 'right' : 'left'"></CommentSelector>
     </div>
     <div :class="['message_shape', { active: messageObj.sender.user_id === userLogged }]">
         <div class="message_sender_info" v-if="!isChatPrivate">
@@ -69,15 +89,25 @@ export default {
             <p class="message_sender_display_name" v-if="messageObj.sender.user_id !== userLogged">{{ this.messageObj.sender.display_name }}</p>
         </div>
 
+        <div class="message_picture" v-if="messageObj.photo !== ''">
+            <img class="message_image" :src="`data:image/jpeg;base64,` + messageObj.photo" alt="The message's photo">
+        </div>
+
         <div class="reply_preview_container" v-if="repliedMessage !== null">
             <img src="../assets/icons/comment-dots-regular-full.svg" class="reply_icon" alt="Original message">
-            <p class="reply_preview_content">{{ repliedMessage.content }}</p>
+            <p class="reply_preview_content">
+                {{ repliedMessage.deleted ? 'This message has been deleted' : repliedMessage.content }}</p>
         </div>
 
         <p v-if="!this.messageObj.deleted" class="message_content">{{ this.messageObj.content }}</p>
         <div v-else class="message_deleted">
             <img src="../assets/icons/ban-solid-full.svg" class="message_deleted_icon">
             <p class="message_deleted_text">This message has been deleted</p>
+        </div>
+
+        <div v-if="messageObj.reactions !== null" class="reactions_container">
+            <SingleReaction v-for="reaction of messageReactions" @removeReaction="this.$emit('refreshChat');"
+                            :reactionObj="reaction" :messageOwner="messageObj.sender"></SingleReaction>
         </div>
 
         <div class="message_metadata">
@@ -87,19 +117,40 @@ export default {
         </div>
     </div>
     <div class="message_side_container" v-if="messageObj.sender.user_id !== userLogged">
-        <div class="message_side_button msg_btn_top" role="button" v-if="!this.messageObj.deleted">
+        <div class="message_side_button msg_btn_top" role="button" v-if="!this.messageObj.deleted" @click="openForwardDial">
             <img src="../assets/icons/arrows-turn-right-solid-full.svg" class="msg_side_icon" alt="Forward the message">
         </div>
         <div class="message_side_button" role="button" v-if="!this.messageObj.deleted" @click="startReply">
             <img src="../assets/icons/comment-dots-regular-full.svg" class="msg_side_icon" alt="Reply to the message">
         </div>
-        <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']" role="button">
+        <div :class="['message_side_button', this.messageObj.deleted ? 'msg_btn_round' : 'msg_btn_bottom']"
+             role="button" @click="openCommentSelector = !openCommentSelector">
             <img src="../assets/icons/heart-circle-plus-solid-full.svg" class="msg_side_icon" alt="React to the message">
         </div>
+        <CommentSelector :showSelector="openCommentSelector" @closeSelector="closeCommentSelector"
+            :messageID="messageObj.message_id" :commentingUserID="userLogged"
+            :position="messageObj.sender.user_id !== userLogged ? 'right' : 'left'"></CommentSelector>
     </div>
+
 </div>
 </template>
 
 <style scoped>
 @import url("../assets/css/chat_messages.css");
+
+.message_picture {
+    width: 250px;
+    height: fit-content;
+
+    margin: 4px 0 8px 0;
+}
+
+.message_image {
+    width: 100%;
+    height: auto;
+
+    border-radius: 8px;
+
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
 </style>

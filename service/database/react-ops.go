@@ -36,9 +36,18 @@ func (db *appdbimpl) GetReactions(messageID int) ([]customstructs.Reaction, erro
 		// Create reaction
 		var reaction customstructs.Reaction
 		var sender string
-		err = queryRes.Scan(&reaction.ID, &reaction.RefMessage, &reaction.Content, sender)
+		var emojiContent string
+		var okEmoji bool
+
+		err = queryRes.Scan(&reaction.ID, &reaction.RefMessage, &emojiContent, &sender)
 
 		if err != nil {
+			return reactions, err
+		}
+
+		reaction.Content, okEmoji = emoji.Lookup(emojiContent)
+
+		if !okEmoji {
 			return reactions, err
 		}
 

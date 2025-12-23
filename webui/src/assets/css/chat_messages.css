@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: row;
     justify-content: end;
-    align-items: center;
+    align-items: start;
 }
 
 .message_shape {
@@ -228,4 +228,19 @@
     margin: 0;
 
     filter: invert(0.3);
+}
+
+.reactions_container {
+    width: 100%;
+    height: fit-content;
+
+    margin: 8px 0 0 0;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: center;
+
+    gap: 4px;
 }

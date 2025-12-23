@@ -1,0 +1,37 @@
+.reaction_button {
+    width: fit-content;
+    height: 24px;
+
+    padding: 0 8px 0 4px;
+
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.reaction_self {
+    background-color: rgba(74, 200, 232, 0.53);
+    border: rgba(28, 104, 204, 0.23) 1px solid;
+}
+
+.reaction_other {
+    border: 1px solid white;
+    background-color: var(--glass-background);
+}
+
+.reaction_sender_pfp {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+}
+
+.reaction_content {
+    margin: 0;
+    font-size: 12px;
+}

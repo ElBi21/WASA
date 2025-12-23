@@ -1,5 +1,5 @@
 <script>
-import {retrieveFromStorage} from "../services/utils";
+import {img_to_base64, retrieveFromStorage} from "../services/utils";
 import {API_send_message} from "../services/message-ops";
 
 export default {
@@ -27,6 +27,7 @@ export default {
                 this.messagePhoto, this.isReplying ? this.replyMessage.message_id : 0);
 
             this.messageBuffer = '';
+            this.messagePhoto = '';
             this.stopReply();
 
             this.$emit("refresh_chat_view");
@@ -34,6 +35,18 @@ export default {
 
         stopReply() {
             this.$emit("stop_reply");
+        },
+
+        async load_message_picture(event) {
+            let picture = event.target.files[0];
+            this.messagePhoto = await img_to_base64(picture);
+
+            // let photoButton = document.getElementById("loaded_pic");
+            // photoButton.style.backgroundImage = `data:image/jpeg;base64,` + this.messagePhoto;
+        },
+
+        removeImage() {
+            this.messagePhoto = '';
         }
     },
 
@@ -74,9 +87,15 @@ export default {
         </div>
         <input class="type_bar" placeholder="What do you feel like sharing?" v-model="messageBuffer"
             v-on:keyup.enter="send_message">
-        <div class="bar_button" id="photo_button" role="button">
-            <img class="photo_button_icon" src="../assets/icons/images-solid-full.svg" alt="Send photo">
+        <div v-if="messagePhoto !== ''" class="bar_button" id="loaded_pic" role="button" @click="removeImage">
+            <img class="photo_remove" src="../assets/icons/xmark-solid-full.svg" alt="Remove the picture">
+            <img class="loaded_pic_img" :src="`data:image/jpeg;base64,` + messagePhoto" alt="Uploaded picture to send">
         </div>
+        <label class="bar_button" id="photo_button" role="button">
+            <img class="photo_button_icon" src="../assets/icons/images-solid-full.svg" alt="Send photo">
+            <input type="file" style="display: none;"
+                   accept="image/*" @change="load_message_picture">
+        </label>
         <div class="bar_button" :id="canSend === true ? 'send_button_available' : 'send_button'"
              role="button" @click="send_message">
             <img class="send_button_icon" src="../assets/icons/send-solid-full.svg" alt="Send message">
@@ -86,4 +105,29 @@ export default {
 
 <style scoped>
 @import url("../assets/css/chat_window.css");
+
+#loaded_pic {
+    border-radius: 4px !important;
+    border: 1.5px solid white;
+}
+
+.loaded_pic_img {
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    display: flex;
+}
+
+.photo_remove {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+
+    opacity: 0.3;
+    filter: invert(0);
+
+    z-index: 100;
+}
 </style>

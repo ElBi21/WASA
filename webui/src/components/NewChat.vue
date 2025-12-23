@@ -92,8 +92,6 @@ export default {
 
             this.usersToAdd.push(this.userID);
 
-            // TODO: Case where photo is not set for a group
-
             await API_create_conversation(
                 privateFlag,
                 this.usersToAdd,

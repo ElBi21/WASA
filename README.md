@@ -23,6 +23,7 @@
 | `getConversation`                | ✓       | ✓            | ✓              |
 | `sendMessage`                    | ✓       | ✓            | ✓              |
 | `forwardMessage`                 | ✓       | ✓            | ✓              |
+| Reply to message                 | N/A     | N/A          | ✓              |
 | `commentMessage`                 | ✓       | ✓            | ×              |
 | `uncommentMessage`               | ✓       | ✓            | ×              |
 | `deleteMessage`                  | ✓       | ✓            | ✓              |

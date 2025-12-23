@@ -3,6 +3,7 @@ import SingleMessage from "./SingleMessage.vue";
 import {API_get_conversation_messages} from "../services/chat-ops";
 import {retrieveFromStorage} from "../services/utils";
 import {API_get_conversations} from "@/services/user-ops";
+import {ref} from "vue";
 
 export default {
     components: { SingleMessage },
@@ -15,7 +16,7 @@ export default {
             refresh_timer_ID: null,
             refresh_timer_interval: 2500,
 
-            stopReloading: false
+            stopReloading: false,
         }
     },
 
