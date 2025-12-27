@@ -24,8 +24,8 @@
 | `sendMessage`                    | ✓       | ✓            | ✓              |
 | `forwardMessage`                 | ✓       | ✓            | ✓              |
 | Reply to message                 | N/A     | N/A          | ✓              |
-| `commentMessage`                 | ✓       | ✓            | ×              |
-| `uncommentMessage`               | ✓       | ✓            | ×              |
+| `commentMessage`                 | ✓       | ✓            | ✓              |
+| `uncommentMessage`               | ✓       | ✓            | ✓              |
 | `deleteMessage`                  | ✓       | ✓            | ✓              |
 | `addToGroup`                     | ✓       | ✓            | ✓              |
 | `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |

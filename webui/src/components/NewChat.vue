@@ -81,7 +81,6 @@ export default {
         },
 
         async create_new_conversation() {
-            console.log(this.selectedOption, this.newGroupName, this.newGroupDescription, this.usersToAdd);
             let privateFlag = this.selectedOption === 'private';
 
             if (this.selectedOption === 'private') {

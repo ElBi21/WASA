@@ -4,6 +4,7 @@ import {API_get_conversation_messages} from "../services/chat-ops";
 import {retrieveFromStorage} from "../services/utils";
 import {API_get_conversations} from "@/services/user-ops";
 import {ref} from "vue";
+import messageCheck from "@/components/MessageCheck.vue";
 
 export default {
     components: { SingleMessage },
@@ -12,6 +13,7 @@ export default {
         return {
             userData: null,
             messages: null,
+            reactions: null,
 
             refresh_timer_ID: null,
             refresh_timer_interval: 2500,
@@ -69,7 +71,7 @@ export default {
 <div class="chat_messages_container">
     <SingleMessage v-for="message in messages"
        @refreshChat="refreshMessages" @openForwardDial="openForwardDial" @startReplyToMessage="startReplyToMessage"
-       :user-logged="userData.user_id" :message-obj="message"
+       :user-logged="userData.user_id" :message-obj="message" :reactionsObj="message.reactions"
        :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>
 </template>

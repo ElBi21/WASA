@@ -63,6 +63,7 @@ export default {
 
         async refreshChat() {
             this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+            this.refreshChatMessages();
         },
 
         async logOutStopTimer() {

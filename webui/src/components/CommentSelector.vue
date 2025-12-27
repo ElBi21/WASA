@@ -1,5 +1,5 @@
 <script>
-import {API_comment_message} from "@/services/comment-ops";
+import {API_comment_message, API_uncomment_message} from "@/services/comment-ops";
 
 export default {
     data: function () {
@@ -12,6 +12,11 @@ export default {
 
     methods: {
         async comment(reaction) {
+            // Not really necessary, API_comment_message can remove any present reaction, but it doesn't refresh!
+            if (this.hasUserReacted !== undefined && this.hasUserReacted.flag) {
+                await API_uncomment_message(this.hasUserReacted.reaction_id, this.commentingUserID);
+            }
+
             await API_comment_message(this.messageID, this.commentingUserID, reaction);
             this.$emit("closeSelector");
         }
@@ -19,7 +24,7 @@ export default {
 
     name: "CommentSelector",
 
-    props: [ 'showSelector', 'messageID', 'commentingUserID' ]
+    props: [ 'showSelector', 'messageID', 'commentingUserID', 'hasUserReacted' ]
 }
 </script>
 

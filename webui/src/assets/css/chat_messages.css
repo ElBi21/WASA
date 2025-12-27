@@ -246,7 +246,7 @@
 }
 
 .message_picture {
-    width: 250px;
+    width: 100%;
     height: fit-content;
 
     margin: 4px 0 8px 0;
