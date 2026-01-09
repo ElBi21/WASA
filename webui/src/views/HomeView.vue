@@ -21,7 +21,10 @@ export default {
 
             chatSelected: null,
             openNewChatDial: false,
-            logOutStopTimers: 0
+            openEditUserDialFlag: false,
+            logOutStopTimers: 0,
+            chatListCounter: 0,
+            refreshUserCounter: 0,
         }
 	},
 
@@ -36,18 +39,38 @@ export default {
             this.openNewChatDial = true;
         },
 
+        openEditUserDial() {
+            this.openEditUserDialFlag = true;
+        },
+
         closeChatDial() {
             this.openNewChatDial = false;
         },
 
+        closeEditUserDial() {
+            this.openEditUserDialFlag = false;
+        },
+
         logOutClicked() {
             this.logOutStopTimers = 1;
+        },
+
+        refreshChatList() {
+            this.chatListCounter += 1;
+        },
+
+        async refreshUser() {
+            this.refreshUserCounter += 1;
+            this.user_data = await retrieveFromStorage();
+
+            console.log(this.user_data);
         }
 	},
 
 	async mounted() {
-		let userData = await retrieveFromStorage();
-        Object.assign(this.user_data, userData);
+		this.user_data = await retrieveFromStorage();
+
+        console.log(this.user_data);
 
         this.logOutStopTimers = 0;
 	}
@@ -57,12 +80,18 @@ export default {
 <template>
     <Background>
         <div class="main_view">
-            <ChatList v-if="this.user_data.user_id !== undefined" :user-id='this.user_data.user_id'
+            <ChatList v-if="this.user_data.user_id !== undefined"
+                :refreshCounter="chatListCounter" :refreshUser="refreshUserCounter"
                 @chat-selected-emit="handleClickedChatButton"
                 @openNewChatDialCL="openChatDial"
+                @openEditUserDialCL="openEditUserDial"
                 @logOutClicked="logOutClicked"></ChatList>
-            <ActivityField :selected-chat-id-prop="this.chatSelected" :open-chat-dial-external="openNewChatDial"
-                :logOutStopTimer="this.logOutStopTimers" @closeChatDialExternal="closeChatDial"></ActivityField>
+            <ActivityField :selected-chat-id-prop="chatSelected" :open-chat-dial-external="openNewChatDial"
+                :logOutStopTimer="logOutStopTimers" :openEditUserDialExt="openEditUserDialFlag"
+                @closeChatDialExternal="closeChatDial"
+                @closeEditUserExternal="closeEditUserDial"
+                @refreshChatList="refreshChatList"
+                @refreshUser="refreshUser"></ActivityField>
         </div>
     </Background>
 </template>

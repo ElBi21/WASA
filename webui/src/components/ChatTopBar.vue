@@ -14,7 +14,7 @@ export default {
         }
     },
 
-    emits: [ "openAddUserDial" ],
+    emits: [ "openAddUserDial", "openEditGroupDial" ],
 
     methods: {
         async loadChatData() {
@@ -36,6 +36,10 @@ export default {
             await API_leave_group(this.chatObj.ID, this.userData.user_id);
         },
 
+        editGroupData() {
+            this.$emit("openEditGroupDial", this.chatObj);
+        },
+
         openAddUserDial() {
             this.$emit("openAddUserDial");
         }
@@ -43,16 +47,18 @@ export default {
 
     async mounted() {
         this.userData = await retrieveFromStorage();
-
         await this.loadChatData();
-
-        console.log(this.chatObj);
     },
 
-    props: [ "chatObj" ],
+    props: [ "chatObj", "refreshUser" ],
 
     watch: {
         async chatObj(newValue) {
+            await this.loadChatData();
+        },
+
+        async refreshUser() {
+            this.userData = await retrieveFromStorage();
             await this.loadChatData();
         }
     }
@@ -70,6 +76,10 @@ export default {
         </div>
     </div>
     <div class="chat_top_actions">
+        <button v-if="!this.chatObj.IsPrivate" class="home_button" role="button" id="editGroupButton" @click="editGroupData">
+            <img class="home_button_icon"
+                 src="../assets/icons/pencil-solid-full.svg" alt="Add user">
+        </button>
         <button v-if="!this.chatObj.IsPrivate" class="home_button" role="button" id="addUserToGroup" @click="openAddUserDial()">
             <img class="home_button_icon"
                  src="../assets/icons/user-plus-solid-full.svg" alt="Add user">

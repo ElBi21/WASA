@@ -55,7 +55,7 @@ export default {
         this.userID = userData.user_id;
     },
 
-    props: [ "chatID", "replyMessage" ],
+    props: [ "chatID", "replyMessage", "refreshUser" ],
 
     watch: {
         messageBuffer() {
@@ -72,6 +72,11 @@ export default {
         replyMessage() {
             this.replyingTo = this.replyMessage !== null ? this.replyMessage.content : '';
             this.isReplying = this.replyMessage !== null;
+        },
+
+        async refreshUser() {
+            let userData = await retrieveFromStorage();
+            this.userID = userData.user_id;
         }
     }
 }

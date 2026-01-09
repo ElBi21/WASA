@@ -28,11 +28,11 @@
 | `uncommentMessage`               | ✓       | ✓            | ✓              |
 | `deleteMessage`                  | ✓       | ✓            | ✓              |
 | `addToGroup`                     | ✓       | ✓            | ✓              |
-| `setGroupDescription` (Extra)    | ✓       | ✓            | ✓ (1/2)        |
+| `setGroupDescription` (Extra)    | ✓       | ✓            | ✓              |
 | `leaveGroup`                     | ✓       | ✓            | ✓              |
-| `setGroupName`                   | ✓       | ✓            | ✓ (1/2)        |
-| `setMyPhoto`                     | ✓       | ✓            | ✓ (1/2)        |
-| `setGroupPhoto`                  | ✓       | ✓            | ✓ (1/2)        |
+| `setGroupName`                   | ✓       | ✓            | ✓              |
+| `setMyPhoto`                     | ✓       | ✓            | ✓              |
+| `setGroupPhoto`                  | ✓       | ✓            | ✓              |
 | `getAllUsers`                    | ✓       | ✓            | ✓              |
 | `getConversationMessages`        | ✓       | ✓            | ✓              |
 

@@ -20,7 +20,7 @@ export default {
         }
     },
 
-    emits: [ "openAddUserDial", "openForwardDial" ],
+    emits: [ "openAddUserDial", "openForwardDial", "openEditGroupDial" ],
 
     methods: {
         async updateChatObject() {
@@ -39,6 +39,10 @@ export default {
             this.$emit("openForwardDial", messageObj);
         },
 
+        openEditGroupDial(chatObj) {
+            this.$emit("openEditGroupDial", chatObj);
+        },
+
         startReplyToMessage(messageObj) {
             this.replyMessage = messageObj;
         },
@@ -53,7 +57,7 @@ export default {
         this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
     },
 
-    props: [ "selectedChatId", "logOutStopTimer", "refreshChat" ],
+    props: [ "selectedChatId", "logOutStopTimer", "refreshChat", "refreshUser" ],
 
     watch: {
         async selectedChatId() {
@@ -66,6 +70,10 @@ export default {
             this.refreshChatMessages();
         },
 
+        async refreshUser() {
+            this.userData = await retrieveFromStorage();
+        },
+
         async logOutStopTimer() {
             this.stopTimersFlag = 1;
         }
@@ -75,13 +83,14 @@ export default {
 
 <template>
     <div class="chat_window">
-        <ChatTopBar v-if="chatObj" :chatObj="chatObj" @openAddUserDial="openAddUserDial"></ChatTopBar>
+        <ChatTopBar v-if="chatObj" :chatObj="chatObj" :refreshUser="refreshUser"
+                    @openAddUserDial="openAddUserDial" @openEditGroupDial="openEditGroupDial"></ChatTopBar>
         <div class="scroll_container">
             <ChatMessages v-if="chatObj" :chatObj="chatObj" @openForwardDial="openForwardDial"
-                          @startForwardToMessage="startReplyToMessage"
+                          @startForwardToMessage="startReplyToMessage" :refreshUser="refreshUser"
                           :refreshFlag="forceRefreshFlag" :stopRefreshFlag="stopTimersFlag"></ChatMessages>
         </div>
-        <TypingBar v-if="chatObj" :chatID="selectedChatId" :replyMessage="replyMessage"
+        <TypingBar v-if="chatObj" :chatID="selectedChatId" :replyMessage="replyMessage" :refreshUser="refreshUser"
                    @refresh_chat_view="refreshChatMessages" @stop_reply="stopReply"></TypingBar>
     </div>
 </template>

@@ -5,7 +5,7 @@ import {API_uncomment_message} from "@/services/comment-ops";
 export default {
     data: function () {
         return {
-            loggedUser: null,
+            // loggedUser: null,
             content: null,
             userPFP: null,
 
@@ -32,7 +32,9 @@ export default {
     },
 
     async mounted() {
-        this.loggedUser = await retrieveFromStorage();
+        // this.loggedUser = await retrieveFromStorage();
+        console.log(this.loggedUser);
+
         this.content = this.reactionObj.reaction_content;
         this.userPFP = `data:image/jpeg;base64,` + this.reactionObj.sender.profile_pic;
 
@@ -41,7 +43,7 @@ export default {
 
     name: "SingleReaction",
 
-    props: [ "reactionObj", "messageOwner" ],
+    props: [ "reactionObj", "messageOwner", "loggedUser" ],
 }
 </script>
 

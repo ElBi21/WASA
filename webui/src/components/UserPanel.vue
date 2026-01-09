@@ -26,12 +26,24 @@ export default {
             }
 
             this.imageSource = this.userData.profile_pic;
+        },
+
+        async loadUserData() {
+            this.userData = await retrieveFromStorage();
+            await this.prepareUserData();
         }
     },
 
     async mounted () {
-        this.userData = await retrieveFromStorage();
-        await this.prepareUserData();
+        await this.loadUserData();
+    },
+
+    props: [ "refreshUserCounter" ],
+
+    watch: {
+        async refreshUserCounter() {
+            await this.loadUserData();
+        }
     }
 }
 </script>

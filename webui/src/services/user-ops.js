@@ -17,9 +17,6 @@ async function API_login(username) {
         // Load user data and change flag
         userData = result.data;
         shouldRegister = result.status === 201;
-    }).catch((error) => {
-        // TODO: Call error message popup
-        console.log(error)
     })
 
     return {userData, shouldRegister}
@@ -37,10 +34,7 @@ async function API_set_new_display_name(username, newDisplayName) {
                 "Content-Type": "application/json",
             }
         }
-    ).catch((error) => {
-        // TODO: Call an error message
-        console.log(error)
-    })
+    )
 }
 
 // The set_new_biography function performs a change of biography
@@ -55,10 +49,7 @@ async function API_set_new_biography(username, newBiography) {
                 "Content-Type": "application/json",
             },
         }
-    ).catch((error) => {
-        // TODO: Call an error message
-        console.log(error)
-    })
+    )
 }
 
 // The API_set_new_pfp function calls the API to change the PFP of the user
@@ -73,10 +64,7 @@ async function API_set_new_pfp(username, newPfpBlob) {
                 "Content-Type": "application/json",
             },
         }
-    ).catch((error) => {
-        // TODO: Call an error message
-        console.log(error)
-    })
+    )
 }
 
 async function API_get_conversations(username) {
@@ -91,9 +79,6 @@ async function API_get_conversations(username) {
         }
     ).then((result) => {
         userChats = result.data;
-    }).catch((error) => {
-        // TODO: Call an error message
-        console.log(error)
     })
 
     return userChats;
@@ -116,11 +101,24 @@ async function API_get_all_users(username) {
     return allUsers;
 }
 
+async function API_set_new_username(user_id, new_username) {
+    await axios.post(`/user/${user_id}/id`, {
+            new_username: new_username
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${user_id}`,
+                "Content-Type": "application/json",
+            },
+        })
+}
+
 export {
     API_login,
     API_set_new_display_name,
     API_set_new_biography,
     API_set_new_pfp,
     API_get_conversations,
-    API_get_all_users
+    API_get_all_users,
+    API_set_new_username
 };

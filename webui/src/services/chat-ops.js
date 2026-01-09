@@ -76,10 +76,49 @@ async function API_add_to_group(chat_id, user_id_to_add, username) {
     )
 }
 
+async function API_set_group_name(chat_id, new_name, user_id) {
+    await axios.post(`/chat/${chat_id}/name`, {
+        new_name: new_name
+    },
+        {
+            headers: {
+                Authorization: `Bearer ${user_id}`,
+                "Content-Type": "application/json",
+            },
+        })
+}
+
+async function API_set_group_description(chat_id, new_description, user_id) {
+    await axios.post(`/chat/${chat_id}/description`, {
+            new_description: new_description
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${user_id}`,
+                "Content-Type": "application/json",
+            },
+        })
+}
+
+async function API_set_group_photo(chat_id, new_photo, user_id) {
+    await axios.post(`/chat/${chat_id}/photo`, {
+            new_photo: new_photo
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${user_id}`,
+                "Content-Type": "application/json",
+            },
+        })
+}
+
 export {
     API_get_conversation,
     API_create_conversation,
     API_get_conversation_messages,
     API_leave_group,
-    API_add_to_group
+    API_add_to_group,
+    API_set_group_name,
+    API_set_group_description,
+    API_set_group_photo
 }

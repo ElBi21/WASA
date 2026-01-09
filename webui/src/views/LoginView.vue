@@ -179,7 +179,7 @@ export default {
                         You can change your display name anytime later in the settings</p>
                         <div id="login_form">
                             <input v-model="username" class="login_register_input" placeholder="Insert your username"
-                                   v-on:keyup.enter="login" v-on:input="check_enter_color">
+                                   @keyup.enter="login" @input="check_enter_color">
                             <button class="login_button_general login_button-unavailable" @click="login">
                                 <img class="login_arrow login_arrow-unavailable"
                                      src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
@@ -187,8 +187,8 @@ export default {
                         </div>
                         <div id="new_display_form">
                             <div class="form_zone">
-                                <input v-model="newDisplayName" class="login_register_input" v-on:input="check_enter_color"
-                                       placeholder="Choose a display name" v-on:keyup.enter="set_new_display_name">
+                                <input v-model="newDisplayName" class="login_register_input" @input="check_enter_color"
+                                       placeholder="Choose a display name" @keyup.enter="set_new_display_name">
                                 <button class="login_button_general login_button-unavailable" @click="set_new_display_name">
                                     <img class="login_arrow login_arrow-unavailable"
                                          src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">
@@ -199,7 +199,7 @@ export default {
                         <div id="new_bio_form">
                             <div class="form_zone">
                                 <input v-model="newBiography" id="set_new_bio_input" class="login_register_input"
-                                       placeholder="Choose a biography" v-on:keyup.enter="set_new_biography" v-on:input="check_enter_color">
+                                       placeholder="Choose a biography" @keyup.enter="set_new_biography" @input="check_enter_color">
                                 <button class="login_button_general login_button-unavailable" @click="set_new_biography">
                                     <img class="login_arrow login_arrow-unavailable"
                                          src="../assets/icons/arrow-right-solid-full.svg" alt="Login arrow">

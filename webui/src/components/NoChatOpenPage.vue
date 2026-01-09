@@ -10,11 +10,15 @@ export default {
         }
     },
 
-    emits: [ "openNewChatDial" ],
+    emits: [ "openNewChatDial", "openEditUserDial" ],
 
     methods: {
         openNewChatDialEmit() {
             this.$emit('openNewChatDial');
+        },
+
+        openEditUserDial() {
+            this.$emit("openEditUserDial");
         }
     },
 
@@ -22,7 +26,14 @@ export default {
         this.user_data = await retrieveFromStorage();
     },
 
-    props: [ "user_display_name" ]
+    props: [ "refreshUserData" ],
+
+    watch: {
+        async refreshUserData() {
+            let userData = await retrieveFromStorage();
+            this.user_data.display_name = userData.display_name;
+        }
+    }
 }
 </script>
 
@@ -37,7 +48,8 @@ export default {
                  role="button" @click="openNewChatDialEmit">
                 <img class="no_chat_suggestion_icon" src="../assets/icons/chats-solid-full.svg">
                 Start a chat</div>
-            <div class="no_chat_single_suggestion" id="sugg_prof_settings" role="button">
+            <div class="no_chat_single_suggestion" id="sugg_prof_settings"
+                 role="button" @click="openEditUserDial">
                 <img class="no_chat_suggestion_icon" src="../assets/icons/user-solid-full.svg">
                 Change your profile</div>
         </div>

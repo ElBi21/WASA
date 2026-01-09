@@ -2,9 +2,10 @@
 import SingleChat from "./SingleChat.vue";
 import UserPanel from "./UserPanel.vue";
 import {API_get_conversations} from "../services/user-ops";
+import {retrieveFromStorage} from "@/services/utils";
 
 export default {
-    async beforeDestroy() {
+    async beforeUnmount() {
         if (this.refresh_timer_ID) {
             clearInterval(this.refresh_timer_ID);
             this.refresh_timer_ID = null;
@@ -24,10 +25,11 @@ export default {
             refresh_timer_interval: 1500,
 
             stopReloading: true,
+            shouldIShow: true
         }
     },
 
-    emits: [ "chatSelectedEmit", "openNewChatDialCL", "logOutClicked" ],
+    emits: [ "chatSelectedEmit", "openNewChatDialCL", "logOutClicked", "openEditUserDialCL" ],
 
     methods: {
         async select_chat(chatObj) {
@@ -41,18 +43,27 @@ export default {
             this.$emit("openNewChatDialCL");
         },
 
+        openEditUserDial() {
+            this.$emit("openEditUserDialCL");
+        },
+
         logOutHandler() {
             this.$emit('logOutClicked', 1);
             this.stopReloading = 1;
+        },
+
+        async refreshChats() {
+            let userData = await retrieveFromStorage();
+            await API_get_conversations(userData.user_id).then((result) => {
+                this.userChats = result;
+            });
         }
     },
 
     // Starting point of page
     async mounted() {
         this.stopReloading = false;
-        await API_get_conversations(this.userId).then((result) => {
-            this.userChats = result;
-        });
+        await this.refreshChats();
 
         this.refresh_timer_ID = setInterval(async () => {
             if (this.stopReloading) {
@@ -60,16 +71,20 @@ export default {
                 clearInterval(this.refresh_timer_ID);
                 this.refresh_timer_interval = null;
             } else {
-                await API_get_conversations(this.userId).then((result) => {
-                    this.userChats = result;
-                });
+                await this.refreshChats();
             }
         }, this.refresh_timer_interval);
     },
 
-    props: [
-        "userId"
-    ],
+    props: [ "userId", "refreshCounter", "refreshUser" ],
+
+    watch: {
+        async refreshCounter() {
+            this.shouldIShow = false;
+            await this.refreshChats();
+            this.shouldIShow = true;
+        }
+    }
 }
 </script>
 
@@ -83,13 +98,13 @@ export default {
                         <img class="home_button_icon" id="new_chat_button_icon"
                              src="../assets/icons/comments-solid-full.svg" alt="Settings">
                     </button>
-                    <button class="home_button" role="button">
+                    <button class="home_button" role="button" @click="openEditUserDial">
                         <img class="home_button_icon" id="settings_button_icon"
                              src="../assets/icons/gear-solid-full.svg" alt="Settings">
                     </button>
                 </div>
             </div>
-            <div class="chat_list_main">
+            <div class="chat_list_main" v-if="shouldIShow">
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
                             :last-message-sender="chat.LastSent.sender.display_name"
                             :last-message-body="chat.LastSent.deleted ? 'Deleted message' : chat.LastSent.content"
@@ -99,7 +114,7 @@ export default {
                 </SingleChat>
             </div>
         </div>
-        <UserPanel @logOutClicked="logOutHandler"></UserPanel>
+        <UserPanel @logOutClicked="logOutHandler" :refreshUserCounter="refreshUser"></UserPanel>
     </div>
 </template>
 

@@ -192,6 +192,10 @@
     background-color: rgba(227, 15, 15, 0.5);
 }
 
+#editGroupButton:hover {
+    background-color: rgba(227, 149, 15, 0.5);
+}
+
 #chat_top_desc {
     margin: 8px 0 0 0;
     color: #606060;

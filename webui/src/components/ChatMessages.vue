@@ -1,10 +1,7 @@
 <script>
 import SingleMessage from "./SingleMessage.vue";
-import {API_get_conversation_messages} from "../services/chat-ops";
-import {retrieveFromStorage} from "../services/utils";
-import {API_get_conversations} from "@/services/user-ops";
-import {ref} from "vue";
-import messageCheck from "@/components/MessageCheck.vue";
+import {API_get_conversation_messages} from "@/services/chat-ops";
+import {retrieveFromStorage} from "@/services/utils";
 
 export default {
     components: { SingleMessage },
@@ -35,6 +32,18 @@ export default {
 
         startReplyToMessage(messageObj) {
             this.$emit("startForwardToMessage", messageObj);
+        },
+
+        async timerRefresh() {
+            this.refresh_timer_ID = setInterval(async () => {
+                if (this.stopReloading) {
+                    this.stopReloading = !this.stopReloading;
+                    clearInterval(this.refresh_timer_ID);
+                    this.refresh_timer_interval = null;
+                } else {
+                    await this.refreshMessages();
+                }
+            }, this.refresh_timer_interval);
         }
     },
 
@@ -42,18 +51,10 @@ export default {
         this.userData = await retrieveFromStorage();
         await this.refreshMessages();
 
-        this.refresh_timer_ID = setInterval(async () => {
-            if (this.stopReloading) {
-                this.stopReloading = !this.stopReloading;
-                clearInterval(this.refresh_timer_ID);
-                this.refresh_timer_interval = null;
-            } else {
-                await this.refreshMessages();
-            }
-        }, this.refresh_timer_interval);
+        await this.timerRefresh();
     },
 
-    props: [ "chatObj", "refreshFlag", "stopRefreshFlag" ],
+    props: [ "chatObj", "refreshFlag", "stopRefreshFlag", "refreshUser" ],
 
     watch: {
         async refreshFlag() {
@@ -62,6 +63,14 @@ export default {
 
         stopRefreshFlag() {
             this.stopReloading = true;
+        },
+
+        async refreshUser() {
+            this.userData = await retrieveFromStorage();
+            this.stopReloading = true;
+            this.stopReloading = false;
+
+            await this.timerRefresh();
         }
     }
 }
@@ -71,7 +80,7 @@ export default {
 <div class="chat_messages_container">
     <SingleMessage v-for="message in messages"
        @refreshChat="refreshMessages" @openForwardDial="openForwardDial" @startReplyToMessage="startReplyToMessage"
-       :user-logged="userData.user_id" :message-obj="message" :reactionsObj="message.reactions"
+       :user-logged="userData" :message-obj="message" :reactionsObj="message.reactions"
        :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>
 </template>

@@ -30,7 +30,7 @@ export default {
 
     methods: {
         async deleteMessage() {
-            await API_delete_message(this.messageObj.message_id, this.userLogged);
+            await API_delete_message(this.messageObj.message_id, this.userLogged.user_id);
             this.$emit("refreshChat");
         },
 
@@ -43,16 +43,10 @@ export default {
         },
 
         async closeCommentSelector() {
-            // let thisMessage = await API_retrieve_message(this.messageObj.message_id, this.userLogged);
-            // this.messageReactions = thisMessage.reactions;
-
             this.openCommentSelector = false;
+            this.messageReactions = null;
             this.$emit("refreshChat");
         },
-
-        // checkIfUserCommented() {
-        //     this.hasUserReactedFlag = this.reactionsObj.findIndex(reaction => reaction.sender.user_id === this.userLogged) !== -1;
-        // }
     },
 
     async mounted() {
@@ -62,28 +56,36 @@ export default {
         this.senderPFP = `data:image/jpeg;base64,` + this.messageObj.sender.profile_pic;
 
         if (this.messageObj.replying !== 0) {
-            this.repliedMessage = await API_retrieve_message(this.messageObj.replying, this.userLogged);
+            this.repliedMessage = await API_retrieve_message(this.messageObj.replying, this.userLogged.user_id);
         }
 
-        this.messageReactions = this.messageObj.reactions;
+        this.messageReactions = this.reactionsObj;
 
         if (this.reactionsObj !== null) {
-            let userReaction = this.reactionsObj.findIndex(reaction => reaction.sender.user_id === this.userLogged);
+            let userReaction = this.reactionsObj.findIndex(reaction => reaction.sender.user_id === this.userLogged.user_id);
             this.hasUserReacted.flag = userReaction !== -1;
 
             if (this.hasUserReacted.flag) {
                 this.hasUserReacted.reaction_id = this.reactionsObj[userReaction].reaction_id;
             }
         }
+
+        console.log(this.userLogged);
     },
 
-    props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer", "reactionsObj" ]
+    props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer", "reactionsObj" ],
+
+    watch: {
+        reactionsObj() {
+            this.messageReactions = this.reactionsObj;
+        }
+    }
 }
 </script>
 
 <template>
-<div :class="['message_container', { active: messageObj.sender.user_id === userLogged }]">
-    <div class="message_side_container message_side_logged_user" v-if="messageObj.sender.user_id === userLogged">
+<div :class="['message_container', { active: messageObj.sender.user_id === userLogged.user_id }]">
+    <div class="message_side_container message_side_logged_user" v-if="messageObj.sender.user_id === userLogged.user_id">
         <div class="message_side_button msg_btn_top" role="button" @click="deleteMessage" v-if="!this.messageObj.deleted">
             <img src="../assets/icons/trash-can-solid-full.svg" class="msg_side_icon" alt="Edit the message">
         </div>
@@ -95,14 +97,14 @@ export default {
             <img src="../assets/icons/heart-circle-plus-solid-full.svg" class="msg_side_icon" alt="React to the message">
         </div>
         <CommentSelector :showSelector="openCommentSelector" @closeSelector="closeCommentSelector"
-                         :messageID="messageObj.message_id" :commentingUserID="userLogged" :hasUserReacted="hasUserReacted"
-                         :position="messageObj.sender.user_id !== userLogged ? 'right' : 'left'"></CommentSelector>
+                         :messageID="messageObj.message_id" :commentingUserID="userLogged.user_id" :hasUserReacted="hasUserReacted"
+                         :position="messageObj.sender.user_id !== userLogged.user_id ? 'right' : 'left'"></CommentSelector>
     </div>
-    <div :class="['message_shape', { active: messageObj.sender.user_id === userLogged }]">
+    <div :class="['message_shape', { active: messageObj.sender.user_id === userLogged.user_id }]">
         <div class="message_sender_info" v-if="!isChatPrivate">
-            <img class="message_sender_photo" v-if="messageObj.sender.user_id !== userLogged"
+            <img class="message_sender_photo" v-if="messageObj.sender.user_id !== userLogged.user_id"
                  :src="this.senderPFP" alt="User PFP">
-            <p class="message_sender_display_name" v-if="messageObj.sender.user_id !== userLogged">{{ this.messageObj.sender.display_name }}</p>
+            <p class="message_sender_display_name" v-if="messageObj.sender.user_id !== userLogged.user_id">{{ this.messageObj.sender.display_name }}</p>
         </div>
 
         <div class="message_picture" v-if="messageObj.photo !== ''">
@@ -121,9 +123,9 @@ export default {
             <p class="message_deleted_text">This message has been deleted</p>
         </div>
 
-        <div v-if="reactionsObj !== null" class="reactions_container">
-            <SingleReaction v-for="reaction of reactionsObj" @removeReaction="this.$emit('refreshChat');"
-                            :reactionObj="reaction" :messageOwner="messageObj.sender"></SingleReaction>
+        <div v-if="messageReactions !== null && this.userLogged !== null" class="reactions_container">
+            <SingleReaction v-for="reaction of messageReactions" @removeReaction="this.$emit('refreshChat');"
+                            :loggedUser="this.userLogged" :reactionObj="reaction" :messageOwner="messageObj.sender"></SingleReaction>
         </div>
 
         <div class="message_metadata">
@@ -132,7 +134,7 @@ export default {
             <img v-if="messageObj.forwarded" src="../assets/icons/arrows-turn-right-solid-full.svg" class="forwarded_icon" alt="Forwarded message">
         </div>
     </div>
-    <div class="message_side_container" v-if="messageObj.sender.user_id !== userLogged">
+    <div class="message_side_container" v-if="messageObj.sender.user_id !== userLogged.user_id">
         <div class="message_side_button msg_btn_top" role="button" v-if="!this.messageObj.deleted" @click="openForwardDial">
             <img src="../assets/icons/arrows-turn-right-solid-full.svg" class="msg_side_icon" alt="Forward the message">
         </div>
@@ -144,8 +146,8 @@ export default {
             <img src="../assets/icons/heart-circle-plus-solid-full.svg" class="msg_side_icon" alt="React to the message">
         </div>
         <CommentSelector :showSelector="openCommentSelector" @closeSelector="closeCommentSelector"
-            :messageID="messageObj.message_id" :commentingUserID="userLogged" :hasUserReacted="hasUserReacted"
-            :position="messageObj.sender.user_id !== userLogged ? 'right' : 'left'"></CommentSelector>
+            :messageID="messageObj.message_id" :commentingUserID="userLogged.user_id" :hasUserReacted="hasUserReacted"
+            :position="messageObj.sender.user_id !== userLogged.user_id ? 'right' : 'left'"></CommentSelector>
     </div>
 
 </div>

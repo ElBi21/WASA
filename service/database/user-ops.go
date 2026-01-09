@@ -45,11 +45,22 @@ func (db *appdbimpl) RegisterNewUser(user string) (customstructs.User, error) {
 // When this function is called, the callee is sure that the new display name has a length
 // that is 3 <= len <= 16
 func (db *appdbimpl) SetNewUserName(user string, newUserName string) error {
-	_, err := db.c.Exec("UPDATE Users SET name = ? WHERE name = ?",
+	_, errOne := db.c.Exec("UPDATE Users SET name = ? WHERE name = ?",
+		newUserName, user)
+	_, errTwo := db.c.Exec("UPDATE ChatsUsers SET user = ? WHERE user = ?",
+		newUserName, user)
+	_, errThree := db.c.Exec("UPDATE Messages SET sender = ? WHERE sender = ?",
+		newUserName, user)
+	_, errFour := db.c.Exec("UPDATE Reactions SET user = ? WHERE user = ?",
+		newUserName, user)
+	_, errFive := db.c.Exec("UPDATE ReceivedMessages SET received_by = ? WHERE received_by = ?",
+		newUserName, user)
+	_, errSix := db.c.Exec("UPDATE SeenMessages SET seen_by = ? WHERE seen_by = ?",
 		newUserName, user)
 
-	if err != nil {
-		return fmt.Errorf("[DB] error while changing username\n (%w)", err)
+	if errOne != nil || errTwo != nil || errThree != nil || errFour != nil || errFive != nil || errSix != nil {
+		return fmt.Errorf("[DB] error while changing username\n (%w)\n (%w)\n (%w)\n (%w)\n (%w)\n (%w)",
+			errOne, errTwo, errThree, errFour, errFive, errSix)
 	}
 
 	return nil

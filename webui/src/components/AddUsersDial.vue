@@ -86,12 +86,13 @@ export default {
     <h2 class="new_chat_title">Add a user</h2>
 
     <div class="new_chat_users_list">
-        <UserButton v-if="availableUsers.length > 0"
-                    v-for="[index, user] in availableUsers.entries()"
-                    :user-object="user"
-                    :kind-of-chat="selectedOption"
-                    :is-selected="usersFlags[index]"
-                    @click="toggle_user_in_conversation(user, index)"></UserButton>
+        <div class="extend_full" v-if="availableUsers.length > 0">
+            <UserButton v-for="[index, user] in availableUsers.entries()"
+                        :user-object="user"
+                        :kind-of-chat="selectedOption"
+                        :is-selected="usersFlags[index]"
+                        @click="toggle_user_in_conversation(user, index)"></UserButton>
+        </div>
         <p v-else>Seems like no one else uses WASAText yet. Make someone join in order to add them in this group chat</p>
     </div>
 

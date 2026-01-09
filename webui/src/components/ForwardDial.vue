@@ -8,7 +8,7 @@ import ChatButton from "@/components/ChatButton.vue";
 import {API_forward_message} from "@/services/message-ops";
 
 export default {
-    components: {ChatButton, UserButton},
+    components: {ChatButton},
 
     data: function() {
         return {
@@ -70,12 +70,13 @@ export default {
     <h2 class="forward_msg_title">Forward message</h2>
 
     <div class="forward_msg_users_list">
-        <ChatButton v-if="allChats.length > 0"
-                    v-for="chat in allChats"
-                    :chat-object="chat"
-                    :is-selected="chat.ID === this.selectedChatID"
-                    @click="toggle_chat_in_conversation(chat)"></ChatButton>
-        <p class="forward_no_chats_text"v-else>Seems like you don't have other chats open at the moment. Create a chat first</p>
+        <div class="chats_container" v-if="allChats.length > 0">
+            <ChatButton v-for="chat in allChats"
+                        :chat-object="chat"
+                        :is-selected="chat.ID === this.selectedChatID"
+                        @click="toggle_chat_in_conversation(chat)"></ChatButton>
+        </div>
+        <p class="forward_no_chats_text" v-else>Seems like you don't have other chats open at the moment. Create a chat first</p>
     </div>
 
     <div v-if="safeToCreate === true" class="forward_msg_button_container">

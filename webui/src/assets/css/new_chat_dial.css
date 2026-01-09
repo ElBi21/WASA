@@ -198,6 +198,21 @@
     margin: 8px 0 12px 0;
     padding: 24px 0 24px 0;
 
+
+
+    background-color: var(--glass-background);
+    border-radius: 16px;
+    /* border: 1px solid #e5e7eb; */
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2) inset;
+
+    overflow-x: scroll;
+}
+
+.extend_full {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -206,13 +221,6 @@
     align-content: flex-start;
     gap: 8px;
     row-gap: 8px;
-
-    background-color: var(--glass-background);
-    border-radius: 16px;
-    /* border: 1px solid #e5e7eb; */
-    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2) inset;
-
-    overflow-x: scroll;
 }
 
 .new_chat_user_button {

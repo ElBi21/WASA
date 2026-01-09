@@ -12,8 +12,6 @@ import (
 )
 
 // The doLogin function performs the login logic
-//
-// TODO: Implement the 403 error by checking for sessions (might want to delete it (?))
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// Fetch the body of the request and unmarshal in variable
 	queryBody, _ := io.ReadAll(r.Body)

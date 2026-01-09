@@ -211,7 +211,7 @@ export default {
                 class="new_chat_input"
             />
 
-            <p class="new_chat_text">Description</p>
+            <p class="new_chat_text">Description (optional)</p>
             <textarea
                 v-model="newGroupDescription"
                 placeholder="What's this group for?"
@@ -231,19 +231,23 @@ export default {
     </div>
 
     <div class="new_chat_users_list">
-        <UserButton v-if="selectedOption === 'private'"
-                    v-for="[index, user] in privateChatUsers.entries()"
-                    :user-object="user"
-                    :kind-of-chat="selectedOption"
-                    :is-selected="usersPrivateFlags[index]"
-                    @click="toggle_user_in_conversation(user, index)"></UserButton>
-        <p v-else-if="selectedOption === 'private' && privateChatUsers.length === 0">No other users are available to start a private conversation</p>
-        <UserButton v-else-if="selectedOption === 'group' && allUsers.length > 0"
-                    v-for="[index, user] in allUsers.entries()"
-                    :user-object="user"
-                    :kind-of-chat="selectedOption"
-                    :is-selected="usersGroupFlags[index]"
-                    @click="toggle_user_in_conversation(user, index)"></UserButton>
+        <div class="extend_full" v-if="selectedOption === 'private' && privateChatUsers.length > 0">
+            <UserButton v-for="[index, user] in privateChatUsers.entries()"
+                        :key="user.user_id"
+                        :user-object="user"
+                        :kind-of-chat="selectedOption"
+                        :is-selected="usersPrivateFlags[index]"
+                        @click="toggle_user_in_conversation(user, index)"></UserButton>
+        </div>
+        <p v-else-if="selectedOption === 'private' && privateChatUsers.length === 0">Seems like no other users are available to start a private conversation</p>
+        <div class="extend_full" v-else-if="selectedOption === 'group' && allUsers.length > 0">
+            <UserButton v-for="[index, user] in allUsers.entries()"
+                        :key="user.user_id"
+                        :user-object="user"
+                        :kind-of-chat="selectedOption"
+                        :is-selected="usersGroupFlags[index]"
+                        @click="toggle_user_in_conversation(user, index)"></UserButton>
+        </div>
         <p v-else-if="selectedOption === 'group' && allUsers.length === 0">Seems like no one else uses WASAText yet. Make someone join in order to start a group chat</p>
     </div>
 
