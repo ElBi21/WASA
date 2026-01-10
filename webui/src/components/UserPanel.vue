@@ -52,7 +52,7 @@ export default {
     <div class="user_panel">
         <img :src="imageSource" alt="User PFP" class="user_pfp">
         <div class="user_data" v-if="this.userData !== null">
-            <p class="user_info"><b>{{ this.userData.display_name }}</b>&nbsp(@{{ this.userData.user_id }})</p>
+            <p class="user_info"><b>{{ this.userData.display_name }}</b>&nbsp;(@{{ this.userData.user_id }})</p>
             <p class="user_bio">{{ this.userData.biography }}</p>
         </div>
         <button class="home_button" id="logout_button" @click="goToLogin">

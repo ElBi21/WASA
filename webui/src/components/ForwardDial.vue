@@ -72,6 +72,7 @@ export default {
     <div class="forward_msg_users_list">
         <div class="chats_container" v-if="allChats.length > 0">
             <ChatButton v-for="chat in allChats"
+                        :key="chat.ID"
                         :chat-object="chat"
                         :is-selected="chat.ID === this.selectedChatID"
                         @click="toggle_chat_in_conversation(chat)"></ChatButton>

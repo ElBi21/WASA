@@ -70,7 +70,7 @@ export default {
             }
         }
 
-        console.log(this.userLogged);
+        console.log(this.messageObj);
     },
 
     props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer", "reactionsObj" ],
@@ -124,13 +124,15 @@ export default {
         </div>
 
         <div v-if="messageReactions !== null && this.userLogged !== null" class="reactions_container">
-            <SingleReaction v-for="reaction of messageReactions" @removeReaction="this.$emit('refreshChat');"
-                            :loggedUser="this.userLogged" :reactionObj="reaction" :messageOwner="messageObj.sender"></SingleReaction>
+            <SingleReaction v-for="reaction of messageReactions" :key="reaction.reaction_id"
+                            @removeReaction="this.$emit('refreshChat')" :loggedUser="this.userLogged"
+                            :reactionObj="reaction" :messageOwner="messageObj.sender"></SingleReaction>
         </div>
 
         <div class="message_metadata">
             <p class="message_time">{{ this.messageFormattedDate }}</p>
-            <MessageCheck :recvList="messageObj.received" :seenList="messageObj.seen" :userList="chatUsers"></MessageCheck>
+            <MessageCheck v-if="messageObj.sender.user_id === userLogged.user_id" :recvList="messageObj.received"
+                          :seenList="messageObj.seen" :userList="chatUsers"></MessageCheck>
             <img v-if="messageObj.forwarded" src="../assets/icons/arrows-turn-right-solid-full.svg" class="forwarded_icon" alt="Forwarded message">
         </div>
     </div>

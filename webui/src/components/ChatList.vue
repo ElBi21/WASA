@@ -106,6 +106,7 @@ export default {
             </div>
             <div class="chat_list_main" v-if="shouldIShow">
                 <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
+                            :key="chat.ID"
                             :last-message-sender="chat.LastSent.sender.display_name"
                             :last-message-body="chat.LastSent.deleted ? 'Deleted message' : chat.LastSent.content"
                             :last-message-date="chat.LastSent.timestamp"

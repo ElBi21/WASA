@@ -1,5 +1,4 @@
 <script>
-import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ChatList from "../components/ChatList.vue";
 import Background from "../components/Background.vue";
 import ActivityField from "../components/ActivityField.vue";
@@ -7,7 +6,7 @@ import {retrieveFromStorage} from "../services/utils";
 
 export default {
     components: {
-        ActivityField, Background, ChatList, LoadingSpinner
+        ActivityField, Background, ChatList
     },
 
 	data: function() {
@@ -27,8 +26,6 @@ export default {
             refreshUserCounter: 0,
         }
 	},
-
-    // emits: [ "chatSelectedEmit" ],
 
 	methods: {
         handleClickedChatButton(chatID) {
@@ -69,9 +66,6 @@ export default {
 
 	async mounted() {
 		this.user_data = await retrieveFromStorage();
-
-        console.log(this.user_data);
-
         this.logOutStopTimers = 0;
 	}
 }

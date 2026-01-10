@@ -60,7 +60,7 @@ export default {
 
 <template>
     <div :class="['single_chat', { active: isChatSelected }]" role="button">
-        <img :src="chatPicture" v-if="chatPicture !== ''" class="chat_photo" alt="Chat picture"></img>
+        <img :src="chatPicture" v-if="chatPicture !== ''" class="chat_photo" alt="Chat picture">
         <div class="chat_details">
             <p class="chat_name">{{ chatName }}</p>
             <div class="chat_last_msg_date">

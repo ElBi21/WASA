@@ -69,3 +69,5 @@ node_modules/
 bun.lockb
 
 wasa.sqlite
+
+unused/

@@ -88,6 +88,7 @@ export default {
     <div class="new_chat_users_list">
         <div class="extend_full" v-if="availableUsers.length > 0">
             <UserButton v-for="[index, user] in availableUsers.entries()"
+                        :key="user.user_id"
                         :user-object="user"
                         :kind-of-chat="selectedOption"
                         :is-selected="usersFlags[index]"

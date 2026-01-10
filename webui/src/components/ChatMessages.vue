@@ -78,10 +78,10 @@ export default {
 
 <template>
 <div class="chat_messages_container">
-    <SingleMessage v-for="message in messages"
-       @refreshChat="refreshMessages" @openForwardDial="openForwardDial" @startReplyToMessage="startReplyToMessage"
-       :user-logged="userData" :message-obj="message" :reactionsObj="message.reactions"
-       :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
+    <SingleMessage v-for="message in messages" :key="message.message_id"
+        @refreshChat="refreshMessages" @openForwardDial="openForwardDial" @startReplyToMessage="startReplyToMessage"
+        :user-logged="userData" :message-obj="message" :reactionsObj="message.reactions"
+        :chatUsers="chatObj.Users" :isChatPrivate="chatObj.IsPrivate"></SingleMessage>
 </div>
 </template>
 
