@@ -47,7 +47,7 @@ async function API_retrieve_message(message_id, username) {
 async function API_forward_message(message_obj, chat_to_forward, username) {
     await axios.post(`/message/${message_obj.message_id}`,
         {
-            sender: message_obj.sender.user_id,
+            sender: username,
             chat_id: chat_to_forward
         },
         {

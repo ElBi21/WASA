@@ -357,3 +357,28 @@
     text-align: center;
     margin: 0;
 }
+
+.chats_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.vert_divider {
+    width: 98%;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.3);
+
+    margin: 32px 0 0 0;
+}
+
+.forward_section_text {
+    color: rgba(0, 0, 0, 0.5);
+    margin: -4px 0 12px 0;
+}
+
+.less_margin_below {
+    margin: -12px 0 0 0;
+}

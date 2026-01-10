@@ -9,8 +9,6 @@ import EditUserDial from "@/components/EditUserDial.vue";
 </script>
 
 <script>
-import {retrieveFromStorage} from "@/services/utils";
-
 export default {
     data: function() {
         return {

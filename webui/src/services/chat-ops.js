@@ -19,6 +19,8 @@ async function API_get_conversation(chat_id, username) {
 }
 
 async function API_create_conversation(isPrivate, users, name, groupDescription, photo, username) {
+    let chat_obj = null;
+
     await axios.put(`/chat`, {
             is_private: isPrivate,
             users: users,
@@ -32,7 +34,13 @@ async function API_create_conversation(isPrivate, users, name, groupDescription,
                 "Content-Type": "application/json",
             },
         }
-    )
+    ).then((result) => {
+        if (result.status === 201) {
+            chat_obj = result.data;
+        }
+    })
+
+    return chat_obj;
 }
 
 async function API_get_conversation_messages(chat_id, username) {

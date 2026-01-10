@@ -63,7 +63,7 @@ func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps
 		queryInput.Photo = ""
 	}
 
-	_, err = rt.db.CreateConversation(
+	createdChat, err := rt.db.CreateConversation(
 		queryInput.IsPrivate, queryInput.Users, queryInput.Name, queryInput.GroupDescription, queryInput.Photo)
 
 	if err != nil {
@@ -72,7 +72,7 @@ func (rt *_router) createConversation(w http.ResponseWriter, r *http.Request, ps
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	jsonReturn, _ := json.Marshal(queryInput)
+	jsonReturn, _ := json.Marshal(createdChat)
 	_, _ = w.Write(jsonReturn)
 }
 

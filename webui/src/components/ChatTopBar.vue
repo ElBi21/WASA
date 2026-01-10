@@ -49,6 +49,8 @@ export default {
     async mounted() {
         this.userData = await retrieveFromStorage();
         await this.loadChatData();
+
+        console.log(this.chatObj);
     },
 
     props: [ "chatObj", "refreshUser" ],

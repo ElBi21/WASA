@@ -9,18 +9,19 @@ import (
 
 // CreateConversation creates a new chat in the DB. The chat will be created only if all the users exist
 func (db *appdbimpl) CreateConversation(private bool, users []string, name string, description string, photo string) (customstructs.Chat, error) {
-	var ID int
-	err := db.c.QueryRow(`SELECT id FROM Chats ORDER BY id DESC`).Scan(&ID)
+	var chatID int
+	err := db.c.QueryRow(`SELECT id FROM Chats ORDER BY id DESC`).Scan(&chatID)
 
 	// If there exists no chats, then this chat is the first ever created
 	if errors.Is(err, sql.ErrNoRows) {
-		ID = 1
+		chatID = 1
 	} else {
-		ID += 1
+		chatID += 1
 	}
 
 	// Create instance of struct that will be used
 	queryChat := customstructs.Chat{
+		ID:               chatID,
 		IsPrivate:        private,
 		Name:             name,
 		GroupDescription: description,
@@ -39,7 +40,7 @@ func (db *appdbimpl) CreateConversation(private bool, users []string, name strin
 	// After checking, create chat
 	_, err = db.c.Exec(
 		"INSERT INTO Chats (id, isPrivate, name, description, photo) VALUES (?, ?, ?, ?, ?);",
-		ID, private, name, description, photo)
+		chatID, private, name, description, photo)
 
 	if err != nil {
 		return queryChat,
@@ -48,7 +49,7 @@ func (db *appdbimpl) CreateConversation(private bool, users []string, name strin
 
 	// Add users to the chat
 	for _, user := range users {
-		_ = db.AddUserToGroup(ID, user)
+		_ = db.AddUserToGroup(chatID, user)
 		userStruct, _ := db.GetUserByName(user)
 		queryChat.Users = append(queryChat.Users, userStruct)
 	}

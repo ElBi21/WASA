@@ -1,14 +1,13 @@
-<script setup>
-import TypingBar from "./TypingBar.vue";
-import ChatTopBar from "./ChatTopBar.vue";
-import ChatMessages from "./ChatMessages.vue";
-</script>
-
 <script>
-import {API_get_conversation} from "../services/chat-ops";
-import {retrieveFromStorage} from "../services/utils";
+import TypingBar from "@/components/TypingBar.vue";
+import ChatTopBar from "@/components/ChatTopBar.vue";
+import ChatMessages from "@/components/ChatMessages.vue";
+import {API_get_conversation} from "@/services/chat-ops";
+import {retrieveFromStorage} from "@/services/utils";
 
 export default {
+    components: {TypingBar, ChatTopBar, ChatMessages},
+
     data: function() {
         return {
             chatObj: null,
