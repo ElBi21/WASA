@@ -84,6 +84,10 @@ export default {
         newUserData(newData) {
             this.refreshUserCounter += 1;
             this.$emit("refreshUser", newData);
+        },
+
+        leaveGroup() {
+            this.selectedChatID = null;
         }
     },
 
@@ -129,7 +133,8 @@ export default {
             @open-new-chat-dial="openNewChatDial" @openEditUserDial="openEditUserDial"></NoChatOpenPage>
         <ChatWindow v-else :selectedChatId="selectedChatID" :logOutStopTimer="stopTimersFlag"
                     :refreshChat="refreshChatCounter" @openEditGroupDial="openEditGroupDial"
-                    @openAddUserDial="openAddUserDial" @openForwardDial="openForwardDial"></ChatWindow>
+                    @openAddUserDial="openAddUserDial" @openForwardDial="openForwardDial"
+                    @groupLeft="leaveGroup"></ChatWindow>
     </div>
 </template>
 

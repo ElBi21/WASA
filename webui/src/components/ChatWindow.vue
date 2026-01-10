@@ -20,7 +20,7 @@ export default {
         }
     },
 
-    emits: [ "openAddUserDial", "openForwardDial", "openEditGroupDial" ],
+    emits: [ "openAddUserDial", "openForwardDial", "openEditGroupDial", "groupLeft" ],
 
     methods: {
         async updateChatObject() {
@@ -49,6 +49,10 @@ export default {
 
         stopReply() {
             this.replyMessage = null;
+        },
+
+        leaveGroup() {
+            this.$emit("groupLeft");
         }
     },
 
@@ -83,7 +87,7 @@ export default {
 
 <template>
     <div class="chat_window">
-        <ChatTopBar v-if="chatObj" :chatObj="chatObj" :refreshUser="refreshUser"
+        <ChatTopBar v-if="chatObj" :chatObj="chatObj" :refreshUser="refreshUser" @groupLeft="leaveGroup"
                     @openAddUserDial="openAddUserDial" @openEditGroupDial="openEditGroupDial"></ChatTopBar>
         <div class="scroll_container">
             <ChatMessages v-if="chatObj" :chatObj="chatObj" @openForwardDial="openForwardDial"

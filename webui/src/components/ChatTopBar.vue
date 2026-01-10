@@ -14,7 +14,7 @@ export default {
         }
     },
 
-    emits: [ "openAddUserDial", "openEditGroupDial" ],
+    emits: [ "openAddUserDial", "openEditGroupDial", "groupLeft" ],
 
     methods: {
         async loadChatData() {
@@ -34,6 +34,7 @@ export default {
 
         async leaveGroup() {
             await API_leave_group(this.chatObj.ID, this.userData.user_id);
+            this.$emit("groupLeft");
         },
 
         editGroupData() {
