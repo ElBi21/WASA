@@ -103,10 +103,25 @@
 .edit_group_text {
     width: fit-content;
 
-    margin: 0 0 -8px 20px;
+    margin: 0;
 
     font-size: 16px;
     font-weight: 450;
+}
+
+.edit_username_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    margin: 0 0 -8px 20px;
+}
+
+.edit_error_text {
+    font-size: 10px;
+    color: darkred;
+    margin: 0 0 -2px 12px;
 }
 
 .edit_group_input,

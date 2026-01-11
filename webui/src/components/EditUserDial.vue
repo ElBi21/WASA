@@ -1,6 +1,7 @@
 <script>
 import {img_to_base64, retrieveFromStorage} from "@/services/utils";
 import {
+    API_get_all_users,
     API_set_new_biography,
     API_set_new_display_name,
     API_set_new_pfp,
@@ -16,6 +17,8 @@ export default {
             userDisplayName: "",
             userBio: "",
             userPFP: "",
+
+            usernameConflict: false
         }
     },
 
@@ -28,22 +31,30 @@ export default {
         },
 
         async update_profile() {
-            await API_set_new_username(this.previousUserID, this.userID);
-            await API_set_new_display_name(this.userID, this.userDisplayName);
-            await API_set_new_biography(this.userID, this.userBio);
-            await API_set_new_pfp(this.userID, this.userPFP);
+            let allUsers = await API_get_all_users(this.previousUserID);
+            let usersWithSameUsername = allUsers.filter(user => user.user_id === this.userID);
 
-            let userData = {
-                user_id: this.userID,
-                display_name: this.userDisplayName,
-                biography: this.userBio,
-                profile_pic: this.userPFP
-            };
+            if (usersWithSameUsername.length === 0) {
+                await API_set_new_username(this.previousUserID, this.userID);
+                await API_set_new_display_name(this.userID, this.userDisplayName);
+                await API_set_new_biography(this.userID, this.userBio);
+                await API_set_new_pfp(this.userID, this.userPFP);
 
-            sessionStorage.setItem("user", JSON.stringify(userData));
+                let userData = {
+                    user_id: this.userID,
+                    display_name: this.userDisplayName,
+                    biography: this.userBio,
+                    profile_pic: this.userPFP
+                };
 
-            this.$emit("closeEditUserDial");
-            this.$emit("newUserValues", userData);
+                sessionStorage.setItem("user", JSON.stringify(userData));
+
+                this.$emit("closeEditUserDial");
+                this.$emit("newUserValues", userData);
+                this.usernameConflict = false;
+            } else {
+                this.usernameConflict = true;
+            }
         },
 
         async close_dial() {
@@ -62,6 +73,12 @@ export default {
     },
 
     name: "EditUserDial",
+
+    watch: {
+        userID() {
+
+        }
+    }
 }
 </script>
 
@@ -75,7 +92,12 @@ export default {
         <h2 class="edit_group_title">Edit your profile</h2>
         <div class="edit_group_settings">
             <div class="edit_group_settings_text">
-                <p class="edit_group_text">Your Username</p>
+                <div class="edit_username_container">
+                    <p class="edit_group_text">Your Username</p>
+                    <p v-if="usernameConflict" class="edit_error_text"
+                        >This username has already been taken. Please select another one</p>
+                </div>
+
                 <input
                     v-model="userID"
                     type="text"
