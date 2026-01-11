@@ -41,6 +41,7 @@ export default {
                     clearInterval(this.refresh_timer_ID);
                     this.refresh_timer_interval = null;
                 } else {
+                    this.userData = await retrieveFromStorage();
                     await this.refreshMessages();
                 }
             }, this.refresh_timer_interval);
