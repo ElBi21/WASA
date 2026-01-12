@@ -24,6 +24,7 @@ export default {
             logOutStopTimers: 0,
             chatListCounter: 0,
             refreshUserCounter: 0,
+            counterDeselect: 0
         }
 	},
 
@@ -61,6 +62,10 @@ export default {
             this.user_data = await retrieveFromStorage();
 
             console.log(this.user_data);
+        },
+
+        deselectChat() {
+            this.counterDeselect++;
         }
 	},
 
@@ -76,6 +81,7 @@ export default {
         <div class="main_view">
             <ChatList v-if="this.user_data.user_id !== undefined"
                 :refreshCounter="chatListCounter" :refreshUser="refreshUserCounter"
+                :counterDeselect="counterDeselect"
                 @chat-selected-emit="handleClickedChatButton"
                 @openNewChatDialCL="openChatDial"
                 @openEditUserDialCL="openEditUserDial"
@@ -85,7 +91,8 @@ export default {
                 @closeChatDialExternal="closeChatDial"
                 @closeEditUserExternal="closeEditUserDial"
                 @refreshChatList="refreshChatList"
-                @refreshUser="refreshUser"></ActivityField>
+                @refreshUser="refreshUser"
+                @deselectChat="deselectChat"></ActivityField>
         </div>
     </Background>
 </template>

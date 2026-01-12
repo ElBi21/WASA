@@ -19,7 +19,13 @@ export default {
         this.countSeen();
     },
 
-    props: [ "recvList", "seenList", "userList" ]
+    props: [ "recvList", "seenList", "userList" ],
+
+    watch: {
+        seenList() {
+            this.countSeen();
+        }
+    }
 }
 </script>
 

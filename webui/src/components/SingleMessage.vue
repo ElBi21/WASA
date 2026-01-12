@@ -70,7 +70,7 @@ export default {
             }
         }
 
-        console.log(this.messageObj);
+        // console.log(this.messageObj);
     },
 
     props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer", "reactionsObj" ],

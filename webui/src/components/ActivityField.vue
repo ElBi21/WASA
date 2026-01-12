@@ -28,7 +28,7 @@ export default {
         }
     },
 
-    emits: [ "closeChatDialExternal", "refreshChatList", "closeEditUserExternal", "refreshUser" ],
+    emits: [ "closeChatDialExternal", "refreshChatList", "closeEditUserExternal", "refreshUser", "deselectChat" ],
 
     methods: {
         closeNewChatDial() {
@@ -86,6 +86,7 @@ export default {
 
         leaveGroup() {
             this.selectedChatID = null;
+            this.$emit("deselectChat");
         }
     },
 

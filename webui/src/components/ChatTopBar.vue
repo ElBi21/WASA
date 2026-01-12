@@ -11,6 +11,9 @@ export default {
             chatPhoto: null,
             chatUsersString: "",
             chatIsPrivate: false,
+            /*stopReloading: false,
+            refresh_timer_interval: 1500,
+            refresh_timer_ID: null,*/
         }
     },
 
@@ -34,6 +37,7 @@ export default {
 
         async leaveGroup() {
             await API_leave_group(this.chatObj.ID, this.userData.user_id);
+            this.stopReloading = true;
             this.$emit("groupLeft");
         },
 
@@ -49,14 +53,12 @@ export default {
     async mounted() {
         this.userData = await retrieveFromStorage();
         await this.loadChatData();
-
-        console.log(this.chatObj);
     },
 
     props: [ "chatObj", "refreshUser" ],
 
     watch: {
-        async chatObj(newValue) {
+        async chatObj() {
             await this.loadChatData();
         },
 

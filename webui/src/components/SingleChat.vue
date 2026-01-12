@@ -44,14 +44,20 @@ export default {
 
     props: [
         "chatId",
+        "chatObj",
         "lastMessageBody",
         "lastMessageSender",
         "lastMessageDate",
-        "isChatSelected"
+        "isChatSelected",
+        "reloadChatCounter"
     ],
 
     watch: {
         async chatId() {
+            await this.buildChatButton();
+        },
+
+        async reloadChatCounter() {
             await this.buildChatButton();
         }
     }

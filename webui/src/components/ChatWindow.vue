@@ -14,8 +14,11 @@ export default {
             userData: null,
             replyMessage: null,
 
-            forceRefreshFlag: false,
-            stopTimersFlag: 0
+            forceRefreshFlag: 0,
+            stopTimersFlag: 0,
+            stopReloading: false,
+            refresh_timer_interval: 1500,
+            refresh_timer_ID: null,
         }
     },
 
@@ -27,7 +30,7 @@ export default {
         },
 
         refreshChatMessages() {
-            this.forceRefreshFlag = !this.forceRefreshFlag;
+            this.forceRefreshFlag++;
         },
 
         openAddUserDial() {
@@ -58,6 +61,16 @@ export default {
     async mounted() {
         this.userData = await retrieveFromStorage();
         this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+
+        this.refresh_timer_ID = setInterval(async () => {
+            if (this.stopReloading && this.chatObj !== null) {
+                this.stopReloading = !this.stopReloading;
+                clearInterval(this.refresh_timer_ID);
+                this.refresh_timer_interval = null;
+            } else {
+                this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
+            }
+        }, this.refresh_timer_interval);
     },
 
     props: [ "selectedChatId", "logOutStopTimer", "refreshChat", "refreshUser" ],
@@ -74,6 +87,7 @@ export default {
         },
 
         async refreshUser() {
+            this.chatObj = await API_get_conversation(this.selectedChatId, this.userData.user_id);
             this.userData = await retrieveFromStorage();
         },
 

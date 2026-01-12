@@ -34,7 +34,7 @@ export default {
             let allUsers = await API_get_all_users(this.previousUserID);
             let usersWithSameUsername = allUsers.filter(user => user.user_id === this.userID);
 
-            if (usersWithSameUsername.length === 0) {
+            if (usersWithSameUsername.length === 0 || usersWithSameUsername[0].user_id === this.previousUserID) {
                 await API_set_new_username(this.previousUserID, this.userID);
                 await API_set_new_display_name(this.userID, this.userDisplayName);
                 await API_set_new_biography(this.userID, this.userBio);
@@ -73,12 +73,6 @@ export default {
     },
 
     name: "EditUserDial",
-
-    watch: {
-        userID() {
-
-        }
-    }
 }
 </script>
 

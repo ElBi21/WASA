@@ -25,7 +25,8 @@ export default {
             refresh_timer_interval: 1500,
 
             stopReloading: true,
-            shouldIShow: true
+            shouldIShow: true,
+            reloadChatCounter: 0
         }
     },
 
@@ -57,6 +58,7 @@ export default {
             await API_get_conversations(userData.user_id).then((result) => {
                 this.userChats = result;
             });
+            this.reloadChatCounter++;
         }
     },
 
@@ -76,13 +78,17 @@ export default {
         }, this.refresh_timer_interval);
     },
 
-    props: [ "userId", "refreshCounter", "refreshUser" ],
+    props: [ "userId", "refreshCounter", "refreshUser", "counterDeselect" ],
 
     watch: {
         async refreshCounter() {
             this.shouldIShow = false;
             await this.refreshChats();
             this.shouldIShow = true;
+        },
+
+        counterDeselect() {
+            this.currently_opened_chat_id = null;
         }
     }
 }
@@ -105,12 +111,13 @@ export default {
                 </div>
             </div>
             <div class="chat_list_main" v-if="shouldIShow">
-                <SingleChat v-for="chat in userChats" :chat-id="chat.ID"
-                            :key="chat.ID"
+                <SingleChat v-for="[index, chat] in userChats.entries()" :chat-id="chat.ID"
+                            :key="index"
                             :last-message-sender="chat.LastSent.sender.display_name"
                             :last-message-body="chat.LastSent.deleted ? 'Deleted message' : chat.LastSent.content"
                             :last-message-date="chat.LastSent.timestamp"
                             :isChatSelected="chat.ID === currently_opened_chat_id"
+                            :reloadChatCounter="reloadChatCounter"
                             @click="select_chat(chat)">
                 </SingleChat>
             </div>
