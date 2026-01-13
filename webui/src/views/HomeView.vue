@@ -60,8 +60,6 @@ export default {
         async refreshUser() {
             this.refreshUserCounter += 1;
             this.user_data = await retrieveFromStorage();
-
-            console.log(this.user_data);
         },
 
         deselectChat() {

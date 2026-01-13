@@ -110,7 +110,7 @@ export default {
                     </button>
                 </div>
             </div>
-            <div class="chat_list_main" v-if="shouldIShow">
+            <div class="chat_list_main" v-if="shouldIShow && userChats !== null">
                 <SingleChat v-for="[index, chat] in userChats.entries()" :chat-id="chat.ID"
                             :key="index"
                             :last-message-sender="chat.LastSent.sender.display_name"

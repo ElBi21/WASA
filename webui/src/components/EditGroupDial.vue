@@ -35,8 +35,6 @@ export default {
     },
 
     async mounted() {
-        console.log(this.chatObj);
-
         let userData = await retrieveFromStorage();
         this.userID = userData.user_id;
 

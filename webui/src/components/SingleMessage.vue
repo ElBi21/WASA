@@ -69,8 +69,6 @@ export default {
                 this.hasUserReacted.reaction_id = this.reactionsObj[userReaction].reaction_id;
             }
         }
-
-        // console.log(this.messageObj);
     },
 
     props: [ "userLogged", "messageObj", "isChatPrivate", "chatUsers", "refreshEnforcer", "reactionsObj" ],

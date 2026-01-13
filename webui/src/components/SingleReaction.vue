@@ -32,9 +32,6 @@ export default {
     },
 
     async mounted() {
-        // this.loggedUser = await retrieveFromStorage();
-        console.log(this.reactionObj);
-
         this.content = this.reactionObj.reaction_content;
         this.userPFP = `data:image/jpeg;base64,` + this.reactionObj.sender.profile_pic;
 
