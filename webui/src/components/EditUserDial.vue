@@ -40,11 +40,15 @@ export default {
             if (usersWithSameUsername.length !== 0 && usersWithSameUsername[0].user_id !== this.previousUserID) {
                 this.usernameConflict = true;
                 return;
+            } else {
+                this.usernameConflict = false;
             }
 
             if (usersWithSameDSName.length !== 0 && usersWithSameDSName[0].user_id !== this.previousUserID) {
                 this.displayNameConflict = true;
                 return;
+            } else {
+                this.displayNameConflict = false;
             }
 
             await API_set_new_username(this.previousUserID, this.userID);
@@ -63,8 +67,8 @@ export default {
 
             this.$emit("closeEditUserDial");
             this.$emit("newUserValues", userData);
-            this.usernameConflict = false;
-            this.displayNameConflict = false;
+            // this.usernameConflict = false;
+            // this.displayNameConflict = false;
         },
 
         async close_dial() {
