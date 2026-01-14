@@ -16,22 +16,31 @@ export default {
 
     async mounted() {
         this.userData = await retrieveFromStorage();
+        this.drawButton();
+    },
 
-        if (this.chatObject.IsPrivate) {
-            this.privateIndex = this.chatObject.Users[0].user_id === this.userData.user_id ? 1 : 0;
-            this.chatPicture = `data:image/jpeg;base64,` + this.chatObject.Users[this.privateIndex].profile_pic;
-            this.chatName = `<b>${this.chatObject.Users[this.privateIndex].display_name}</b> (@${this.chatObject.Users[this.privateIndex].user_id})`;
-            this.chatDescription = this.chatObject.Users[this.privateIndex].biography;
-        } else {
-            this.chatPicture = `data:image/jpeg;base64,` + this.chatObject.Photo;
-            this.chatName = `<b>${this.chatObject.Name}</b>`;
-            this.chatDescription = this.chatObject.GroupDescription;
+    methods: {
+        drawButton() {
+            if (this.chatObject.IsPrivate) {
+                this.privateIndex = this.chatObject.Users[0].user_id === this.userData.user_id ? 1 : 0;
+                this.chatPicture = `data:image/jpeg;base64,` + this.chatObject.Users[this.privateIndex].profile_pic;
+                this.chatName = `<b>${this.chatObject.Users[this.privateIndex].display_name}</b> (@${this.chatObject.Users[this.privateIndex].user_id})`;
+                this.chatDescription = this.chatObject.Users[this.privateIndex].biography;
+            } else {
+                this.chatPicture = `data:image/jpeg;base64,` + this.chatObject.Photo;
+                this.chatName = `<b>${this.chatObject.Name}</b>`;
+                this.chatDescription = this.chatObject.GroupDescription;
+            }
         }
     },
 
     props: [ "chatObject", "isSelected" ],
 
     watch: {
+        chatObject() {
+            this.drawButton();
+        },
+
         isSelected() {
             this.isThisSelected = this.isSelected;
         }

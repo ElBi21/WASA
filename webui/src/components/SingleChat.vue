@@ -33,7 +33,7 @@ export default {
 
             if (chat.IsPrivate === true) {
                 let otherParticipantIndex = chat.Users.findIndex(user => user.user_id !== this.userData.user_id);
-                this.chatName = chat.Users[otherParticipantIndex].display_name;
+                this.chatName = `<b>${chat.Users[otherParticipantIndex].display_name}</b> <i class="small_username">(@${chat.Users[otherParticipantIndex].user_id})</i>`;
                 this.chatPicture = `data:image/jpeg;base64,` + chat.Users[otherParticipantIndex].profile_pic;
             } else {
                 this.chatName = chat.Name;
@@ -57,6 +57,10 @@ export default {
             await this.buildChatButton();
         },
 
+        async chatObj() {
+            await this.buildChatButton();
+        },
+
         async reloadChatCounter() {
             await this.buildChatButton();
         }
@@ -68,7 +72,7 @@ export default {
     <div :class="['single_chat', { active: isChatSelected }]" role="button">
         <img :src="chatPicture" v-if="chatPicture !== ''" class="chat_photo" alt="Chat picture">
         <div class="chat_details">
-            <p class="chat_name">{{ chatName }}</p>
+            <p class="chat_name" v-html="chatName"></p>
             <div class="chat_last_msg_date">
                 <p class="chat_last_message" v-if="this.to_render"><b style="font-weight: 650;">{{ lastMessageSender }}</b>: {{ lastMessageBody }}</p>
                 <p class="chat_date" v-if="this.to_render">({{ lastMessageFormattedDate }})</p>
@@ -76,3 +80,9 @@ export default {
         </div>
     </div>
 </template>
+
+<style>
+.small_username {
+    font-size: 14px;
+}
+</style>

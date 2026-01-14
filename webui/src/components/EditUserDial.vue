@@ -12,13 +12,15 @@ export default {
     data: function() {
         return {
             previousUserID: "",
+            previousDisplayName: "",
 
             userID: "",
             userDisplayName: "",
             userBio: "",
             userPFP: "",
 
-            usernameConflict: false
+            usernameConflict: false,
+            displayNameConflict: false,
         }
     },
 
@@ -33,28 +35,36 @@ export default {
         async update_profile() {
             let allUsers = await API_get_all_users(this.previousUserID);
             let usersWithSameUsername = allUsers.filter(user => user.user_id === this.userID);
+            let usersWithSameDSName = allUsers.filter(user => user.display_name === this.userDisplayName);
 
-            if (usersWithSameUsername.length === 0 || usersWithSameUsername[0].user_id === this.previousUserID) {
-                await API_set_new_username(this.previousUserID, this.userID);
-                await API_set_new_display_name(this.userID, this.userDisplayName);
-                await API_set_new_biography(this.userID, this.userBio);
-                await API_set_new_pfp(this.userID, this.userPFP);
-
-                let userData = {
-                    user_id: this.userID,
-                    display_name: this.userDisplayName,
-                    biography: this.userBio,
-                    profile_pic: this.userPFP
-                };
-
-                sessionStorage.setItem("user", JSON.stringify(userData));
-
-                this.$emit("closeEditUserDial");
-                this.$emit("newUserValues", userData);
-                this.usernameConflict = false;
-            } else {
+            if (usersWithSameUsername.length !== 0 && usersWithSameUsername[0].user_id !== this.previousUserID) {
                 this.usernameConflict = true;
+                return;
             }
+
+            if (usersWithSameDSName.length !== 0 && usersWithSameDSName[0].user_id !== this.previousUserID) {
+                this.displayNameConflict = true;
+                return;
+            }
+
+            await API_set_new_username(this.previousUserID, this.userID);
+            await API_set_new_display_name(this.userID, this.userDisplayName);
+            await API_set_new_biography(this.userID, this.userBio);
+            await API_set_new_pfp(this.userID, this.userPFP);
+
+            let userData = {
+                user_id: this.userID,
+                display_name: this.userDisplayName,
+                biography: this.userBio,
+                profile_pic: this.userPFP
+            };
+
+            sessionStorage.setItem("user", JSON.stringify(userData));
+
+            this.$emit("closeEditUserDial");
+            this.$emit("newUserValues", userData);
+            this.usernameConflict = false;
+            this.displayNameConflict = false;
         },
 
         async close_dial() {
@@ -68,6 +78,8 @@ export default {
         this.previousUserID = userData.user_id;
 
         this.userDisplayName = userData.display_name;
+        this.previousDisplayName = userData.display_name;
+
         this.userBio = userData.biography;
         this.userPFP = userData.profile_pic;
     },
@@ -99,7 +111,11 @@ export default {
                     class="edit_group_input"
                 />
 
-                <p class="edit_group_text">Your Display Name</p>
+                <div class="edit_username_container">
+                    <p class="edit_group_text">Your Display Name</p>
+                    <p v-if="displayNameConflict" class="edit_error_text"
+                    >This display name has already been taken. Please select another one</p>
+                </div>
                 <input
                     v-model="userDisplayName"
                     type="text"
