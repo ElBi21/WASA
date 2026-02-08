@@ -477,7 +477,7 @@ paths:
                 $ref: "#/components/schemas/User"
 
   /user/{user_id}/name:
-    # POST = setMyUserName
+    # POST = setMyDisplayName
     parameters:
       - $ref: "#/components/parameters/user_id"
 

@@ -67,8 +67,6 @@ export default {
 
             this.$emit("closeEditUserDial");
             this.$emit("newUserValues", userData);
-            // this.usernameConflict = false;
-            // this.displayNameConflict = false;
         },
 
         async close_dial() {

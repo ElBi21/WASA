@@ -8,8 +8,6 @@ services:
             dockerfile: Dockerfile.backend
         ports:
             - "3000:3000"
-        volumes:
-            - ./shared:/shared
 
     # Service for frontend
     frontend:
