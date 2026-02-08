@@ -15,12 +15,12 @@ WASAText is the name of a Single Page Application made for the Web And Software 
 Running WASAText is really easy: just open the shell and execute the following:
 
 ```sh
-curl https://github.com/ElBi21/WASA/archive/refs/heads/main.zip
-unzip "WASA-main.zip" -d WASA && cd WASA
+wget https://github.com/ElBi21/WASA/archive/refs/heads/main.zip
+unzip -q "main.zip" && mv WASA-main WASA && cd WASA
 docker compose up -d
 ```
 
-And voilà, you'll be ready to go! You can open up an instance of the project at `localhost`
+And voilà, you'll be ready to go! You can open up an instance of the project at `localhost:80`!
 
 ## How does it look?
 
