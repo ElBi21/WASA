@@ -12,7 +12,7 @@ WASAText is the name of a Single Page Application made for the Web And Software 
 
 ## Spinning it up
 
-Running WASAText is really easy: just open the shell and execute the following:
+Running WASAText is really easy, just open the shell and execute the following:
 
 ```sh
 wget https://github.com/ElBi21/WASA/archive/refs/heads/main.zip
